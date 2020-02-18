@@ -1,0 +1,17 @@
+Package: pkgapi
+Title: Turn a Package into an HTTP API
+Version: 0.0.1
+Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
+                    email = "rich.fitzjohn@gmail.com"),
+             person("Imperial College of Science, Technology and Medicine",
+                    role = "cph"))
+Description: Wrapper around the plumber package to turn a package into
+    an HTTP API. This adds some conventions that we find useful, such as
+    some testing infrastructure and automatic validation of responses
+    against a json schema.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Language: en-GB
+Suggests:
+    testthat
