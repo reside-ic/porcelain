@@ -1,3 +1,33 @@
+pkgapi <- R6::R6Class(
+  "pkgapi",
+  inherit = plumber::plumber,
+
+  private = list(
+    root = NULL
+  ),
+
+  public = list(
+    ## initialize = function(...) {
+    ##   super$initialize(...)
+    ## },
+    ## TODO: this ignores the 'preempt' arg - because the underlying
+    ## logic of the super method uses missing() it's not
+    ## straightforward to wrap.
+    ##
+    ## TODO: the plumber::PlumberEndpoint class could be used so that
+    ## we might get plumber information here using the schema data.
+    handle = function(methods, path, handler) {
+      stopifnot(inherits(handler, "pkgapi_endpoint"))
+      ## endpoint <- plumber::PlumberEndpoint$new(
+      ##   methods, path, handler, private$envir,
+      ##   serializer = pkgapi_serialize_pass)
+      ## super$handle(endpoint = endpoint)
+      super$handle(methods, path, handler$wrapped,
+                   serializer = pkgapi_serialize_pass)
+    }
+  ))
+
+
 pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
   if (is.null(root)) {
     package <- utils::packageName(environment(handler))
@@ -5,7 +35,7 @@ pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
   }
   validator <- pkgapi_validator(schema, root)
   force(handler)
-  wrapped <- function(..., validate = TRUE) {
+  wrapped <- function(req, res, ..., validate = TRUE) {
     ## TODO: should use tryCatch here to do some automatic failure
     ## handling.
     data <- handler(...)
@@ -27,16 +57,18 @@ pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
 
 
 ## Wrap our most common serialise style
-pkgapi_serialize_pass <- function() {
-  function(val, req, res, errorHandler) {
-    tryCatch({
-      res$setHeader("Content-Type", val$content_type)
+pkgapi_serialize_pass <- function(val, req, res, errorHandler) {
+  tryCatch({
+    res$setHeader("Content-Type", val$content_type)
+    if (val$content_type == "application/json") {
+      res$body <- as.character(val$body)
+    } else {
       res$body <- val$body
-      return(res$toResponse())
-    }, error = function(e) {
-      errorHandler(req, res, e)
-    })
-  }
+    }
+    return(res$toResponse())
+  }, error = function(e) {
+    errorHandler(req, res, e)
+  })
 }
 
 

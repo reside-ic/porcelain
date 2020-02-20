@@ -41,3 +41,18 @@ test_that("validate schema", {
   expect_equal(e$result$body, to_json(e$result$value))
   expect_equal(e$result$content_type, "application/json")
 })
+
+
+test_that("build api", {
+  hello <- function() {
+    jsonlite::unbox("hello")
+  }
+  endpoint <- pkgapi_endpoint_json(hello, "String", "schema")
+  pr <- pkgapi$new()
+  pr$handle("GET", "/hello", endpoint)
+
+  res <- test_call(pr, "GET", "/hello")
+  expect_equal(res$status, 200L)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(res$body, as.character(endpoint$wrapped()$body))
+})
