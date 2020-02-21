@@ -87,3 +87,12 @@ test_that("build api - binary endpoint", {
   expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
   expect_equal(res$body, binary())
 })
+
+
+test_that("find schema root", {
+  handler <- pkgapi_endpoint_json # important thing is that it is in the our ns
+  expect_equal(schema_root(".", handler), normalizePath("."))
+  expect_equal(schema_root(NULL, handler),
+               system_file("schema", package = "pkgapi"))
+  expect_error(schema_root(tempfile(), handler))
+})

@@ -2,10 +2,6 @@ pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
-  private = list(
-    root = NULL
-  ),
-
   public = list(
     ## initialize = function(...) {
     ##   super$initialize(...)
@@ -29,10 +25,7 @@ pkgapi <- R6::R6Class(
 
 
 pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
-  if (is.null(root)) {
-    package <- utils::packageName(environment(handler))
-    root <- system_file("schema", package = package)
-  }
+  root <- schema_root(root, handler)
   validator <- pkgapi_validator(schema, root)
   force(handler)
   wrapped <- function(req, res, ..., validate = TRUE) {
@@ -122,4 +115,16 @@ response_success <- function(value) {
 ## This should probably be tuneable?
 to_json <- function(x) {
   jsonlite::toJSON(x, json_verbatim = TRUE, na = "null", null = "null")
+}
+
+
+schema_root <- function(root, handler) {
+  if (is.null(root)) {
+    package <- utils::packageName(environment(handler))
+    root <- system_file("schema", package = package)
+  } else {
+    stopifnot(file.info(root)$isdir)
+    root <- normalizePath(root, mustWork = TRUE)
+  }
+  root
 }
