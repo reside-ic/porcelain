@@ -106,9 +106,22 @@ pkgapi_validator <- function(schema, root) {
 }
 
 
-## Standard response type
+## Standard response types
 response_success <- function(value) {
   list(status = jsonlite::unbox("success"), errors = NULL, data = value)
+}
+
+
+## Here the error can be a named character vector and we'll extend
+## this later to allow additional things to be collected.
+response_failure <- function(errors) {
+  stopifnot(length(errors) > 0, !is.null(names(errors)))
+  error <- function(type, detail) {
+    list(error = jsonlite::unbox(type),
+         detail = jsonlite::unbox(detail))
+  }
+  errors <- Map(error, names(errors), unname(errors), USE.NAMES = FALSE)
+  list(status = jsonlite::unbox("failure"), errors = errors, data = NULL)
 }
 
 
