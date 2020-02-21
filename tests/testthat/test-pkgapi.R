@@ -35,7 +35,7 @@ test_that("validate schema", {
   expect_setequal(names(e$result), c("data", "value", "body", "content_type"))
   expect_equal(e$result$data, hello())
   expect_equal(e$result$value,
-               list(success = jsonlite::unbox(TRUE),
+               list(status = jsonlite::unbox("success"),
                     errors = NULL,
                     data = hello()))
   expect_equal(e$result$body, to_json(e$result$value))

@@ -82,7 +82,7 @@ pkgapi_serialize_pass <- function(val, req, res, errorHandler) {
 
 
 pkgapi_validate <- function(result, validator, validate) {
-  if (result$value$success && validate) {
+  if (result$value$status == "success" && validate) {
     ## TODO: do something more helpful with an error here; ideally
     ## we'll throw with all the data and then either restart or
     ## trycatch our way out of it.
@@ -108,7 +108,7 @@ pkgapi_validator <- function(schema, root) {
 
 ## Standard response type
 response_success <- function(value) {
-  list(success = jsonlite::unbox(TRUE), errors = NULL, data = value)
+  list(status = jsonlite::unbox("success"), errors = NULL, data = value)
 }
 
 
