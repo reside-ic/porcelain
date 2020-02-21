@@ -56,6 +56,22 @@ pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
 }
 
 
+pkgapi_endpoint_binary <- function(handler) {
+  force(handler)
+  wrapped <- function(req, res, ..., validate = TRUE) {
+    data <- handler(...)
+    stopifnot(is.raw(data))
+    list(body = data,
+         content_type = "application/octet-stream")
+  }
+  ret <- list(handler = handler,
+              wrapped = wrapped,
+              returns = "binary")
+  class(ret) <- "pkgapi_endpoint"
+  ret
+}
+
+
 ## Wrap our most common serialise style
 pkgapi_serialize_pass <- function(val, req, res, errorHandler) {
   tryCatch({

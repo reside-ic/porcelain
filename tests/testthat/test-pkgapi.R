@@ -56,3 +56,21 @@ test_that("build api", {
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, as.character(endpoint$wrapped()$body))
 })
+
+
+test_that("wrap raw output", {
+  binary <- function() {
+    as.raw(0:255)
+  }
+  endpoint <- pkgapi_endpoint_binary(binary)
+  expect_is(endpoint, "pkgapi_endpoint")
+  expect_equal(endpoint$returns, "binary")
+  expect_identical(endpoint$handler, binary)
+
+  res <- endpoint$wrapped()
+  expect_setequal(names(res), c("data", "value", "body", "content_type"))
+  expect_equal(res$data, hello())
+  expect_equal(res$value, response_success(hello()))
+  expect_equal(res$body, to_json(res$value))
+  expect_equal(res$content_type, "application/json")
+})
