@@ -1,11 +1,18 @@
+## TODO: pretty soon we need to start pushing the path bits into the
+## endpoints and building the api directly.  We need to do that
+## *without* capturing the root of the package.  With that done we can
+## automatically build the api :)
+
 pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
   public = list(
-    ## initialize = function(...) {
-    ##   super$initialize(...)
-    ## },
+    initialize = function(...) {
+      super$initialize(...)
+      self$setErrorHandler(pkgapi_error_handler)
+    },
+
     ## TODO: this ignores the 'preempt' arg - because the underlying
     ## logic of the super method uses missing() it's not
     ## straightforward to wrap.
@@ -29,11 +36,8 @@ pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
   validator <- pkgapi_validator(schema, root)
   force(handler)
   wrapped <- function(req, res, ..., validate = TRUE) {
-    ## TODO: should use tryCatch here to do some automatic failure
-    ## handling.
     data <- handler(...)
     value <- response_success(data)
-    json <- to_json(value)
     ret <- list(data = data,
                 value = value,
                 body = to_json(value),
@@ -66,6 +70,10 @@ pkgapi_endpoint_binary <- function(handler) {
 
 
 ## Wrap our most common serialise style
+##
+## TODO: The error here is strictly a *serialisation* failure and
+## should not happen that often.  However it will if we pass something
+## that jsonlite can't deal with.
 pkgapi_serialize_pass <- function(val, req, res, errorHandler) {
   tryCatch({
     res$setHeader("Content-Type", val$content_type)
@@ -74,6 +82,7 @@ pkgapi_serialize_pass <- function(val, req, res, errorHandler) {
     } else {
       res$body <- val$body
     }
+    res$status <- val$status_code %||% 200L
     return(res$toResponse())
   }, error = function(e) {
     errorHandler(req, res, e)
@@ -109,19 +118,6 @@ pkgapi_validator <- function(schema, root) {
 ## Standard response types
 response_success <- function(value) {
   list(status = jsonlite::unbox("success"), errors = NULL, data = value)
-}
-
-
-## Here the error can be a named character vector and we'll extend
-## this later to allow additional things to be collected.
-response_failure <- function(errors) {
-  stopifnot(length(errors) > 0, !is.null(names(errors)))
-  error <- function(type, detail) {
-    list(error = jsonlite::unbox(type),
-         detail = jsonlite::unbox(detail))
-  }
-  errors <- Map(error, names(errors), unname(errors), USE.NAMES = FALSE)
-  list(status = jsonlite::unbox("failure"), errors = errors, data = NULL)
 }
 
 

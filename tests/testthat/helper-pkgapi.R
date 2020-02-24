@@ -15,3 +15,8 @@ test_call <- function(p, verb, path) {
   res <- plumber:::PlumberResponse$new()
   p$serve(req, res)
 }
+
+
+to_json_string <- function(x) {
+  as.character(to_json(x))
+}
