@@ -8,22 +8,19 @@ pkgapi <- R6::R6Class(
       self$setErrorHandler(pkgapi_error_handler)
     },
 
-    ## TODO: this ignores the 'preempt' arg - because the underlying
+    ## NOTE: this ignores the 'preempt' arg - because the underlying
     ## logic of the super method uses missing() it's not
     ## straightforward to wrap.
     ##
-    ## TODO: the plumber::PlumberEndpoint class could be used so that
-    ## we might get plumber information here using the schema data;
-    ## once this is working we'll replace this bit of code
+    ## NOTE: This uses private$envir, which is probably not ideal, but
+    ## looks fairly uncontroversial and we could have intercepted it
+    ## earlier.  It's not totally clear what this does though...
     handle = function(endpoint) {
       assert_is(endpoint, "pkgapi_endpoint")
-
-      ## endpoint <- plumber::PlumberEndpoint$new(
-      ##   methods, path, endpoint$plumber, private$envir,
-      ##   serializer = pkgapi_serialize_pass)
-      ## super$handle(endpoint = endpoint)
-      super$handle(endpoint$methods, endpoint$path, endpoint$plumber,
-                   serializer = pkgapi_serialize_pass)
+      endpoint <- plumber::PlumberEndpoint$new(
+        endpoint$methods, endpoint$path, endpoint$plumber, private$envir,
+        serializer = pkgapi_serialize_pass)
+      super$handle(endpoint = endpoint)
       invisible(self)
     }
   ))
