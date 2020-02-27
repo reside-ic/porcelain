@@ -1,8 +1,3 @@
-## TODO: pretty soon we need to start pushing the path bits into the
-## endpoints and building the api directly.  We need to do that
-## *without* capturing the root of the package.  With that done we can
-## automatically build the api :)
-
 pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
@@ -18,100 +13,51 @@ pkgapi <- R6::R6Class(
     ## straightforward to wrap.
     ##
     ## TODO: the plumber::PlumberEndpoint class could be used so that
-    ## we might get plumber information here using the schema data.
+    ## we might get plumber information here using the schema data;
+    ## once this is working we'll replace this bit of code
     handle = function(methods, path, handler) {
       stopifnot(inherits(handler, "pkgapi_endpoint"))
       ## endpoint <- plumber::PlumberEndpoint$new(
       ##   methods, path, handler, private$envir,
       ##   serializer = pkgapi_serialize_pass)
       ## super$handle(endpoint = endpoint)
-      super$handle(methods, path, handler$wrapped,
+      super$handle(methods, path, handler$plumber,
                    serializer = pkgapi_serialize_pass)
     }
   ))
 
 
-pkgapi_endpoint_json <- function(handler, schema, root = NULL) {
-  root <- schema_root(root, handler)
-  validator <- pkgapi_validator(schema, root)
-  force(handler)
-  wrapped <- function(req, res, ..., validate = TRUE) {
-    data <- handler(...)
-    value <- response_success(data)
-    ret <- list(data = data,
-                value = value,
-                body = to_json(value),
-                content_type = "application/json")
-    pkgapi_validate(ret, validator, validate)
-  }
-  ret <- list(handler = handler,
-              wrapped = wrapped,
-              returns = "json",
-              schema = schema)
-  class(ret) <- "pkgapi_endpoint"
+pkgapi_response <- function(status_code, content_type, body, ...) {
+  ret <- list(status_code = status_code,
+              content_type = content_type,
+              body = body,
+              ...)
+  class(ret) <- "pkgapi_response"
   ret
 }
 
 
-pkgapi_endpoint_binary <- function(handler) {
-  force(handler)
-  wrapped <- function(req, res, ..., validate = TRUE) {
-    data <- handler(...)
-    stopifnot(is.raw(data))
-    list(body = data,
-         content_type = "application/octet-stream")
+pkgapi_serialize_pass <- function(val, req, res, error_handler) {
+  tryCatch(pkgapi_do_serialize_pass(val, res),
+           error = function(e) error_handler(req, res, e))
+}
+
+
+pkgapi_do_serialize_pass <- function(val, res) {
+  res$setHeader("Content-Type", val$content_type)
+  if (val$content_type == "application/json") {
+    res$body <- as.character(val$body)
+  } else {
+    res$body <- val$body
   }
-  ret <- list(handler = handler,
-              wrapped = wrapped,
-              returns = "binary")
-  class(ret) <- "pkgapi_endpoint"
-  ret
+  res$status <- val$status_code %||% 200L
+  res$toResponse()
 }
 
 
-## Wrap our most common serialise style
-##
-## TODO: The error here is strictly a *serialisation* failure and
-## should not happen that often.  However it will if we pass something
-## that jsonlite can't deal with.
-pkgapi_serialize_pass <- function(val, req, res, errorHandler) {
-  tryCatch({
-    res$setHeader("Content-Type", val$content_type)
-    if (val$content_type == "application/json") {
-      res$body <- as.character(val$body)
-    } else {
-      res$body <- val$body
-    }
-    res$status <- val$status_code %||% 200L
-    return(res$toResponse())
-  }, error = function(e) {
-    errorHandler(req, res, e)
-  })
-}
-
-
-pkgapi_validate <- function(result, validator, validate) {
-  if (result$value$status == "success" && validate) {
-    ## TODO: do something more helpful with an error here; ideally
-    ## we'll throw with all the data and then either restart or
-    ## trycatch our way out of it.
-    rethrow <- function(e) {
-      class(e) <- c("pkgapi_validation_error", class(e))
-      e$result <- result
-      stop(e)
-    }
-    tryCatch(validator(result$body, query = "data", error = TRUE),
-             validation_error = rethrow)
-  }
-  result
-}
-
-
-## TODO: make somewhat conditional on package load - we'll use an
-## environment variable to also require it in tests.
-pkgapi_validator <- function(schema, root) {
-  path_schema <- file.path(root, paste0(schema, ".json"))
-  jsonvalidate::json_validator(path_schema, "ajv")
+pkgapi_error_handler <- function(req, res, e) {
+  val <- pkgapi_process_error(e, FALSE)
+  pkgapi_serialize_pass(val, req, res, function(...) {})
 }
 
 
@@ -121,19 +67,6 @@ response_success <- function(value) {
 }
 
 
-## This should probably be tuneable?
-to_json <- function(x) {
-  jsonlite::toJSON(x, json_verbatim = TRUE, na = "null", null = "null")
-}
-
-
-schema_root <- function(root, handler) {
-  if (is.null(root)) {
-    package <- utils::packageName(environment(handler))
-    root <- system_file("schema", package = package)
-  } else {
-    stopifnot(file.info(root)$isdir)
-    root <- normalizePath(root, mustWork = TRUE)
-  }
-  root
+response_failure <- function(errors) {
+  list(status = jsonlite::unbox("failure"), errors = errors, data = NULL)
 }

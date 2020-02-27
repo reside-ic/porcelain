@@ -9,20 +9,136 @@ test_that("error can be constructed", {
 })
 
 
-test_that("error case", {
+test_that("Catch an error in a json endpoint", {
   hello <- function() {
     pkgapi_error(c("an-error" = "An error has occured"))
   }
-  ## Even better might not be to use the error handling here at all
-  ## and have the endpint return this, because this is going to get
-  ## annoying:
-  err <- tryCatch(hello(), pkgapi_error = identity)
+  err <- get_error(hello())
 
-  endpoint <- pkgapi_endpoint_json(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  expect_error(endpoint$target(), class = "pkgapi_error")
+
+  res <- endpoint$run()
+  expect_equal(res, pkgapi_process_error(err))
+  expect_equal(res$status_code, 400L)
+  expect_equal(res$content_type, "application/json")
+
+  expect_equal(res$value$errors[[1]]$error,
+               jsonlite::unbox("an-error"))
+  expect_equal(res$value$errors[[1]]$detail,
+               jsonlite::unbox("An error has occured"))
+})
+
+
+test_that("Catch error in a binary endpoint", {
+  binary <- function() {
+    pkgapi_error(c("an-error" = "An error has occured"))
+  }
+  err <- get_error(binary())
+
+  endpoint <- pkgapi_endpoint_binary$new(binary)
+  expect_error(endpoint$target(), class = "pkgapi_error")
+
+  res <- endpoint$run()
+  expect_equal(res, pkgapi_process_error(err))
+  expect_equal(res$status_code, 400L)
+  expect_equal(res$content_type, "application/json")
+
+  expect_equal(res$value$errors[[1]]$error,
+               jsonlite::unbox("an-error"))
+  expect_equal(res$value$errors[[1]]$detail,
+               jsonlite::unbox("An error has occured"))
+})
+
+
+test_that("Uncaught error", {
+  hello <- function() {
+    stop("Unexpected error!", call. = FALSE)
+  }
+  err <- get_error(hello())
+  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+
+  res <- endpoint$run()
+  expect_equal(res, pkgapi_process_error(err))
+  expect_equal(res$status_code, 500L)
+  expect_equal(res$content_type, "application/json")
+
+  expect_equal(res$value$errors[[1]]$error,
+               jsonlite::unbox("SERVER_ERROR"))
+  expect_equal(res$value$errors[[1]]$detail,
+               jsonlite::unbox("Unexpected error!"))
+})
+
+
+test_that("Uncaught error from the api", {
+  hello <- function() {
+    stop("unexpected error!")
+  }
+  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
   pr <- pkgapi$new()
-  pr$handle("GET", "/error", endpoint)
-  res <- test_call(pr, "GET", "/error")
-  expect_equal(res$status, 400)
+  pr$handle("GET", "/hello", endpoint)
+  res <- test_call(pr, "GET", "/hello")
+
+  expect_equal(res$status, 500L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
-  expect_equal(res$body, to_json_string(response_failure(err$data)))
+  expect_equal(res$body, endpoint$run()$body)
+})
+
+
+test_that("Catch error from the api", {
+  hello <- function() {
+    pkgapi_error(c("an-error" = "An error has occured"))
+  }
+  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  pr <- pkgapi$new()
+  pr$handle("GET", "/hello", endpoint)
+
+  res <- test_call(pr, "GET", "/hello")
+  expect_equal(res$status, 400L)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(res$body, endpoint$run()$body)
+})
+
+
+## this is not actually super likely but seems worth checking for as
+## we do move pass our error handler along.
+test_that("Error during serialisation", {
+  mock_endpoint <- R6::R6Class(
+    inherit = pkgapi_endpoint_json,
+    public = list(
+      process = function(...) {
+        ret <- super$process(...)
+        ret$content_type <- NULL
+        ret
+      }
+    ))
+
+  hello <- function() {
+    jsonlite::unbox("hello")
+  }
+  endpoint <- mock_endpoint$new(hello, "String", "schema")
+  val <- endpoint$run()
+
+  ## First, work our what the error should look like:
+  err <- get_error(pkgapi_do_serialize_pass(val, plumber_response()))
+  cmp <- pkgapi_process_error(err, FALSE)
+  expect_equal(cmp$value$errors[[1]]$error, jsonlite::unbox("SERVER_ERROR"))
+  expect_equal(cmp$value$errors[[1]]$detail, jsonlite::unbox(err$message))
+
+  ## Then, get this from the endpoint,
+  req <- NULL
+  res <- plumber_response()
+  ans <- pkgapi_serialize_pass(val, req, res, pkgapi_error_handler)
+
+  expect_equal(res$status, 500L)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(res$body, cmp$body)
+
+  ## All the way from the api:
+  pr <- pkgapi$new()
+  pr$handle("GET", "/hello", endpoint)
+  res_api <- test_call(pr, "GET", "/hello")
+  expect_equal(res_api$status, 500L)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
 })

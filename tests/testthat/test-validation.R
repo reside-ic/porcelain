@@ -12,21 +12,25 @@ test_that("validate errors", {
   root <- system_file("schema", package = "pkgapi")
   v <- pkgapi_validator("response-failure", root)
 
-  e1 <- response_failure(c("ERROR" = "reason"))
-  expect_equal(e1$errors, list(list(error = jsonlite::unbox("ERROR"),
-                                    detail = jsonlite::unbox("reason"))))
-  expect_true(v(to_json(e1)))
+  f <- function(x) {
+    pkgapi_process_error(pkgapi_error_object(x, 400L))
+  }
 
-  e2 <- response_failure(list("ERROR" = NULL))
-  expect_equal(e2$errors, list(list(error = jsonlite::unbox("ERROR"),
-                                    detail = NULL)))
-  expect_true(v(to_json(e2)))
+  e1 <- f(c("ERROR" = "reason"))
+  expect_equal(e1$value$errors, list(list(error = jsonlite::unbox("ERROR"),
+                                          detail = jsonlite::unbox("reason"))))
+  expect_true(v(e1$body))
 
-  e3 <- response_failure(list("ERROR" = NULL, "OTHER" = "reason"))
-  expect_equal(e3$errors,
+  e2 <- f(list("ERROR" = NULL))
+  expect_equal(e2$value$errors, list(list(error = jsonlite::unbox("ERROR"),
+                                          detail = NULL)))
+  expect_true(v(e2$body))
+
+  e3 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
+  expect_equal(e3$value$errors,
                list(list(error = jsonlite::unbox("ERROR"),
                          detail = NULL),
                     list(error = jsonlite::unbox("OTHER"),
                          detail = jsonlite::unbox("reason"))))
-  expect_true(v(to_json(e3)))
+  expect_true(v(e3$body))
 })
