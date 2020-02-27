@@ -6,12 +6,7 @@ test_call <- function(p, verb, path, query = NULL) {
   req <- new.env(parent = emptyenv())
   req$REQUEST_METHOD <- toupper(verb)
   req$PATH_INFO <- path
-  if (is.null(query)) {
-    req$QUERY_STRING <- ""
-  } else {
-    req$QUERY_STRING <-
-      paste0("?", sprintf("%s=%s", names(query), unname(query)))
-  }
+  req$QUERY_STRING <- query_string(query)
   req$rook.input <- list(read_lines = function() "")
 
   res <- plumber_response()
@@ -29,4 +24,14 @@ get_error <- function(expr) {
 ## the Rook interface but this class is not exported.
 plumber_response <- function() {
   plumber:::PlumberResponse$new()
+}
+
+
+query_string <- function(query) {
+  if (is.null(query)) {
+    return("")
+  }
+  assert_named(query)
+  pairs <- sprintf("%s=%s", names(query), as.character(query))
+  utils::URLencode(paste0("?", paste(pairs, collapse = "&")))
 }
