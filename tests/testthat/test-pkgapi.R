@@ -85,7 +85,7 @@ test_that("build api - json endpoint", {
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
-  res <- test_call(pr, "GET", "/")
+  res <- pr$request("GET", "/")
   expect_equal(res$status, 200L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, as.character(endpoint$run()$body))
@@ -100,7 +100,7 @@ test_that("build api - binary endpoint", {
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
-  res <- test_call(pr, "GET", "/binary")
+  res <- pr$request("GET", "/binary")
   expect_equal(res$status, 200L)
   expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
   expect_equal(res$body, binary())
@@ -124,7 +124,7 @@ test_that("use routing parameter", {
 
   ## Through the api
   pr <- pkgapi$new()$handle(endpoint)
-  res_api <- test_call(pr, "GET", "/square/4")
+  res_api <- pr$request("GET", "/square/4")
   expect_equal(res_api$status, 200)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
@@ -149,7 +149,7 @@ test_that("use query parameter", {
 
   ## Through the api
   pr <- pkgapi$new()$handle(endpoint)
-  res_api <- test_call(pr, "GET", "/square", c(n = 4))
+  res_api <- pr$request("GET", "/square", c(n = 4))
   expect_equal(res_api$status, 200)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)

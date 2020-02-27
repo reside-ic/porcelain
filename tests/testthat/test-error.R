@@ -95,7 +95,7 @@ test_that("Uncaught error from the api", {
   endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   pr <- pkgapi$new()
   pr$handle(endpoint)
-  res <- test_call(pr, "GET", "/")
+  res <- pr$request("GET", "/")
 
   expect_equal(res$status, 500L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
@@ -111,7 +111,7 @@ test_that("Catch error from the api", {
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
-  res <- test_call(pr, "GET", "/")
+  res <- pr$request("GET", "/")
   expect_equal(res$status, 400L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, endpoint$run()$body)
@@ -155,7 +155,7 @@ test_that("Error during serialisation", {
   ## All the way from the api:
   pr <- pkgapi$new()
   pr$handle(endpoint)
-  res_api <- test_call(pr, "GET", "/")
+  res_api <- pr$request("GET", "/")
   expect_equal(res_api$status, 500L)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)

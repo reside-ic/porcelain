@@ -22,6 +22,10 @@ pkgapi <- R6::R6Class(
         serializer = pkgapi_serialize_pass)
       super$handle(endpoint = endpoint)
       invisible(self)
+    },
+
+    request = function(method, path, query = NULL) {
+      plumber_request(self, method, path, query)
     }
   ))
 
