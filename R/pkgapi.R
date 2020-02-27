@@ -24,6 +24,7 @@ pkgapi <- R6::R6Class(
       ## super$handle(endpoint = endpoint)
       super$handle(endpoint$methods, endpoint$path, endpoint$plumber,
                    serializer = pkgapi_serialize_pass)
+      invisible(self)
     }
   ))
 

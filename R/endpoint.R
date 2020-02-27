@@ -6,6 +6,9 @@ pkgapi_endpoint <- R6::R6Class(
     path = NULL,
     target = NULL,
 
+    ## TODO: We should parse the path for dynamic routes (<thing> or
+    ## <thing:type>) and ensure that the function supports the
+    ## routing.
     initialize = function(methods, path, target) {
       self$methods <- methods
       self$path <- path

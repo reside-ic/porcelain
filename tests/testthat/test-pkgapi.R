@@ -91,3 +91,27 @@ test_that("build api - binary endpoint", {
   expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
   expect_equal(res$body, binary())
 })
+
+
+test_that("use routing parameter", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- pkgapi_endpoint_json$new("GET", "/square/<n:int>", square,
+                                       "Number", "schema")
+
+  ## endpoint directly:
+  res <- endpoint$run(4)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(16))
+  expect_equal(res$value, response_success(res$data))
+  expect_equal(res$body, to_json_string(res$value))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- test_call(pr, "GET", "/square/4")
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})
