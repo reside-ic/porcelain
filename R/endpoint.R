@@ -38,7 +38,7 @@ pkgapi_endpoint_json <- R6::R6Class(
     validator = NULL,
     validate = NULL,
 
-    initialize = function(methods, path, target, schema, root, validate) {
+    initialize = function(methods, path, target, schema = NULL, root = NULL) {
       super$initialize(methods, path, target)
 
       ## TODO: we will have to do some tricks here to get the package
@@ -47,8 +47,7 @@ pkgapi_endpoint_json <- R6::R6Class(
       ## Something that can be sorted out later though.  First use of
       ## the validator seems like a nice way to do it.
       self$schema <- schema
-      root <- schema_root(root, self$target)
-      self$validator <- pkgapi_validator(schema, root)
+      self$validator <- pkgapi_validator(schema, schema_root(root, self$target))
       self$validate <- TRUE
     },
 

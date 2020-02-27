@@ -21,6 +21,9 @@ pkgapi_validate <- function(json, validator, validate) {
 ## TODO: make somewhat conditional on package load - we'll use an
 ## environment variable to also require it in tests.
 pkgapi_validator <- function(schema, root) {
+  if (is.null(schema)) {
+    return(function(...) invisible())
+  }
   path_schema <- file.path(root, paste0(schema, ".json"))
   jsonvalidate::json_validator(path_schema, "ajv")
 }

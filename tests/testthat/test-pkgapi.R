@@ -45,6 +45,20 @@ test_that("validate schema", {
 })
 
 
+test_that("allow missing schema", {
+  hello <- function() {
+    jsonlite::unbox(1)
+  }
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, NULL)
+  res <- endpoint$run()
+  expect_equal(res$status_code, 200L)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$body, to_json_string(res$value))
+  expect_equal(res$data, hello())
+  expect_equal(res$value, response_success(hello()))
+})
+
+
 test_that("wrap raw output", {
   binary <- function() {
     as.raw(0:255)
