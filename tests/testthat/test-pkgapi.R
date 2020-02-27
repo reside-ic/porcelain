@@ -20,6 +20,7 @@ test_that("wrap endpoint", {
   expect_equal(res$body, to_json_string(res$value))
   expect_equal(res$data, hello())
   expect_equal(res$value, response_success(hello()))
+  expect_true(validator_response_success(res$body))
 })
 
 
