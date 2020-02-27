@@ -2,7 +2,15 @@ pkgapi_endpoint <- R6::R6Class(
   "pkgapi_endpoint",
 
   public = list(
+    methods = NULL,
+    path = NULL,
     target = NULL,
+
+    initialize = function(methods, path, target) {
+      self$methods <- methods
+      self$path <- path
+      self$target <- target
+    },
 
     run = function(...) {
       tryCatch(
@@ -23,13 +31,12 @@ pkgapi_endpoint_json <- R6::R6Class(
 
   public = list(
     content_type = "application/json",
-    target = NULL,
     schema = NULL,
     validator = NULL,
     validate = NULL,
 
-    initialize = function(target, schema, root, validate) {
-      self$target <- target
+    initialize = function(methods, path, target, schema, root, validate) {
+      super$initialize(methods, path, target)
 
       ## TODO: we will have to do some tricks here to get the package
       ## root on initialisation, or somewhat lazily.  Otherwise we
@@ -58,11 +65,6 @@ pkgapi_endpoint_binary <- R6::R6Class(
 
   public = list(
     content_type = "application/octet-stream",
-    target = NULL,
-
-    initialize = function(target) {
-      self$target <- target
-    },
 
     process = function(data) {
       stopifnot(is.raw(data))

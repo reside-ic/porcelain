@@ -15,13 +15,14 @@ pkgapi <- R6::R6Class(
     ## TODO: the plumber::PlumberEndpoint class could be used so that
     ## we might get plumber information here using the schema data;
     ## once this is working we'll replace this bit of code
-    handle = function(methods, path, handler) {
-      stopifnot(inherits(handler, "pkgapi_endpoint"))
+    handle = function(endpoint) {
+      stopifnot(inherits(endpoint, "pkgapi_endpoint"))
+
       ## endpoint <- plumber::PlumberEndpoint$new(
-      ##   methods, path, handler, private$envir,
+      ##   methods, path, endpoint$plumber, private$envir,
       ##   serializer = pkgapi_serialize_pass)
       ## super$handle(endpoint = endpoint)
-      super$handle(methods, path, handler$plumber,
+      super$handle(endpoint$methods, endpoint$path, endpoint$plumber,
                    serializer = pkgapi_serialize_pass)
     }
   ))

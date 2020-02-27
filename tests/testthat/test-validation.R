@@ -1,5 +1,15 @@
 context("validation")
 
+
+test_that("find schema root", {
+  handler <- response_failure # important thing is that it is in the our ns
+  expect_equal(schema_root(".", handler), normalizePath("."))
+  expect_equal(schema_root(NULL, handler),
+               system_file("schema", package = "pkgapi"))
+  expect_error(schema_root(tempfile(), handler))
+})
+
+
 test_that("validate successful return", {
   root <- system_file("schema", package = "pkgapi")
   v <- pkgapi_validator("response-success", root)

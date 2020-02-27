@@ -4,7 +4,7 @@ test_that("wrap endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   expect_is(endpoint, "pkgapi_endpoint")
   expect_is(endpoint, "pkgapi_endpoint_json")
   expect_equal(endpoint$content_type, "application/json")
@@ -27,7 +27,7 @@ test_that("validate schema", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   res <- endpoint$run()
 
   expect_is(res, "pkgapi_response")
@@ -49,7 +49,7 @@ test_that("wrap raw output", {
   binary <- function() {
     as.raw(0:255)
   }
-  endpoint <- pkgapi_endpoint_binary$new(binary)
+  endpoint <- pkgapi_endpoint_binary$new("GET", "/binary", binary)
   expect_is(endpoint, "pkgapi_endpoint")
   expect_is(endpoint, "pkgapi_endpoint_binary")
   expect_equal(endpoint$content_type, "application/octet-stream")
@@ -67,11 +67,11 @@ test_that("build api - json endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   pr <- pkgapi$new()
-  pr$handle("GET", "/hello", endpoint)
+  pr$handle(endpoint)
 
-  res <- test_call(pr, "GET", "/hello")
+  res <- test_call(pr, "GET", "/")
   expect_equal(res$status, 200L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, as.character(endpoint$run()$body))
@@ -82,21 +82,12 @@ test_that("build api - binary endpoint", {
   binary <- function() {
     as.raw(0:255)
   }
-  endpoint <- pkgapi_endpoint_binary$new(binary)
+  endpoint <- pkgapi_endpoint_binary$new("GET", "/binary", binary)
   pr <- pkgapi$new()
-  pr$handle("GET", "/binary", endpoint)
+  pr$handle(endpoint)
 
   res <- test_call(pr, "GET", "/binary")
   expect_equal(res$status, 200L)
   expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
   expect_equal(res$body, binary())
-})
-
-
-test_that("find schema root", {
-  handler <- response_failure # important thing is that it is in the our ns
-  expect_equal(schema_root(".", handler), normalizePath("."))
-  expect_equal(schema_root(NULL, handler),
-               system_file("schema", package = "pkgapi"))
-  expect_error(schema_root(tempfile(), handler))
 })

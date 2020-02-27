@@ -15,7 +15,7 @@ test_that("Catch an error in a json endpoint", {
   }
   err <- get_error(hello())
 
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -36,7 +36,7 @@ test_that("Catch error in a binary endpoint", {
   }
   err <- get_error(binary())
 
-  endpoint <- pkgapi_endpoint_binary$new(binary)
+  endpoint <- pkgapi_endpoint_binary$new("GET", "/binary", binary)
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -56,7 +56,7 @@ test_that("Uncaught error", {
     stop("Unexpected error!", call. = FALSE)
   }
   err <- get_error(hello())
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
 
   res <- endpoint$run()
   expect_equal(res, pkgapi_process_error(err))
@@ -74,10 +74,10 @@ test_that("Uncaught error from the api", {
   hello <- function() {
     stop("unexpected error!")
   }
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   pr <- pkgapi$new()
-  pr$handle("GET", "/hello", endpoint)
-  res <- test_call(pr, "GET", "/hello")
+  pr$handle(endpoint)
+  res <- test_call(pr, "GET", "/")
 
   expect_equal(res$status, 500L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
@@ -89,11 +89,11 @@ test_that("Catch error from the api", {
   hello <- function() {
     pkgapi_error(c("an-error" = "An error has occured"))
   }
-  endpoint <- pkgapi_endpoint_json$new(hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
   pr <- pkgapi$new()
-  pr$handle("GET", "/hello", endpoint)
+  pr$handle(endpoint)
 
-  res <- test_call(pr, "GET", "/hello")
+  res <- test_call(pr, "GET", "/")
   expect_equal(res$status, 400L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, endpoint$run()$body)
@@ -116,7 +116,7 @@ test_that("Error during serialisation", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- mock_endpoint$new(hello, "String", "schema")
+  endpoint <- mock_endpoint$new("GET", "/", hello, "String", "schema")
   val <- endpoint$run()
 
   ## First, work our what the error should look like:
@@ -136,8 +136,8 @@ test_that("Error during serialisation", {
 
   ## All the way from the api:
   pr <- pkgapi$new()
-  pr$handle("GET", "/hello", endpoint)
-  res_api <- test_call(pr, "GET", "/hello")
+  pr$handle(endpoint)
+  res_api <- test_call(pr, "GET", "/")
   expect_equal(res_api$status, 500L)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
