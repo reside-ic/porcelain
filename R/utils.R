@@ -27,3 +27,8 @@ to_json <- function(x) {
 to_json_string <- function(x) {
   as.character(to_json(x))
 }
+
+
+is_directory <- function(x) {
+  file.info(x, extra_cols = FALSE)$isdir
+}
