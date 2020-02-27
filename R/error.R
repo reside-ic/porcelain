@@ -36,7 +36,7 @@ pkgapi_error_message <- function(data) {
 }
 
 
-pkgapi_process_error <- function(error, validate = FALSE) {
+pkgapi_process_error <- function(error) {
   if (inherits(error, "pkgapi_validation_error")) {
     error_data <- pkgapi_error_data(c(VALIDATION_ERROR = error$message))
     status_code <- 500L
@@ -51,7 +51,6 @@ pkgapi_process_error <- function(error, validate = FALSE) {
   value <- response_failure(error_data)
   content_type <- "application/json"
   body <- to_json_string(value)
-  ## pkgapi_validate(body, pkgapi_validator_error, validate)
   pkgapi_response(status_code, content_type, body,
                   error = error, value = value)
 }

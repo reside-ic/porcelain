@@ -5,23 +5,21 @@ pkgapi_endpoint <- R6::R6Class(
     methods = NULL,
     path = NULL,
     target = NULL,
+    validate = NULL,
 
-    ## TODO: We should parse the path for dynamic routes (<thing> or
-    ## <thing:type>) and ensure that the function supports the
-    ## routing.
-    initialize = function(methods, path, target) {
+    initialize = function(methods, path, target, validate = FALSE) {
       self$methods <- methods
       self$path <- path
       self$target <- target
+      self$validate <- validate
     },
 
     run = function(...) {
       tryCatch(
         self$process(self$target(...)),
-        error = function(e) pkgapi_process_error(e, self$validate))
+        error = pkgapi_process_error)
     },
 
-    ## For now - later we'll produce a full plumber object
     plumber = function(req, res, ...) {
       self$run(...)
     }
@@ -36,10 +34,10 @@ pkgapi_endpoint_json <- R6::R6Class(
     content_type = "application/json",
     schema = NULL,
     validator = NULL,
-    validate = NULL,
 
-    initialize = function(methods, path, target, schema = NULL, root = NULL) {
-      super$initialize(methods, path, target)
+    initialize = function(methods, path, target, schema = NULL, root = NULL,
+                          validate = FALSE) {
+      super$initialize(methods, path, target, validate)
 
       ## TODO: we will have to do some tricks here to get the package
       ## root on initialisation, or somewhat lazily.  Otherwise we
@@ -48,7 +46,6 @@ pkgapi_endpoint_json <- R6::R6Class(
       ## the validator seems like a nice way to do it.
       self$schema <- schema
       self$validator <- pkgapi_validator(schema, schema_root(root, self$target))
-      self$validate <- TRUE
     },
 
     process = function(data) {
@@ -69,7 +66,9 @@ pkgapi_endpoint_binary <- R6::R6Class(
     content_type = "application/octet-stream",
 
     process = function(data) {
-      assert_is(data, "raw")
+      if (self$validate) {
+        assert_is(data, "raw")
+      }
       pkgapi_response(200, "application/octet-stream", data)
     }
   ))

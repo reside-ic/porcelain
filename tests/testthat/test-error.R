@@ -139,7 +139,7 @@ test_that("Error during serialisation", {
 
   ## First, work our what the error should look like:
   err <- get_error(pkgapi_do_serialize_pass(val, plumber_response()))
-  cmp <- pkgapi_process_error(err, FALSE)
+  cmp <- pkgapi_process_error(err)
   expect_equal(cmp$value$errors[[1]]$error, jsonlite::unbox("SERVER_ERROR"))
   expect_equal(cmp$value$errors[[1]]$detail, jsonlite::unbox(err$message))
 

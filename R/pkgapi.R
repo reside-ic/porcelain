@@ -59,7 +59,7 @@ pkgapi_do_serialize_pass <- function(val, res) {
 
 
 pkgapi_error_handler <- function(req, res, e) {
-  val <- pkgapi_process_error(e, FALSE)
+  val <- pkgapi_process_error(e)
   pkgapi_serialize_pass(val, req, res, function(...) NULL)
 }
 
