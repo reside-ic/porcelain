@@ -115,3 +115,28 @@ test_that("use routing parameter", {
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
 })
+
+
+test_that("use query parameter", {
+  square <- function(n) {
+    n <- as.numeric(n)
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- pkgapi_endpoint_json$new("GET", "/square", square,
+                                       "Number", "schema")
+
+  ## endpoint directly:
+  res <- endpoint$run(4)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(16))
+  expect_equal(res$value, response_success(res$data))
+  expect_equal(res$body, to_json_string(res$value))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- test_call(pr, "GET", "/square", c(n = 4))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})
