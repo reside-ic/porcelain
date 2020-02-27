@@ -45,6 +45,8 @@ test_that("Catch an error in a json endpoint", {
                jsonlite::unbox("an-error"))
   expect_equal(res$value$errors[[1]]$detail,
                jsonlite::unbox("An error has occured"))
+
+  expect_true(validator_response_failure(res$body))
 })
 
 
@@ -66,6 +68,8 @@ test_that("Catch error in a binary endpoint", {
                jsonlite::unbox("an-error"))
   expect_equal(res$value$errors[[1]]$detail,
                jsonlite::unbox("An error has occured"))
+
+  expect_true(validator_response_failure(res$body))
 })
 
 
@@ -85,6 +89,8 @@ test_that("Uncaught error", {
                jsonlite::unbox("SERVER_ERROR"))
   expect_equal(res$value$errors[[1]]$detail,
                jsonlite::unbox("Unexpected error!"))
+
+  expect_true(validator_response_failure(res$body))
 })
 
 
@@ -100,6 +106,8 @@ test_that("Uncaught error from the api", {
   expect_equal(res$status, 500L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, endpoint$run()$body)
+
+  expect_true(validator_response_failure(res$body))
 })
 
 
@@ -115,6 +123,8 @@ test_that("Catch error from the api", {
   expect_equal(res$status, 400L)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   expect_equal(res$body, endpoint$run()$body)
+
+  expect_true(validator_response_failure(res$body))
 })
 
 
@@ -159,4 +169,6 @@ test_that("Error during serialisation", {
   expect_equal(res_api$status, 500L)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
+
+  expect_true(validator_response_failure(res_api$body))
 })
