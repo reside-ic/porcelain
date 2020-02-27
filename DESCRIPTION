@@ -16,7 +16,7 @@ Language: en-GB
 Imports:
     R6,
     jsonlite,
-    jsonvalidate,
+    jsonvalidate (>= 1.2.2),
     plumber
 Suggests:
     testthat
