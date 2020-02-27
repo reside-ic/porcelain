@@ -22,12 +22,12 @@ pkgapi_error_object <- function(errors, status_code) {
 
 
 pkgapi_error_data <- function(errors) {
-  ## TODO: better validation here
-  stopifnot(!is.null(names(errors)))
+  assert_named(errors)
   error <- names(errors)
   detail <- unname(errors)
-  i <- !vlapply(detail, is.null)
-  stopifnot(all(vlapply(detail[i], is.character)))
+  if (!all(vlapply(detail, function(x) is.null(x) || is.character(x)))) {
+    stop("All error details must be character or NULL", call. = FALSE)
+  }
   Map(function(e, d)
     list(error = jsonlite::unbox(e), detail = jsonlite::unbox(d)),
     error, detail, USE.NAMES = FALSE)

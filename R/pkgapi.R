@@ -16,7 +16,7 @@ pkgapi <- R6::R6Class(
     ## we might get plumber information here using the schema data;
     ## once this is working we'll replace this bit of code
     handle = function(endpoint) {
-      stopifnot(inherits(endpoint, "pkgapi_endpoint"))
+      assert_is(endpoint, "pkgapi_endpoint")
 
       ## endpoint <- plumber::PlumberEndpoint$new(
       ##   methods, path, endpoint$plumber, private$envir,

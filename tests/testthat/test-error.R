@@ -1,5 +1,23 @@
 context("error")
 
+
+test_that("construct error", {
+  expect_equal(
+    pkgapi_error_data(list(a = NULL)),
+    list(list(error = jsonlite::unbox("a"), detail = NULL)))
+  expect_equal(
+    pkgapi_error_data(list(a = "b")),
+    list(list(error = jsonlite::unbox("a"), detail = jsonlite::unbox("b"))))
+  expect_equal(
+    pkgapi_error_data(list(a = "b", c = NULL)),
+    list(list(error = jsonlite::unbox("a"), detail = jsonlite::unbox("b")),
+         list(error = jsonlite::unbox("c"), detail = NULL)))
+  expect_error(
+    pkgapi_error_data(list(a = 1)),
+    "All error details must be character or NULL")
+})
+
+
 test_that("error can be constructed", {
   err <- expect_error(
     pkgapi_error(c(a = "error")), class = "pkgapi_error")

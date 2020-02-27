@@ -31,7 +31,7 @@ schema_root <- function(root, handler) {
     package <- utils::packageName(environment(handler))
     root <- system_file("schema", package = package)
   } else {
-    stopifnot(file.info(root)$isdir)
+    assert_is_directory(root)
     root <- normalizePath(root, mustWork = TRUE)
   }
   root

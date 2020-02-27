@@ -70,7 +70,7 @@ pkgapi_endpoint_binary <- R6::R6Class(
     content_type = "application/octet-stream",
 
     process = function(data) {
-      stopifnot(is.raw(data))
+      assert_is(data, "raw")
       pkgapi_response(200, "application/octet-stream", data)
     }
   ))
