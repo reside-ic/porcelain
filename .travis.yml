@@ -7,7 +7,7 @@ addons:
       - libnode-dev
 r_packages:
   - covr
-r_packages_github:
+r_github_packages:
   - ropensci/jsonvalidate
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
