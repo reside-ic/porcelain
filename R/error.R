@@ -1,12 +1,3 @@
-## This one is designed to be user throwable.  The user provides either
-##
-## pkgapi_error("error") # not implemented
-## pkgapi_error(c(error = "detail"))
-## pkgapi_error(c(error1 = "detail1", error2 = "detail2"))
-##
-## It's a bit weird because when throwing the error we need to agree
-## what type of error we're going to throw but I think this will work
-## ok.
 pkgapi_error <- function(errors, status_code = 400L) {
   stop(pkgapi_error_object(errors, status_code))
 }

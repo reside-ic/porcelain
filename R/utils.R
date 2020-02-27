@@ -1,4 +1,4 @@
-`%||%` <- function(a, b) {
+`%||%` <- function(a, b) { # nolint
   if (is.null(a)) b else a
 }
 
@@ -8,13 +8,13 @@ system_file <- function(...) {
 }
 
 
-vlapply <- function(X, FUN, ...) {
-  vapply(X, FUN, logical(1), ...)
+vlapply <- function(x, fun, ...) {
+  vapply(x, fun, logical(1), ...)
 }
 
 
-vcapply <- function(X, FUN, ...) {
-  vapply(X, FUN, character(1), ...)
+vcapply <- function(x, fun, ...) {
+  vapply(x, fun, character(1), ...)
 }
 
 

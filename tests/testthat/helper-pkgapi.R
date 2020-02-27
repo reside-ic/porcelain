@@ -4,10 +4,10 @@ options(plumber.debug = FALSE)
 ## TODO: this moves elsewhere
 test_call <- function(p, verb, path, query = NULL) {
   req <- new.env(parent = emptyenv())
-  req$REQUEST_METHOD <- toupper(verb)
-  req$PATH_INFO <- path
-  req$QUERY_STRING <- query_string(query)
-  req$rook.input <- list(read_lines = function() "")
+  req[["REQUEST_METHOD"]] <- toupper(verb)
+  req[["PATH_INFO"]] <- path
+  req[["QUERY_STRING"]] <- query_string(query)
+  req[["rook.input"]] <- list(read_lines = function() "")
 
   res <- plumber_response()
   p$serve(req, res)
