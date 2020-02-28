@@ -132,16 +132,11 @@ pkgapi_endpoint_json <- function(method, path, target, validate = FALSE,
 pkgapi_endpoint_binary <- function(method, path, target, validate = FALSE) {
   pkgapi_endpoint$new(
     method, path, target, "application/octet-stream",
-    validate_response = pkgapi_endpoint_binary_validate_response,
+    validate_response = assert_raw,
     validate = validate)
 }
 
 
 pkgapi_endpoint_json_process <- function(data) {
   to_json_string(response_success(data))
-}
-
-
-pkgapi_endpoint_binary_validate_response <- function(body) {
-  assert_is(body, "raw")
 }

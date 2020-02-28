@@ -30,3 +30,9 @@ test_that("assert_is_directory", {
   expect_error(assert_is_directory(path), "File exists but is not a directory")
   expect_silent(assert_is_directory("."))
 })
+
+
+test_that("assert_raw", {
+  expect_error(assert_raw("x", "foo"), "must be a raw vector")
+  expect_silent(assert_raw(as.raw(0:255)))
+})

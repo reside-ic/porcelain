@@ -30,3 +30,10 @@ assert_is_directory <- function(x, name = "File") {
          call. = FALSE)
   }
 }
+
+
+assert_raw <- function(x, name = deparse(substitute(x))) {
+  if (!is.raw(x)) {
+    stop(sprintf("'%s' must be a raw vector", name), call. = FALSE)
+  }
+}
