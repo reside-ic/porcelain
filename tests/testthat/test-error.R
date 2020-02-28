@@ -33,7 +33,7 @@ test_that("Catch an error in a json endpoint", {
   }
   err <- get_error(hello())
 
-  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json("GET", "/", hello)
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -56,7 +56,7 @@ test_that("Catch error in a binary endpoint", {
   }
   err <- get_error(binary())
 
-  endpoint <- pkgapi_endpoint_binary$new("GET", "/binary", binary)
+  endpoint <- pkgapi_endpoint_binary("GET", "/binary", binary)
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -78,7 +78,7 @@ test_that("Uncaught error", {
     stop("Unexpected error!", call. = FALSE)
   }
   err <- get_error(hello())
-  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
 
   res <- endpoint$run()
   expect_equal(res, pkgapi_process_error(err))
@@ -98,7 +98,7 @@ test_that("Uncaught error from the api", {
   hello <- function() {
     stop("unexpected error!")
   }
-  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
   pr <- pkgapi$new()
   pr$handle(endpoint)
   res <- pr$request("GET", "/")
@@ -115,7 +115,7 @@ test_that("Catch error from the api", {
   hello <- function() {
     pkgapi_error(c("an-error" = "An error has occured"))
   }
-  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema")
+  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
@@ -131,15 +131,10 @@ test_that("Catch error from the api", {
 ## this is not actually super likely but seems worth checking for as
 ## we do move pass our error handler along.
 test_that("Error during serialisation", {
-  mock_endpoint <- R6::R6Class(
-    inherit = pkgapi_endpoint_json,
-    public = list(
-      content_type = NULL))
-
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- mock_endpoint$new("GET", "/", hello, "String", "schema")
+  endpoint <- pkgapi_endpoint$new("GET", "/", hello, NULL)
   val <- endpoint$run()
 
   ## First, work our what the error should look like:

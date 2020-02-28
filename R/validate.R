@@ -1,7 +1,4 @@
-## TODO: if we validate errors this needs to change slightly, and
-## possibly move this function as a method in the endpoints with
-## appropriate defaults
-pkgapi_validate <- function(json, validator, query = "data") {
+pkgapi_validate <- function(json, validator) {
   ## TODO: do something more helpful with an error here; ideally
   ## we'll throw with all the data and then either restart or
   ## trycatch our way out of it.
@@ -10,7 +7,7 @@ pkgapi_validate <- function(json, validator, query = "data") {
     e$json <- json
     stop(e)
   }
-  tryCatch(validator(json, query = query, error = TRUE),
+  tryCatch(validator(json, query = "data", error = TRUE),
            validation_error = rethrow)
   invisible(NULL)
 }
@@ -23,7 +20,10 @@ pkgapi_validator <- function(schema, root) {
     return(function(...) NULL)
   }
   path_schema <- file.path(root, paste0(schema, ".json"))
-  jsonvalidate::json_validator(path_schema, "ajv")
+  v <- jsonvalidate::json_validator(path_schema, "ajv")
+  function(json) {
+    pkgapi_validate(json, v)
+  }
 }
 
 

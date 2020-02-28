@@ -2,20 +2,35 @@
 % Please edit documentation in R/endpoint.R
 \name{pkgapi_endpoint}
 \alias{pkgapi_endpoint}
-\title{Basic endpoint objects}
+\title{Basic endpoint object}
 \description{
 Create a \code{pkgapi_endpoint} object that collects
   together an HTTP method (e.g., \code{GET}), a path (e.g.,
   \code{/path}) and a target R function.  Unlike plumber
   endpoints, pkgapi endpoints are meant to be used in testing.
+  See \code{\link{pkgapi_endpoint_json}} and
+  \code{\link{pkgapi_endpoint_binary}} for examples of use.
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{method}}{HTTP method}
+
+\item{\code{path}}{HTTP path}
+
+\item{\code{target}}{R function used for the endpoint}
+
+\item{\code{validate}}{Logical, indicating if response validation is used}
+
+\item{\code{content_type}}{the HTTP content type for a successful response}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{pkgapi_endpoint$new()}}
 \item \href{#method-run}{\code{pkgapi_endpoint$run()}}
-\item \href{#method-process}{\code{pkgapi_endpoint$process()}}
-\item \href{#method-validate_response}{\code{pkgapi_endpoint$validate_response()}}
 \item \href{#method-plumber}{\code{pkgapi_endpoint$plumber()}}
 }
 }
@@ -24,7 +39,15 @@ Create a \code{pkgapi_endpoint} object that collects
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, validate = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(
+  method,
+  path,
+  target,
+  content_type,
+  validate = FALSE,
+  process = NULL,
+  validate_response = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -36,9 +59,19 @@ Create an endpoint
 
 \item{\code{target}}{An R function to run as the endpoint}
 
+\item{\code{content_type}}{A string describing the content type}
+
 \item{\code{validate}}{Logical, indicating if any validation
-(implemented by a subclass) should be enabled.  This should be
-set to \code{FALSE} in production environments.}
+(implemented by the \code{validate_response} argument) should be
+enabled.  This should be set to \code{FALSE} in production
+environments.}
+
+\item{\code{process}}{Optional processing function that will serialise
+the data produced by \code{target} into an appropriate body to
+be returned by plumber.}
+
+\item{\code{validate_response}}{Optional function that throws an error
+of the processed body is "invalid".}
 }
 \if{html}{\out{</div>}}
 }
@@ -59,39 +92,6 @@ through the \code{process} method and returned by plumber) and
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{Arguments passed through to the \code{target} function}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-process"></a>}}
-\subsection{Method \code{process()}}{
-Process the data (result of \code{target}),
-including all serialisation.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$process(data)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{data}}{Data to process (the result of \code{target})}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-validate_response"></a>}}
-\subsection{Method \code{validate_response()}}{
-Validate that the body conforms to the schema
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$validate_response(body)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{body}}{The serialised body as returned by \code{process}}
 }
 \if{html}{\out{</div>}}
 }
