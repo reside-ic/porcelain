@@ -1,0 +1,4 @@
+ignored:
+  # See https://github.com/hadolint/hadolint/wiki/DL3007
+  # We explicitly want to track latest on r-ver so this is ok to ignore
+  - DL3007
