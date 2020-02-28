@@ -38,7 +38,7 @@ pkgapi <- R6::R6Class(
       ## overloading handle, as to add plain plumber endpoints.
       assert_is(endpoint, "pkgapi_endpoint")
       endpoint <- plumber::PlumberEndpoint$new(
-        endpoint$methods, endpoint$path, endpoint$plumber, private$envir,
+        endpoint$method, endpoint$path, endpoint$plumber, private$envir,
         serializer = pkgapi_serialize_pass)
       super$handle(endpoint = endpoint)
       invisible(self)
