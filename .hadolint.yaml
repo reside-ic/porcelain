@@ -2,3 +2,6 @@ ignored:
   # See https://github.com/hadolint/hadolint/wiki/DL3007
   # We explicitly want to track latest on r-ver so this is ok to ignore
   - DL3007
+  # https://github.com/hadolint/hadolint/wiki/DL3008
+  # I can't imagine ever wanting this
+  - DL3008
