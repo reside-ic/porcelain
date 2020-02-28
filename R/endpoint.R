@@ -60,7 +60,7 @@ pkgapi_endpoint <- R6::R6Class(
       self$validate <- validate
       private$process <- process %||% identity
       private$validate_response = validate_response %||% identity
-      ## lock_bindings(c("method", "path", "target", "content_type"), self)
+      lock_bindings(c("method", "path", "target", "content_type"), self)
     },
 
     ##' @description Run the endpoint.  This will produce a

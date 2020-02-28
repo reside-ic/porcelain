@@ -32,3 +32,10 @@ to_json_string <- function(x) {
 is_directory <- function(x) {
   file.info(x, extra_cols = FALSE)$isdir
 }
+
+
+lock_bindings <- function(names, e) {
+  for (nm in names) {
+    lockBinding(nm, e)
+  }
+}
