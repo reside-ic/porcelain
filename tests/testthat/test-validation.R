@@ -46,6 +46,17 @@ test_that("validate errors", {
 })
 
 
+test_that("validate schema - success", {
+  hello <- function() {
+    jsonlite::unbox("hello")
+  }
+  endpoint <- pkgapi_endpoint_json$new("GET", "/", hello, "String", "schema",
+                                       validate = TRUE)
+  res <- endpoint$run()
+  expect_equal(res$status_code, 200L)
+})
+
+
 test_that("validate schema", {
   hello <- function() {
     jsonlite::unbox(1)
