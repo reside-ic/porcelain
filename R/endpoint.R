@@ -59,7 +59,7 @@ pkgapi_endpoint <- R6::R6Class(
       self$content_type <- content_type
       self$validate <- validate
       private$process <- process %||% identity
-      private$validate_response = validate_response %||% identity
+      private$validate_response <- validate_response %||% identity
       lock_bindings(c("method", "path", "target", "content_type"), self)
     },
 
