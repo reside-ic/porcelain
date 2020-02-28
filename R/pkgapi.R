@@ -1,21 +1,41 @@
+##' @title A \code{pkgapi} object
+##'
+##' @description A \code{pkgapi} object.  This extends (via
+##'   inheritance) a plumber object, and so only changes to the
+##'   plumber API are documented here.
+##'
+##' @export
 pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
   public = list(
+    ##' @description Create a pkgapi object
+    ##'
+    ##' @param ... Parameters passed to [plumber::plumber()]
     initialize = function(...) {
       super$initialize(...)
       self$setErrorHandler(pkgapi_error_handler)
     },
 
-    ## NOTE: this ignores the 'preempt' arg - because the underlying
-    ## logic of the super method uses missing() it's not
-    ## straightforward to wrap.
-    ##
-    ## NOTE: This uses private$envir, which is probably not ideal, but
-    ## looks fairly uncontroversial and we could have intercepted it
-    ## earlier.  It's not totally clear what this does though...
+    ##' @description Handle an endpoint
+    ##'
+    ##' @param endpoint A \code{pkgapi_endpoint} object representing
+    ##' an endpoint.  See \code{\link{pkgapi_endpoint_json}} and
+    ##' \code{\link{pkgapi_endpoint_binary}} for information.  Unlike
+    ##' plumber, an R function will \emph{not} work.
     handle = function(endpoint) {
+      ## NOTE: this ignores the 'preempt' arg - because the underlying
+      ## logic of the super method uses missing() it's not
+      ## straightforward to wrap.
+      ##
+      ## NOTE: This uses private$envir, which is probably not ideal,
+      ## but looks fairly uncontroversial and we could have
+      ## intercepted it earlier.  It's not totally clear what this
+      ## does though...
+      ##
+      ## NOTE: We could use a different method here rather than
+      ## overloading handle, as to add plain plumber endpoints.
       assert_is(endpoint, "pkgapi_endpoint")
       endpoint <- plumber::PlumberEndpoint$new(
         endpoint$methods, endpoint$path, endpoint$plumber, private$envir,
@@ -24,6 +44,18 @@ pkgapi <- R6::R6Class(
       invisible(self)
     },
 
+    ##' @description Send a request to plumber for debugging
+    ##'
+    ##' Sends a request to plumber so that the API can be easily
+    ##' tested without running the whole API. The interface here will
+    ##' probably change, and may end up using the interface of \code{httr}.
+    ##'
+    ##' @param method Name of HTTP method to use (e.g., \code{GET})
+    ##'
+    ##' @param path Path to send the request to
+    ##'
+    ##' @param query Optional query parameters as a named list or
+    ##' character vector.
     request = function(method, path, query = NULL) {
       plumber_request(self, method, path, query)
     }
