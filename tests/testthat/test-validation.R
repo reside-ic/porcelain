@@ -61,7 +61,7 @@ test_that("validate schema", {
   expect_is(res$error, "pkgapi_validation_error")
 
   expect_equal(to_json_string(response_success(hello())), res$error$json)
-  err <- get_error(pkgapi_validate(res$error$json, endpoint$validator, TRUE))
+  err <- get_error(pkgapi_validate(res$error$json, endpoint$validator))
   expect_equal(err, res$error)
 })
 

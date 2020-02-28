@@ -1,19 +1,17 @@
 ## TODO: if we validate errors this needs to change slightly, and
 ## possibly move this function as a method in the endpoints with
 ## appropriate defaults
-pkgapi_validate <- function(json, validator, validate, query = "data") {
-  if (validate && !is.null(validator)) {
-    ## TODO: do something more helpful with an error here; ideally
-    ## we'll throw with all the data and then either restart or
-    ## trycatch our way out of it.
-    rethrow <- function(e) {
-      class(e) <- c("pkgapi_validation_error", class(e))
-      e$json <- json
-      stop(e)
-    }
-    tryCatch(validator(json, query = query, error = TRUE),
-             validation_error = rethrow)
+pkgapi_validate <- function(json, validator, query = "data") {
+  ## TODO: do something more helpful with an error here; ideally
+  ## we'll throw with all the data and then either restart or
+  ## trycatch our way out of it.
+  rethrow <- function(e) {
+    class(e) <- c("pkgapi_validation_error", class(e))
+    e$json <- json
+    stop(e)
   }
+  tryCatch(validator(json, query = query, error = TRUE),
+           validation_error = rethrow)
   invisible(NULL)
 }
 
@@ -22,7 +20,7 @@ pkgapi_validate <- function(json, validator, validate, query = "data") {
 ## environment variable to also require it in tests.
 pkgapi_validator <- function(schema, root) {
   if (is.null(schema)) {
-    return(NULL)
+    return(function(...) NULL)
   }
   path_schema <- file.path(root, paste0(schema, ".json"))
   jsonvalidate::json_validator(path_schema, "ajv")

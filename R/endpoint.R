@@ -59,7 +59,7 @@ pkgapi_endpoint_json <- R6::R6Class(
     },
 
     validate_response = function(body) {
-      pkgapi_validate(body, self$validator, TRUE) # TODO - drop 3rd arg
+      pkgapi_validate(body, self$validator)
     }
   ))
 
