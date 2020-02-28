@@ -97,8 +97,8 @@ pkgapi_error_handler <- function(req, res, e) {
 
 
 ## Standard response types
-response_success <- function(value) {
-  list(status = jsonlite::unbox("success"), errors = NULL, data = value)
+response_success <- function(data) {
+  list(status = jsonlite::unbox("success"), errors = NULL, data = data)
 }
 
 

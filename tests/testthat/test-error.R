@@ -134,12 +134,7 @@ test_that("Error during serialisation", {
   mock_endpoint <- R6::R6Class(
     inherit = pkgapi_endpoint_json,
     public = list(
-      process = function(...) {
-        ret <- super$process(...)
-        ret$content_type <- NULL
-        ret
-      }
-    ))
+      content_type = NULL))
 
   hello <- function() {
     jsonlite::unbox("hello")

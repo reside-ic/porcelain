@@ -14,12 +14,12 @@ test_that("wrap endpoint", {
   res <- endpoint$run()
   expect_is(res, "pkgapi_response")
   expect_setequal(names(res),
-                  c("status_code", "content_type", "body", "data", "value"))
+                  c("status_code", "content_type", "body", "data"))
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
-  expect_equal(res$body, to_json_string(res$value))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
   expect_equal(res$data, hello())
-  expect_equal(res$value, response_success(hello()))
+
   expect_true(validator_response_success(res$body))
 })
 
@@ -39,6 +39,7 @@ test_that("wrap raw output", {
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/octet-stream")
   expect_equal(res$body, binary())
+  expect_equal(res$data, binary())
 })
 
 
@@ -84,8 +85,7 @@ test_that("use routing parameter", {
   expect_equal(res$status_code, 200)
   expect_equal(res$content_type, "application/json")
   expect_equal(res$data, jsonlite::unbox(16))
-  expect_equal(res$value, response_success(res$data))
-  expect_equal(res$body, to_json_string(res$value))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
 
   ## Through the api
   pr <- pkgapi$new()$handle(endpoint)
@@ -109,8 +109,7 @@ test_that("use query parameter", {
   expect_equal(res$status_code, 200)
   expect_equal(res$content_type, "application/json")
   expect_equal(res$data, jsonlite::unbox(16))
-  expect_equal(res$value, response_success(res$data))
-  expect_equal(res$body, to_json_string(res$value))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
 
   ## Through the api
   pr <- pkgapi$new()$handle(endpoint)

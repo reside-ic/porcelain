@@ -85,9 +85,8 @@ test_that("allow missing schema", {
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
-  expect_equal(res$body, to_json_string(res$value))
   expect_equal(res$data, hello())
-  expect_equal(res$value, response_success(hello()))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
 })
 
 

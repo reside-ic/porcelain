@@ -15,9 +15,21 @@ pkgapi_endpoint <- R6::R6Class(
     },
 
     run = function(...) {
-      tryCatch(
-        self$process(self$target(...)),
-        error = pkgapi_process_error)
+      tryCatch({
+        data <- self$target(...)
+        body <- self$process(data)
+        if (self$validate) {
+          self$validate_response(body)
+        }
+        pkgapi_response(200, self$content_type, body, data = data)
+      }, error = pkgapi_process_error)
+    },
+
+    process = function(data) {
+      data
+    },
+
+    validate_response = function(body) {
     },
 
     plumber = function(req, res, ...) {
@@ -38,22 +50,16 @@ pkgapi_endpoint_json <- R6::R6Class(
     initialize = function(methods, path, target, schema = NULL, root = NULL,
                           validate = FALSE) {
       super$initialize(methods, path, target, validate)
-
-      ## TODO: we will have to do some tricks here to get the package
-      ## root on initialisation, or somewhat lazily.  Otherwise we
-      ## will get warnings in packages and that's not ideal.
-      ## Something that can be sorted out later though.  First use of
-      ## the validator seems like a nice way to do it.
       self$schema <- schema
-      self$validator <- pkgapi_validator(schema, schema_root(root, self$target))
+      self$validator <- pkgapi_validator(schema, schema_root(root, target))
     },
 
     process = function(data) {
-      value <- response_success(data)
-      body <- to_json_string(value)
-      pkgapi_validate(body, self$validator, self$validate)
-      pkgapi_response(200L, self$content_type, body,
-                      data = data, value = value)
+      to_json_string(response_success(data))
+    },
+
+    validate_response = function(body) {
+      pkgapi_validate(body, self$validator, TRUE) # TODO - drop 3rd arg
     }
   ))
 
@@ -65,10 +71,7 @@ pkgapi_endpoint_binary <- R6::R6Class(
   public = list(
     content_type = "application/octet-stream",
 
-    process = function(data) {
-      if (self$validate) {
-        assert_is(data, "raw")
-      }
-      pkgapi_response(200, "application/octet-stream", data)
+    validate_response = function(body) {
+      assert_is(body, "raw")
     }
   ))
