@@ -29,6 +29,16 @@ pkgapi_input_query <- function(..., .parameters = list(...)) {
 }
 
 
+pkgapi_input_path <- function(path) {
+  data <- parse_plumber_path(path)
+  if (is.null(data)) {
+    return(NULL)
+  }
+  apply(parse_plumber_path(path), 1, function(x)
+    pkgapi_input(x[[1]], x[[2]], "path"))
+}
+
+
 pkgapi_input <- function(name, type, where, validator = NULL) {
   res <- list(name = name, type = type, where = where)
   if (is.null(validator)) {
@@ -39,12 +49,22 @@ pkgapi_input <- function(name, type, where, validator = NULL) {
 }
 
 
-pkgapi_inputs_init <- function(inputs_query, args) {
-  ## TODO: look for duplicates across all inputs
-  validate_query <- pkgapi_input_validator_query(inputs_query, args)
+pkgapi_inputs_init <- function(path, inputs_query, args) {
+  inputs_path <- pkgapi_input_path(path)
+  validate_path <- pkgapi_input_validator_simple(inputs_path, args)
 
-  function(query) {
-    validate_query(query)
+  validate_query <- pkgapi_input_validator_simple(inputs_query, args)
+
+  inputs <- c(inputs_path, inputs_query)
+  nms <- vcapply(inputs, "[[", "name")
+  if (anyDuplicated(nms)) {
+    message("fix duplicated")
+    browser()
+  }
+
+  function(path, query) {
+    c(validate_path(path),
+      validate_query(query))
   }
 }
 
@@ -114,7 +134,7 @@ pkgapi_input_validator_basic <- function(type) {
 }
 
 
-pkgapi_input_validator_query <- function(inputs, args) {
+pkgapi_input_validator_simple <- function(inputs, args) {
   inputs <- lapply(inputs, pkgapi_input_init, args)
   nms <- vcapply(inputs, "[[", "name")
 
@@ -129,12 +149,15 @@ pkgapi_input_validator_query <- function(inputs, args) {
         query[[i$name]] <- tryCatch(
           i$validator(value),
           error = function(e)
-            throw("Error parsing query parameter '%s': %s", i$name, e$message))
+            throw("Error parsing %s parameter '%s': %s",
+                  i$name, i$where, e$message))
       }
     }
 
     extra <- setdiff(names(query), nms)
     if (length(extra) > 0L) {
+      message("Fix message")
+      browser()
       throw("Recieved extra query parameters: %s", paste(squote(extra)))
     }
 

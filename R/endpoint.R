@@ -64,7 +64,7 @@ pkgapi_endpoint <- R6::R6Class(
 
       ## This is only part of the problem here: we need the metadata
       ## stored somewhere too.
-      self$inputs <- pkgapi_inputs_init(input_query, formals(target))
+      self$inputs <- pkgapi_inputs_init(path, input_query, formals(target))
 
       self$validate <- validate
       lock_bindings(c("method", "path", "target", "returning"), self)
@@ -95,8 +95,11 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param req,res Conventional plumber request/response objects
     ##' @param ... Additional arguments passed through to \code{run}
     plumber = function(req, res, ...) {
+      ## TODO: It's not abundantly clear here what we do to get the
+      ## args out, but this works at least:
+      pkgapi_path <- req$args[seq_len(length(req$args) - 2L)]
       tryCatch({
-        args <- self$inputs(req$pkgapi_query)
+        args <- self$inputs(pkgapi_path, req$pkgapi_query)
         do.call(self$run, args)
       }, error = pkgapi_process_error)
     }

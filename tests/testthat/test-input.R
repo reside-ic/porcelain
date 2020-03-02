@@ -74,3 +74,29 @@ test_that("Can validate query parameters from plumber, throwing nice errors", {
     "Error parsing query parameter 'b': Could not convert 'x'",
     fixed = TRUE)
 })
+
+
+test_that("use routing parameter", {
+  power <- function(n, m = 2) {
+    jsonlite::unbox(n^m)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/power/<m:int>", power,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(n = "numeric"),
+    validate = TRUE)
+
+  ## endpoint directly:
+  res <- endpoint$run(n = 4, m = 3)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(64))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- pr$request("GET", "/power/3", c(n = 4))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})
