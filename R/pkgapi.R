@@ -56,8 +56,11 @@ pkgapi <- R6::R6Class(
     ##'
     ##' @param query Optional query parameters as a named list or
     ##' character vector.
-    request = function(method, path, query = NULL) {
-      plumber_request(self, method, path, query)
+    ##'
+    ##' @param body Optional body (only valid with \code{PUT}, \code{POST},
+    ##' etc).
+    request = function(method, path, query = NULL, body = NULL) {
+      plumber_request(self, method, path, query, body = body)
     }
   ))
 

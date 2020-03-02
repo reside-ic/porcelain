@@ -100,3 +100,32 @@ test_that("use routing parameter", {
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
 })
+
+
+test_that("use body", {
+  mean_rds <- function(x) {
+    jsonlite::unbox(mean(unserialize(x)))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "POST", "/mean", mean_rds,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_body = pkgapi_input_body_binary("x"),
+    validate = TRUE)
+
+  data <- runif(10)
+  payload <- serialize(data, NULL)
+
+  ## endpoint directly:
+  res <- endpoint$run(x = payload)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(mean(data)))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- pr$request("POST", "/mean", body = payload)
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})

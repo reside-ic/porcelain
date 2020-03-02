@@ -54,7 +54,7 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param validate_response Optional function that throws an error
     ##' of the processed body is "invalid".
     initialize = function(method, path, target, returning,
-                          input_query = NULL,
+                          input_query = NULL, input_body = NULL,
                           validate = FALSE) {
       self$method <- method
       self$path <- path
@@ -62,9 +62,13 @@ pkgapi_endpoint <- R6::R6Class(
       assert_is(returning, "pkgapi_returning")
       self$returning <- returning
 
+      ## TODO: Assert HTTP/REST compliance on presence of body
+
       ## This is only part of the problem here: we need the metadata
-      ## stored somewhere too.
-      self$inputs <- pkgapi_inputs_init(path, input_query, formals(target))
+      ## stored somewhere too; things like "required" don't make it
+      ## out of here but should and will require a little tweaking.
+      self$inputs <- pkgapi_inputs_init(path, input_query, input_body,
+                                        formals(target))
 
       self$validate <- validate
       lock_bindings(c("method", "path", "target", "returning"), self)
@@ -99,7 +103,7 @@ pkgapi_endpoint <- R6::R6Class(
       ## args out, but this works at least:
       pkgapi_path <- req$args[seq_len(length(req$args) - 2L)]
       tryCatch({
-        args <- self$inputs(pkgapi_path, req$pkgapi_query)
+        args <- self$inputs(pkgapi_path, req$pkgapi_query, req$pkgapi_body)
         do.call(self$run, args)
       }, error = pkgapi_process_error)
     }

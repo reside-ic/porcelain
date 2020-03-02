@@ -11,6 +11,7 @@ pkgapi_filter_query_string <- function(req, res) {
 
 
 pkgapi_filter_post_body <- function(req, res) {
-  ## req$pkgapi_body <- ???
+  ## We should look at req$HTTP_CONTENT_TYPE here and behave accordingly
+  req$pkgapi_body <- req[["rook.input"]]$read()
   plumber::forward()
 }

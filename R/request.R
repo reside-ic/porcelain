@@ -1,10 +1,22 @@
 ## Support for easily sending requests to the plumber without running it
-plumber_request <- function(plumber, method, path, query = NULL) {
+plumber_request <- function(plumber, method, path, query = NULL, body = NULL) {
   req <- new.env(parent = emptyenv())
   req[["REQUEST_METHOD"]] <- toupper(method)
   req[["PATH_INFO"]] <- path
   req[["QUERY_STRING"]] <- query_string(query)
-  req[["rook.input"]] <- list(read_lines = function() "")
+
+  ## Some work here required to really nail the concept of the body,
+  ## but I believe that these are enough.
+  req[["rook.input"]] <- list(
+    read_lines = function() body,
+    read = function() body)
+
+  if (!is.null(body)) {
+    ## TODO: set the content type header here - default to
+    ## application/octet-stream for binary data?  This requires some
+    ## work running this up for real to work out what the correct mock
+    ## is.
+  }
 
   res <- plumber_response()
   plumber$serve(req, res)

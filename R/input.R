@@ -29,6 +29,37 @@ pkgapi_input_query <- function(..., .parameters = list(...)) {
 }
 
 
+##' Control for body parameters.  This might change.  There are
+##' several types of HTTP bodies that we want to consider here - the
+##' primary ones are a body uploaded in binary, the other is a json
+##' object.  In the latter we want to validate the body against a
+##' schema (at least if validation is used).  In future we might also
+##' support a form input here too.
+##'
+##' @title Control for body parameters
+##'
+##' @param name Name of the parameter
+##'
+##' @export
+##' @rdname pkgapi_input_body
+pkgapi_input_body_binary <- function(name) {
+  assert_scalar_character(name)
+  pkgapi_input(name, "binary", "body", assert_raw,
+               content_type = "application/octet-stream")
+}
+
+
+##' @inheritParams pkgapi_returning_json
+##' @export
+##' @rdname pkgapi_input_body
+pkgapi_input_body_json <- function(name, schema, root) {
+  assert_scalar_character(name)
+  validator <- pkgapi_validator(schema, schema_root(root))
+  pkgapi_input(name, "json", "body", validator,
+               content_type = "application/json")
+}
+
+
 pkgapi_input_path <- function(path) {
   data <- parse_plumber_path(path)
   if (is.null(data)) {
@@ -39,8 +70,9 @@ pkgapi_input_path <- function(path) {
 }
 
 
-pkgapi_input <- function(name, type, where, validator = NULL) {
-  res <- list(name = name, type = type, where = where)
+pkgapi_input <- function(name, type, where, validator = NULL, ...) {
+  res <- list(name = name, type = type, where = where, validator = validator,
+              ...)
   if (is.null(validator)) {
     res$validator <- pkgapi_input_validator_basic(type)
   }
@@ -49,11 +81,12 @@ pkgapi_input <- function(name, type, where, validator = NULL) {
 }
 
 
-pkgapi_inputs_init <- function(path, inputs_query, args) {
+## TODO: duplicate passed query parameters not supported yet (are allowed)
+pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
   inputs_path <- pkgapi_input_path(path)
   validate_path <- pkgapi_input_validator_simple(inputs_path, args)
-
   validate_query <- pkgapi_input_validator_simple(inputs_query, args)
+  validate_body <- pkgapi_input_validator_body(inputs_body, args)
 
   inputs <- c(inputs_path, inputs_query)
   nms <- vcapply(inputs, "[[", "name")
@@ -62,9 +95,10 @@ pkgapi_inputs_init <- function(path, inputs_query, args) {
     browser()
   }
 
-  function(path, query) {
+  function(path, query, body) {
     c(validate_path(path),
-      validate_query(query))
+      validate_query(query),
+      validate_body(body))
   }
 }
 
@@ -139,7 +173,7 @@ pkgapi_input_validator_simple <- function(inputs, args) {
   nms <- vcapply(inputs, "[[", "name")
 
   throw <- function(msg, ...) {
-    pkgapi_error(list(INVALID_QUERY = sprintf(msg, ...)))
+    pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
   }
 
   function(query) {
@@ -162,5 +196,31 @@ pkgapi_input_validator_simple <- function(inputs, args) {
     }
 
     query
+  }
+}
+
+
+pkgapi_input_validator_body <- function(body, args) {
+  input <- pkgapi_input_init(body, args)
+
+  throw <- function(msg, ...) {
+    pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
+  }
+
+  name <- input$name
+  required <- input$required
+  validator <- input$validator
+
+  ## TODO: This must act on content type, which requires work in the
+  ## mocks.
+  function(body, content_type) {
+    if (required && is.null(body)) { # or length zero?
+      throw("Body was not provided")
+    }
+    tryCatch(
+      validator(body),
+      error = function(e)
+        throw("Invalid body provided: %s", e$message))
+    set_names(list(body), name)
   }
 }
