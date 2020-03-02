@@ -14,7 +14,9 @@ pkgapi <- R6::R6Class(
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
     initialize = function(...) {
-      super$initialize(...)
+      ## NOTE: it's not totally clear what the correct environment
+      ## here is.
+      super$initialize(NULL, pkgapi_filters(), new.env(parent = .GlobalEnv))
       self$setErrorHandler(pkgapi_error_handler)
     },
 
