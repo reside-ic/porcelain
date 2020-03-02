@@ -27,7 +27,7 @@ pkgapi_error_data <- function(errors) {
 
 pkgapi_error_message <- function(data) {
   error <- vcapply(data, "[[", "error")
-  detail <- vcapply(data, "[[", "detail")
+  detail <- vcapply(data, function(x) x$detail %||% NA_character_)
   msg <- character(length(error))
   i <- is.na(detail)
   msg[i] <- sprintf("  * %s", error[i])
