@@ -22,7 +22,9 @@ Create a \code{pkgapi_endpoint} object that collects
 
 \item{\code{validate}}{Logical, indicating if response validation is used}
 
-\item{\code{content_type}}{the HTTP content type for a successful response}
+\item{\code{returning}}{An \code{\link{pkgapi_returning}} object
+controlling the return type (content type, status code,
+serialisation and validation information).}
 }
 \if{html}{\out{</div>}}
 }
@@ -39,15 +41,7 @@ Create a \code{pkgapi_endpoint} object that collects
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(
-  method,
-  path,
-  target,
-  content_type,
-  validate = FALSE,
-  process = NULL,
-  validate_response = NULL
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, returning, validate = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -59,7 +53,7 @@ Create an endpoint
 
 \item{\code{target}}{An R function to run as the endpoint}
 
-\item{\code{content_type}}{A string describing the content type}
+\item{\code{returning}}{Information about what the endpoint returns,}
 
 \item{\code{validate}}{Logical, indicating if any validation
 (implemented by the \code{validate_response} argument) should be

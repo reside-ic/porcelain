@@ -2,7 +2,8 @@
 
 export(pkgapi)
 export(pkgapi_endpoint)
-export(pkgapi_endpoint_binary)
-export(pkgapi_endpoint_json)
+export(pkgapi_returning)
+export(pkgapi_returning_binary)
+export(pkgapi_returning_json)
 importFrom(R6,R6Class)
 importFrom(plumber,plumber)

@@ -4,9 +4,13 @@ test_that("wrap endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
+
   expect_is(endpoint, "pkgapi_endpoint")
-  expect_equal(endpoint$content_type, "application/json")
+  expect_equal(endpoint$returning$content_type, "application/json")
   expect_identical(endpoint$target, hello)
 
   res <- endpoint$run()
@@ -26,9 +30,11 @@ test_that("wrap raw output", {
   binary <- function() {
     as.raw(0:255)
   }
-  endpoint <- pkgapi_endpoint_binary("GET", "/binary", binary)
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary, pkgapi_returning_binary(), TRUE)
+
   expect_is(endpoint, "pkgapi_endpoint")
-  expect_equal(endpoint$content_type, "application/octet-stream")
+  expect_equal(endpoint$returning$content_type, "application/octet-stream")
   expect_identical(endpoint$target, binary)
 
   res <- endpoint$run()
@@ -44,7 +50,10 @@ test_that("build api - json endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
@@ -59,7 +68,8 @@ test_that("build api - binary endpoint", {
   binary <- function() {
     as.raw(0:255)
   }
-  endpoint <- pkgapi_endpoint_binary("GET", "/binary", binary, TRUE)
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary, pkgapi_returning_binary(), TRUE)
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
@@ -74,8 +84,10 @@ test_that("use routing parameter", {
   square <- function(n) {
     jsonlite::unbox(n * n)
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/square/<n:int>", square,
-                                   TRUE, "Number", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/square/<n:int>", square,
+    pkgapi_returning_json("Number", "schema"),
+    TRUE)
 
   ## endpoint directly:
   res <- endpoint$run(4)
@@ -98,8 +110,10 @@ test_that("use query parameter", {
     n <- as.numeric(n)
     jsonlite::unbox(n * n)
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/square", square,
-                                   TRUE, "Number", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/square", square,
+    pkgapi_returning_json("Number", "schema"),
+    TRUE)
 
   ## endpoint directly:
   res <- endpoint$run(4)

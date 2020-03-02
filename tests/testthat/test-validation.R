@@ -50,7 +50,10 @@ test_that("validate schema - success", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
 })
@@ -60,7 +63,10 @@ test_that("validate schema", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
   res <- endpoint$run()
 
   expect_is(res, "pkgapi_response")
@@ -77,7 +83,10 @@ test_that("can skip validation", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, FALSE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = FALSE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
 })
@@ -87,7 +96,10 @@ test_that("allow missing schema", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, NULL, NULL)
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json(),
+    validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
@@ -100,7 +112,8 @@ test_that("validate binary output", {
   binary <- function() {
     "not binary"
   }
-  endpoint <- pkgapi_endpoint_binary("GET", "/binary", binary, TRUE)
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary, pkgapi_returning_binary(), TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 500L)
   endpoint$validate <- FALSE

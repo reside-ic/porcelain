@@ -33,7 +33,7 @@ test_that("Catch an error in a json endpoint", {
   }
   err <- get_error(hello())
 
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello)
+  endpoint <- pkgapi_endpoint$new("GET", "/", hello, pkgapi_returning_json())
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -56,7 +56,8 @@ test_that("Catch error in a binary endpoint", {
   }
   err <- get_error(binary())
 
-  endpoint <- pkgapi_endpoint_binary("GET", "/binary", binary)
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary, pkgapi_returning_binary())
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -78,7 +79,10 @@ test_that("Uncaught error", {
     stop("Unexpected error!", call. = FALSE)
   }
   err <- get_error(hello())
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
 
   res <- endpoint$run()
   expect_equal(res, pkgapi_process_error(err))
@@ -98,7 +102,10 @@ test_that("Uncaught error from the api", {
   hello <- function() {
     stop("unexpected error!")
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
   pr <- pkgapi$new()
   pr$handle(endpoint)
   res <- pr$request("GET", "/")
@@ -115,7 +122,10 @@ test_that("Catch error from the api", {
   hello <- function() {
     pkgapi_error(c("an-error" = "An error has occured"))
   }
-  endpoint <- pkgapi_endpoint_json("GET", "/", hello, TRUE, "String", "schema")
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
@@ -134,7 +144,9 @@ test_that("Error during serialisation", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint$new("GET", "/", hello, NULL)
+  returning <- pkgapi_returning_json()
+  returning$content_type <- NULL
+  endpoint <- pkgapi_endpoint$new("GET", "/", hello, returning)
   val <- endpoint$run()
 
   ## First, work our what the error should look like:

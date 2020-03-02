@@ -26,8 +26,10 @@ pkgapi_endpoint <- R6::R6Class(
     target = NULL,
     ##' @field validate Logical, indicating if response validation is used
     validate = NULL,
-    ##' @field content_type the HTTP content type for a successful response
-    content_type = NULL,
+    ##' @field returning An \code{\link{pkgapi_returning}} object
+    ##' controlling the return type (content type, status code,
+    ##' serialisation and validation information).
+    returning = NULL,
 
     ##' @description Create an endpoint
     ##'
@@ -37,7 +39,8 @@ pkgapi_endpoint <- R6::R6Class(
     ##'
     ##' @param target An R function to run as the endpoint
     ##'
-    ##' @param content_type A string describing the content type
+    ##' @param returning Information about what the endpoint returns,
+    ##    as created by \code{\link{pkgapi_returning}}
     ##'
     ##' @param validate Logical, indicating if any validation
     ##' (implemented by the \code{validate_response} argument) should be
@@ -50,17 +53,16 @@ pkgapi_endpoint <- R6::R6Class(
     ##'
     ##' @param validate_response Optional function that throws an error
     ##' of the processed body is "invalid".
-    initialize = function(method, path, target, content_type,
-                          validate = FALSE, process = NULL,
-                          validate_response = NULL) {
+    initialize = function(method, path, target, returning,
+                          validate = FALSE) {
       self$method <- method
       self$path <- path
       self$target <- target
-      self$content_type <- content_type
+      assert_is(returning, "pkgapi_returning")
+      self$returning <- returning
+
       self$validate <- validate
-      private$process <- process %||% identity
-      private$validate_response <- validate_response %||% identity
-      lock_bindings(c("method", "path", "target", "content_type"), self)
+      lock_bindings(c("method", "path", "target", "returning"), self)
     },
 
     ##' @description Run the endpoint.  This will produce a
@@ -73,11 +75,12 @@ pkgapi_endpoint <- R6::R6Class(
     run = function(...) {
       tryCatch({
         data <- self$target(...)
-        body <- private$process(data)
+        body <- self$returning$process(data)
         if (self$validate) {
-          private$validate_response(body)
+          self$returning$validate(body)
         }
-        pkgapi_response(200, self$content_type, body, data = data)
+        pkgapi_response(self$returning$status_code,
+                        self$returning$content_type, body, data = data)
       }, error = pkgapi_process_error)
     },
 
@@ -90,53 +93,3 @@ pkgapi_endpoint <- R6::R6Class(
       self$run(...)
     }
   ))
-
-
-##' Create a JSON endpoint
-##'
-##' Note: We look for schema files in \code{<root>/<schema>.json}.
-##'
-##' @title Create JSON endpoint
-##'
-##' @param method The HTTP method to support
-##'
-##' @param path The server path for the endpoint
-##'
-##' @param target An R function to run as the endpoint
-##'
-##' @param validate Logical, indicating if any validation (implemented
-##'   by the \code{validate_response} argument) should be enabled.
-##'   This should be set to \code{FALSE} in production environments.
-##'
-##' @param schema The name of the json schema to use
-##'
-##' @param root The root of the schema directory.  If not provided,
-##'   and if \code{target} is in a package, then we'll look in that
-##'   package's installed \code{schema} directory.
-##'
-##' @export
-pkgapi_endpoint_json <- function(method, path, target, validate = FALSE,
-                                 schema = NULL, root = NULL) {
-  pkgapi_endpoint$new(
-    method, path, target, "application/json",
-    process = pkgapi_endpoint_json_process,
-    validate_response = pkgapi_validator(schema, schema_root(root, target)),
-    validate = validate)
-}
-
-
-##' Create a binary endpoint
-##'
-##' @inheritParams pkgapi_endpoint_json
-##' @export
-pkgapi_endpoint_binary <- function(method, path, target, validate = FALSE) {
-  pkgapi_endpoint$new(
-    method, path, target, "application/octet-stream",
-    validate_response = assert_raw,
-    validate = validate)
-}
-
-
-pkgapi_endpoint_json_process <- function(data) {
-  to_json_string(response_success(data))
-}
