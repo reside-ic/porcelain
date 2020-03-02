@@ -56,7 +56,7 @@ Create a pkgapi object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{Parameters passed to \code{\link{plumber::plumber}}}
+\item{\code{...}}{Parameters passed to \code{\link{plumber}}}
 }
 \if{html}{\out{</div>}}
 }

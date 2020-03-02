@@ -12,7 +12,7 @@ pkgapi <- R6::R6Class(
   public = list(
     ##' @description Create a pkgapi object
     ##'
-    ##' @param ... Parameters passed to \code{\link{plumber::plumber}}
+    ##' @param ... Parameters passed to \code{\link{plumber}}
     initialize = function(...) {
       super$initialize(...)
       self$setErrorHandler(pkgapi_error_handler)
