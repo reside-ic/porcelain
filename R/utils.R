@@ -44,3 +44,41 @@ lock_bindings <- function(names, e) {
 squote <- function(x) {
   sprintf("'%s'", x)
 }
+
+
+set_names <- function(x, nms) {
+  names(x) <- nms
+  x
+}
+
+
+## NOTE: plumber does not expose a parser here so we just bodge one
+## together
+parse_plumber_path <- function(x) {
+  p <- strsplit(x, "/", fixed = TRUE)[[1]]
+  i <- grepl("^<([^>]+)>$", p)
+  name <- p[i]
+  if (length(name) == 0L) {
+    return(NULL)
+  }
+  name <- substr(name, 2L, nchar(name) - 1L)
+  type <- rep("string", length(name))
+
+  j <- grepl(":", name, fixed = TRUE)
+
+  translate <- list(
+    "logical" = c("bool", "boolean", "logical"),
+    "integer" = c("int", "integer"),
+    "numeric" = c("dbl", "double", "float", "number", "numeric"),
+    "string" = c("chr", "str", "character", "string"))
+  translate <- set_names(rep(names(translate), lengths(translate)),
+                         unlist(translate, FALSE, FALSE))
+
+  if (any(j)) {
+    type[j] <- unname(translate[sub(".*:", "", name[j])])
+    type[is.na(type)] <- "string"
+    name[j] <- sub(":.*", "", name[j])
+  }
+
+  cbind(name = name, type = type)
+}

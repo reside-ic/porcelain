@@ -15,3 +15,21 @@ test_that("lock_bindings", {
   lock_bindings(c("a", "b"), e)
   expect_error(e$a <- 2)
 })
+
+
+test_that("parse_plumber_path", {
+  expect_null(parse_plumber_path("/"))
+  expect_null(parse_plumber_path("/no/routing/at/all"))
+  expect_equal(parse_plumber_path("/my/<id>"),
+               cbind(name = "id", type = "string"))
+  expect_equal(parse_plumber_path("/my/<dynamic>/path"),
+               cbind(name = "dynamic", type = "string"))
+  expect_equal(parse_plumber_path("/my/<id:int>"),
+               cbind(name = "id", type = "integer"))
+  expect_equal(parse_plumber_path("/my/<id:int>/<action>"),
+               cbind(name = c("id", "action"),
+                     type = c("integer", "string")))
+  expect_equal(parse_plumber_path("/my/<id:apple>/<action>"),
+               cbind(name = c("id", "action"),
+                     type = c("string", "string")))
+})
