@@ -12,7 +12,7 @@ pkgapi <- R6::R6Class(
   public = list(
     ##' @description Create a pkgapi object
     ##'
-    ##' @param ... Parameters passed to [plumber::plumber()]
+    ##' @param ... Parameters passed to \code{\link{plumber::plumber}}
     initialize = function(...) {
       super$initialize(...)
       self$setErrorHandler(pkgapi_error_handler)
@@ -20,10 +20,8 @@ pkgapi <- R6::R6Class(
 
     ##' @description Handle an endpoint
     ##'
-    ##' @param endpoint A \code{pkgapi_endpoint} object representing
-    ##' an endpoint.  See \code{\link{pkgapi_endpoint_json}} and
-    ##' \code{\link{pkgapi_endpoint_binary}} for information.  Unlike
-    ##' plumber, an R function will \emph{not} work.
+    ##' @param endpoint A \code{\link{pkgapi_endpoint}} object representing
+    ##' an endpoint.  Unlike plumber, an R function will \emph{not} work.
     handle = function(endpoint) {
       ## NOTE: this ignores the 'preempt' arg - because the underlying
       ## logic of the super method uses missing() it's not

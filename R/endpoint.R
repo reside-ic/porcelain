@@ -4,8 +4,6 @@
 ##'   together an HTTP method (e.g., \code{GET}), a path (e.g.,
 ##'   \code{/path}) and a target R function.  Unlike plumber
 ##'   endpoints, pkgapi endpoints are meant to be used in testing.
-##'   See \code{\link{pkgapi_endpoint_json}} and
-##'   \code{\link{pkgapi_endpoint_binary}} for examples of use.
 ##'
 ##' @export
 pkgapi_endpoint <- R6::R6Class(

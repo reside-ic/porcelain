@@ -56,7 +56,7 @@ Create a pkgapi object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{Parameters passed to [plumber::plumber()]}
+\item{\code{...}}{Parameters passed to \code{\link{plumber::plumber}}}
 }
 \if{html}{\out{</div>}}
 }
@@ -72,10 +72,8 @@ Handle an endpoint
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{endpoint}}{A \code{pkgapi_endpoint} object representing
-an endpoint.  See \code{\link{pkgapi_endpoint_json}} and
-\code{\link{pkgapi_endpoint_binary}} for information.  Unlike
-plumber, an R function will \emph{not} work.}
+\item{\code{endpoint}}{A \code{\link{pkgapi_endpoint}} object representing
+an endpoint.  Unlike plumber, an R function will \emph{not} work.}
 }
 \if{html}{\out{</div>}}
 }
