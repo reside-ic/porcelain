@@ -39,3 +39,8 @@ lock_bindings <- function(names, e) {
     lockBinding(nm, e)
   }
 }
+
+
+squote <- function(x) {
+  sprintf("'%s'", x)
+}
