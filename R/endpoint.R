@@ -24,6 +24,8 @@ pkgapi_endpoint <- R6::R6Class(
     target = NULL,
     ##' @field validate Logical, indicating if response validation is used
     validate = NULL,
+    ##' @field inputs Input control
+    inputs = NULL,
     ##' @field returning An \code{\link{pkgapi_returning}} object
     ##' controlling the return type (content type, status code,
     ##' serialisation and validation information).
@@ -52,12 +54,17 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param validate_response Optional function that throws an error
     ##' of the processed body is "invalid".
     initialize = function(method, path, target, returning,
+                          input_query = NULL,
                           validate = FALSE) {
       self$method <- method
       self$path <- path
       self$target <- target
       assert_is(returning, "pkgapi_returning")
       self$returning <- returning
+
+      ## This is only part of the problem here: we need the metadata
+      ## stored somewhere too.
+      self$inputs <- pkgapi_inputs_init(input_query, formals(target))
 
       self$validate <- validate
       lock_bindings(c("method", "path", "target", "returning"), self)
@@ -88,6 +95,9 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param req,res Conventional plumber request/response objects
     ##' @param ... Additional arguments passed through to \code{run}
     plumber = function(req, res, ...) {
-      self$run(...)
+      tryCatch({
+        args <- self$inputs(req$pkgapi_query)
+        do.call(self$run, args)
+      }, error = pkgapi_process_error)
     }
   ))
