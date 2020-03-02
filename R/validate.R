@@ -27,13 +27,18 @@ pkgapi_validator <- function(schema, root) {
 }
 
 
-schema_root <- function(root, handler) {
-  if (is.null(root)) {
-    package <- utils::packageName(environment(handler))
-    root <- system_file("schema", package = package)
-  } else {
-    assert_is_directory(root)
-    root <- normalizePath(root, mustWork = TRUE)
-  }
-  root
+## nolint start
+## If we have access to the handler here we could find its schema root
+## with something like:
+##
+##   package <- utils::packageName(environment(handler))
+##   root <- system_file("schema", package = package)
+##
+## but that would need harmonising with any other schema use - and
+## that might want to come through the endpoint object or even the
+## whole pkgapi object.
+## nolint end
+schema_root <- function(root) {
+  assert_is_directory(root)
+  normalizePath(root, mustWork = TRUE)
 }

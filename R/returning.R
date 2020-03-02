@@ -48,7 +48,7 @@ pkgapi_returning_json <- function(schema = NULL, root = NULL,
   content_type <- "application/json"
   status_code <- status_code
   process <- function(data) to_json_string(response_success(data))
-  validate <- pkgapi_validator(schema, schema_root(root, target))
+  validate <- pkgapi_validator(schema, schema_root(root))
   pkgapi_returning(content_type, process, validate, status_code)
 }
 
