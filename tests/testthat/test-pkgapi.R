@@ -31,7 +31,9 @@ test_that("wrap raw output", {
     as.raw(0:255)
   }
   endpoint <- pkgapi_endpoint$new(
-    "GET", "/binary", binary, pkgapi_returning_binary(), TRUE)
+    "GET", "/binary", binary,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
 
   expect_is(endpoint, "pkgapi_endpoint")
   expect_equal(endpoint$returning$content_type, "application/octet-stream")
@@ -69,7 +71,9 @@ test_that("build api - binary endpoint", {
     as.raw(0:255)
   }
   endpoint <- pkgapi_endpoint$new(
-    "GET", "/binary", binary, pkgapi_returning_binary(), TRUE)
+    "GET", "/binary", binary,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
   pr <- pkgapi$new()
   pr$handle(endpoint)
 
@@ -86,8 +90,8 @@ test_that("use routing parameter", {
   }
   endpoint <- pkgapi_endpoint$new(
     "GET", "/square/<n:int>", square,
-    pkgapi_returning_json("Number", "schema"),
-    TRUE)
+    returning = pkgapi_returning_json("Number", "schema"),
+    validate = TRUE)
 
   ## endpoint directly:
   res <- endpoint$run(4)
@@ -99,32 +103,6 @@ test_that("use routing parameter", {
   ## Through the api
   pr <- pkgapi$new()$handle(endpoint)
   res_api <- pr$request("GET", "/square/4")
-  expect_equal(res_api$status, 200)
-  expect_equal(res_api$headers[["Content-Type"]], "application/json")
-  expect_equal(res_api$body, res$body)
-})
-
-
-test_that("use query parameter", {
-  square <- function(n) {
-    n <- as.numeric(n)
-    jsonlite::unbox(n * n)
-  }
-  endpoint <- pkgapi_endpoint$new(
-    "GET", "/square", square,
-    pkgapi_returning_json("Number", "schema"),
-    TRUE)
-
-  ## endpoint directly:
-  res <- endpoint$run(4)
-  expect_equal(res$status_code, 200)
-  expect_equal(res$content_type, "application/json")
-  expect_equal(res$data, jsonlite::unbox(16))
-  expect_equal(res$body, to_json_string(response_success(res$data)))
-
-  ## Through the api
-  pr <- pkgapi$new()$handle(endpoint)
-  res_api <- pr$request("GET", "/square", c(n = 4))
   expect_equal(res_api$status, 200)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)

@@ -110,7 +110,9 @@ test_that("validate binary output", {
     "not binary"
   }
   endpoint <- pkgapi_endpoint$new(
-    "GET", "/binary", binary, pkgapi_returning_binary(), TRUE)
+    "GET", "/binary", binary,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 500L)
   endpoint$validate <- FALSE

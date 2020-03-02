@@ -21,7 +21,33 @@ test_that("Validate query parameters", {
 })
 
 
-test_that("Can accept query parameters from plumber", {
+test_that("Can use single query parameter", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(n = "numeric"),
+    validate = TRUE)
+
+  ## endpoint directly:
+  res <- endpoint$run(4)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(16))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- pr$request("GET", "/square", c(n = 4))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})
+
+
+test_that("Can validate query parameters from plumber, throwing nice errors", {
   multiply <- pkgapi_endpoint$new(
     "GET", "/multiply", function(a, b) jsonlite::unbox(a * b),
     input_query = pkgapi_input_query(a = "numeric", b = "numeric"),
