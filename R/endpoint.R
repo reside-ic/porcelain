@@ -64,8 +64,8 @@ pkgapi_endpoint <- R6::R6Class(
     },
 
     ##' @description Run the endpoint.  This will produce a
-    ##' standardised response pbject that contains \code{status_code},
-    ##' \code{content_type}, \code{body} (the serialised output as tun
+    ##' standardised response object that contains \code{status_code},
+    ##' \code{content_type}, \code{body} (the serialised output as run
     ##' through the \code{process} method and returned by plumber) and
     ##' \code{data} (the result of running the target function)
     ##'

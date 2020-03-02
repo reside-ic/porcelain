@@ -72,8 +72,8 @@ of the processed body is "invalid".}
 \if{html}{\out{<a id="method-run"></a>}}
 \subsection{Method \code{run()}}{
 Run the endpoint.  This will produce a
-standardised response pbject that contains \code{status_code},
-\code{content_type}, \code{body} (the serialised output as tun
+standardised response object that contains \code{status_code},
+\code{content_type}, \code{body} (the serialised output as run
 through the \code{process} method and returned by plumber) and
 \code{data} (the result of running the target function)
 \subsection{Usage}{

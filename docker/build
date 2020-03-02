@@ -6,7 +6,7 @@ HERE=$(dirname $0)
 docker build --pull \
        --build-arg GIT_ID=$GIT_SHA \
        --build-arg GIT_BRANCH=$GIT_BRANCH \
-       --build-arg DETTL_VERSION=$PKG_VERSION \
+       --build-arg PKGAPI_VERSION=$PKG_VERSION \
        --tag $TAG_SHA \
        --tag $TAG_BRANCH \
        --tag $TAG_VERSION \

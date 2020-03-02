@@ -24,6 +24,7 @@ test_that("error can be constructed", {
   expect_equal(err$data, list(list(error = jsonlite::unbox("a"),
                                    detail = jsonlite::unbox("error"))))
   expect_equal(err$status_code, 400L)
+  expect_match(err$message, "pkgapi_error:\\s+\\* a: error")
 })
 
 
