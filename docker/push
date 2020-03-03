@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(dirname $0)
+. $HERE/common
+
+docker push $TAG_SHA
+docker push $TAG_BRANCH
+docker push $TAG_VERSION
+
+if [ $GIT_BRANCH == "master" ]; then
+    TAG_LATEST="${PACKAGE_ORG}/${PACKAGE_NAME}:latest"
+    docker tag $TAG_BRANCH $TAG_LATEST
+fi

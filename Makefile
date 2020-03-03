@@ -9,9 +9,12 @@ test:
 test_all:
 	REMAKE_TEST_INSTALL_PACKAGES=true make test
 
+# https://github.com/r-lib/roxygen2/issues/963
 roxygen:
 	@mkdir -p man
 	${RSCRIPT} -e "library(methods); devtools::document()"
+	sed -i.bak 's/^.*plumber::hookable}} -> //' man/pkgapi.Rd
+	rm -f man/pkgapi.Rd.bak
 
 install:
 	R CMD INSTALL .
