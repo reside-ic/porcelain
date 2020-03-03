@@ -156,6 +156,72 @@ test_that("use routing parameter", {
 })
 
 
+test_that("use text routing parameter", {
+  operation <- function(type, x, y) {
+    op <- switch(type,
+           "plus" = `+`,
+           "minus" = `-`)
+    jsonlite::unbox(op(x, y))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/operation/<type>", operation,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(x = "numeric", y = "numeric"),
+    validate = TRUE)
+
+  res <- endpoint$run(type = "plus", x = 3, y = 4)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(7))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- pr$request("GET", "/operation/plus", c(x = 3, y = 4))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})
+
+
+test_that("Can use an optional logical parameter", {
+  hello <- function(positive = TRUE) {
+    jsonlite::unbox(if (positive) 1 else -1)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/hello", hello,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(positive = "logical"),
+    validate = TRUE)
+
+  ## endpoint directly:
+  resf <- endpoint$run(FALSE)
+  expect_equal(resf$status_code, 200)
+  expect_equal(resf$content_type, "application/json")
+  expect_equal(resf$data, jsonlite::unbox(-1))
+  expect_equal(resf$body, to_json_string(response_success(resf$data)))
+
+  rest <- endpoint$run()
+  expect_equal(rest$status_code, 200)
+  expect_equal(rest$content_type, "application/json")
+  expect_equal(rest$data, jsonlite::unbox(1))
+  expect_equal(rest$body, to_json_string(response_success(rest$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  resf_api <- pr$request("GET", "/hello", c(positive = FALSE))
+  expect_equal(resf_api$status, 200)
+  expect_equal(resf_api$headers[["Content-Type"]], "application/json")
+  expect_equal(resf_api$body, resf$body)
+
+  pr <- pkgapi$new()$handle(endpoint)
+  rest_api <- pr$request("GET", "/hello")
+  expect_equal(rest_api$status, 200)
+  expect_equal(rest_api$headers[["Content-Type"]], "application/json")
+  expect_equal(rest_api$body, rest$body)
+})
+
+
 test_that("use binary body", {
   mean_rds <- function(x) {
     jsonlite::unbox(mean(unserialize(x)))
