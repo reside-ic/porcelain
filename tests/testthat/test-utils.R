@@ -33,3 +33,23 @@ test_that("parse_plumber_path", {
                cbind(name = c("id", "action"),
                      type = c("string", "string")))
 })
+
+
+test_that("parse_mime", {
+  expect_equal(
+    parse_mime("text/plain"),
+    list(mime = "text/plain", type = "text", subtype = "plain",
+         is_text = TRUE))
+  expect_equal(
+    parse_mime("application/json"),
+    list(mime = "application/json", type = "application", subtype = "json",
+         is_text = TRUE))
+  expect_equal(
+    parse_mime("application/octet-stream"),
+    list(mime = "application/octet-stream", type = "application",
+         subtype = "octet-stream", is_text = FALSE))
+
+  expect_equal(
+    parse_mime("text/plain;charset=UTF-8"),
+    parse_mime("text/plain"))
+})

@@ -90,27 +90,26 @@ parse_plumber_path <- function(x) {
 ## Doing this properly requires the following:
 ##   https://mimesniff.spec.whatwg.org/#parsing-a-mime-type
 ##
+## See also http://pretty-rfc.herokuapp.com/RFC2616#media.types
+##
 ## I'm just punting on this now.
 parse_mime <- function(mime) {
   if (is.null(mime)) {
     return(NULL)
   }
   if (grepl(";", mime, fixed = TRUE)) {
-    stop("Fancy mime not yet supported")
+    ## TODO: just discard all parameters everything for
+    ## now. Practically the things we will be interested in here are
+    ## the encoding I think.
+    mime <- sub("\\s*;.*", "", mime)
   }
   parts <- strsplit(mime, "/", fixed = TRUE)[[1L]]
   type <- parts[[1L]]
   subtype <- parts[[2L]]
   is_text <- type == "text" ||
     (type == "application" && subtype %in% c("xml", "json"))
-  if (is_text) {
-    encoding <- "UTF-8"
-  } else {
-    encoding <- NULL
-  }
   list(mime = mime,
        type = type,
        subtype = subtype,
-       is_text = is_text,
-       encoding = encoding)
+       is_text = is_text)
 }
