@@ -11,12 +11,6 @@ plumber_request <- function(plumber, method, path, query = NULL,
     read = function() body)
 
   if (!is.null(body)) {
-    ## TODO: could set this in the header too, especially when
-    ## starting to work with header inputs more generally.  We'd be
-    ## looking to set the HEADERS field with a lower case:
-    ## "content-type" = content_type, along with the "content-length"
-    ## being a string which is the length.  Deal with that at the same
-    ## time as the accept header?
     req[["HTTP_CONTENT_TYPE"]] <- request_content_type(body, content_type)
   }
 

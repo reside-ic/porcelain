@@ -98,9 +98,8 @@ parse_mime <- function(mime) {
     return(NULL)
   }
   if (grepl(";", mime, fixed = TRUE)) {
-    ## TODO: just discard all parameters everything for
-    ## now. Practically the things we will be interested in here are
-    ## the encoding I think.
+    ## Discard all parameters for now - later we might use these if we
+    ## have text/plain inputs with encoding to get right.
     mime <- sub("\\s*;.*", "", mime)
   }
   parts <- strsplit(mime, "/", fixed = TRUE)[[1L]]

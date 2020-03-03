@@ -17,7 +17,6 @@ pkgapi_validate <- function(json, validator, query) {
 ## environment variable to also require it in tests.
 pkgapi_validator <- function(schema, root, query) {
   if (is.null(schema)) {
-    # TODO: validate the we do actually have json...
     return(function(...) NULL)
   }
   force(query)

@@ -67,11 +67,6 @@ pkgapi_endpoint <- R6::R6Class(
       assert_is(returning, "pkgapi_returning")
       self$returning <- returning
 
-      ## TODO: Assert HTTP/REST compliance on presence of body
-
-      ## This is only part of the problem here: we need the metadata
-      ## stored somewhere too; things like "required" don't make it
-      ## out of here but should and will require a little tweaking.
       self$inputs <- pkgapi_inputs_init(path, input_query, input_body,
                                         formals(target))
 
@@ -104,8 +99,8 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param req,res Conventional plumber request/response objects
     ##' @param ... Additional arguments passed through to \code{run}
     plumber = function(req, res, ...) {
-      ## TODO: It's not abundantly clear here what we do to get the
-      ## args out, but this works at least:
+      ## It's not abundantly clear here what we do to get the path
+      ## args, and they cannot be retrieved from the filters it seems.
       pkgapi_path <- req$args[seq_len(length(req$args) - 2L)]
       tryCatch({
         args <- self$inputs(pkgapi_path, req$pkgapi_query, req$pkgapi_body)
