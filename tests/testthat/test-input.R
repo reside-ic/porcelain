@@ -293,3 +293,17 @@ test_that("inputs must match function args", {
     "Argument 'm' (used in query) missing from the target function",
     fixed = TRUE)
 })
+
+
+test_that("No duplicated args allowed", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  expect_error(pkgapi_endpoint$new(
+    "GET", "/square/<n>", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(n = "numeric"),
+    validate = TRUE),
+    "Duplicated parameter names: 'n' (in path), 'n' (in query)",
+    fixed = TRUE)
+})

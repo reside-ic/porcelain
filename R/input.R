@@ -81,7 +81,6 @@ pkgapi_input <- function(name, type, where, validator = NULL, ...) {
 }
 
 
-## TODO: duplicate passed query parameters not supported yet (are allowed)
 pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
   inputs_path <- pkgapi_input_path(path)
   validate_path <- pkgapi_input_validator_simple(inputs_path, args, "path")
@@ -91,8 +90,11 @@ pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
   inputs <- c(inputs_path, inputs_query) # TODO: inputs_body not here yet
   nms <- vcapply(inputs, "[[", "name")
   if (anyDuplicated(nms)) {
-    message("fix duplicated")
-    browser()
+    i <- nms %in% unique(nms[duplicated(nms)])
+    err <- sort(vcapply(inputs[i], function(x)
+      sprintf("'%s' (in %s)", x$name, x$where)))
+    stop("Duplicated parameter names: ", paste(err, collapse = ", "),
+         call. = FALSE)
   }
 
   function(path, query, body) {
