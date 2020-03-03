@@ -84,11 +84,11 @@ pkgapi_input <- function(name, type, where, validator = NULL, ...) {
 ## TODO: duplicate passed query parameters not supported yet (are allowed)
 pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
   inputs_path <- pkgapi_input_path(path)
-  validate_path <- pkgapi_input_validator_simple(inputs_path, args)
-  validate_query <- pkgapi_input_validator_simple(inputs_query, args)
+  validate_path <- pkgapi_input_validator_simple(inputs_path, args, "path")
+  validate_query <- pkgapi_input_validator_simple(inputs_query, args, "query")
   validate_body <- pkgapi_input_validator_body(inputs_body, args)
 
-  inputs <- c(inputs_path, inputs_query)
+  inputs <- c(inputs_path, inputs_query) # TODO: inputs_body not here yet
   nms <- vcapply(inputs, "[[", "name")
   if (anyDuplicated(nms)) {
     message("fix duplicated")
@@ -168,7 +168,7 @@ pkgapi_input_validator_basic <- function(type) {
 }
 
 
-pkgapi_input_validator_simple <- function(inputs, args) {
+pkgapi_input_validator_simple <- function(inputs, args, where) {
   inputs <- lapply(inputs, pkgapi_input_init, args)
   nms <- vcapply(inputs, "[[", "name")
 
@@ -176,31 +176,34 @@ pkgapi_input_validator_simple <- function(inputs, args) {
     pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
   }
 
-  function(query) {
+  function(given) {
     for (i in inputs) {
-      value <- query[[i$name]]
+      value <- given[[i$name]]
       if (i$required || !is.null(value)) {
-        query[[i$name]] <- tryCatch(
+        given[[i$name]] <- tryCatch(
           i$validator(value),
           error = function(e)
             throw("Error parsing %s parameter '%s': %s",
-                  i$name, i$where, e$message))
+                  i$where, i$name, e$message))
       }
     }
 
-    extra <- setdiff(names(query), nms)
+    extra <- setdiff(names(given), nms)
     if (length(extra) > 0L) {
-      message("Fix message")
-      browser()
-      throw("Recieved extra query parameters: %s", paste(squote(extra)))
+      throw("Recieved extra %s parameters: %s",
+            where, paste(squote(extra), collapse = ", "))
     }
 
-    query
+    given
   }
 }
 
 
 pkgapi_input_validator_body <- function(body, args) {
+  if (is.null(body)) {
+    ## TODO: Probably we should throw if a body *is* provided...
+    return(function(body, content_type) NULL)
+  }
   input <- pkgapi_input_init(body, args)
 
   throw <- function(msg, ...) {

@@ -3,7 +3,8 @@ context("input")
 
 test_that("Validate query parameters", {
   q <- pkgapi_input_query(a = "numeric", b = "numeric")
-  res <- pkgapi_input_validator_simple(q, formals(function(a, b) NULL))
+  args <- formals(function(a, b) NULL)
+  res <- pkgapi_input_validator_simple(q, args, "query")
   expect_equal(res(list(a = "1", b = "2")), list(a = 1, b = 2))
 
   err <- expect_error(res(list(a = "1", b = "x")), class = "pkgapi_error")
@@ -53,7 +54,7 @@ test_that("Can validate query parameters from plumber, throwing nice errors", {
     input_query = pkgapi_input_query(a = "numeric", b = "numeric"),
     returning = pkgapi_returning_json())
 
-  expect_equal(multiply$inputs(list(a = "1", b = "2")),
+  expect_equal(multiply$inputs(NULL, list(a = "1", b = "2"), NULL),
                list(a = 1, b = 2))
 
   api <- pkgapi$new()
@@ -68,7 +69,7 @@ test_that("Can validate query parameters from plumber, throwing nice errors", {
   expect_equal(res$status, 400)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   dat <- jsonlite::fromJSON(res$body, FALSE)
-  expect_equal(dat$errors[[1]]$error, "INVALID_QUERY")
+  expect_equal(dat$errors[[1]]$error, "INVALID_INPUT")
   expect_match(
     dat$errors[[1]]$detail,
     "Error parsing query parameter 'b': Could not convert 'x'",
