@@ -361,6 +361,34 @@ test_that("Use json body", {
 })
 
 
+test_that("validate json body against schema", {
+  square <- function(n) {
+    x <- jsonlite::fromJSON(n)
+    jsonlite::unbox(x * x)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "POST", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_body = pkgapi_input_body_json("n", "Number", "schema"),
+    validate = TRUE)
+
+  data <- "not a number"
+  payload <- to_json_string(jsonlite::unbox(data))
+
+  v <- pkgapi_validator("Number", "schema", query = NULL)
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res <- pr$request("POST", "/square", body = payload)
+  expect_equal(res$status, 400)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  errs <- from_json(res$body)$errors[[1]]
+  expect_equal(errs$error, "INVALID_INPUT")
+  expect_match(errs$detail, "^Invalid body provided:")
+  expect_match(errs$detail, get_error(v(payload))$message, fixed = TRUE)
+})
+
+
 test_that("inputs must match function args", {
   square <- function(n) {
     jsonlite::unbox(n * n)
