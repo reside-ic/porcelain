@@ -6,6 +6,11 @@ get_error <- function(expr) {
 }
 
 
+from_json <- function(x) {
+  jsonlite::fromJSON(x, FALSE)
+}
+
+
 validator_response_failure <- jsonvalidate::json_validator(
   system_file("schema/response-failure.json", package = "pkgapi"),
   engine = "ajv")

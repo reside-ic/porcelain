@@ -18,6 +18,7 @@ pkgapi_filter_post_body <- function(req, res) {
   } else {
     value <- input$read()
   }
-  req$pkgapi_body <- list(type = type, value = value)
+  req$pkgapi_body <- list(type = type, value = value,
+                          provided = length(value) > 0L)
   plumber::forward()
 }

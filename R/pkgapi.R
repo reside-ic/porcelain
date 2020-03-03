@@ -59,8 +59,10 @@ pkgapi <- R6::R6Class(
     ##'
     ##' @param body Optional body (only valid with \code{PUT}, \code{POST},
     ##' etc).
-    request = function(method, path, query = NULL, body = NULL) {
-      plumber_request(self, method, path, query, body = body)
+    request = function(method, path, query = NULL, body = NULL,
+                       content_type = NULL) {
+      plumber_request(self, method, path, query, body = body,
+                      content_type = content_type)
     }
   ))
 

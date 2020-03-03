@@ -251,6 +251,41 @@ test_that("use binary body", {
 })
 
 
+test_that("validate binary body on input", {
+  mean_rds <- function(x) {
+    jsonlite::unbox(mean(unserialize(x)))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "POST", "/mean", mean_rds,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_body = pkgapi_input_body_binary("x"),
+    validate = TRUE)
+
+  data <- runif(10)
+  payload <- serialize(data, NULL)
+
+  pr <- pkgapi$new()$handle(endpoint)
+
+  res <- pr$request("POST", "/mean")
+  expect_equal(res$status, 400)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(from_json(res$body)$errors[[1]],
+               list(error = "INVALID_INPUT",
+                    detail = "Body was not provided"))
+
+  res <- pr$request("POST", "/mean", body = "[1,2,3]",
+                    content_type = "application/json")
+  expect_equal(res$status, 400)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(
+    from_json(res$body)$errors[[1]],
+    list(
+      error = "INVALID_INPUT",
+      detail = paste("Expected content type 'application/octet-stream'",
+                     "but was sent 'application/json'")))
+})
+
+
 test_that("Use json body", {
   square <- function(n) {
     x <- jsonlite::fromJSON(n)

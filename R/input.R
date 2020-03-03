@@ -232,8 +232,15 @@ pkgapi_input_validator_body <- function(body, args) {
   content_type <- parse_mime(input$content_type)
 
   function(body) {
-    if (required && is.null(body)) { # TODO: or length zero?
-      throw("Body was not provided")
+    if (!body$provided) {
+      if (required) {
+        throw("Body was not provided")
+      } else {
+        return(NULL)
+      }
+    }
+    if (is.null(body$type$mime)) {
+      throw("Content-Type was not set (expected '%s')", content_type$mime)
     }
     if (body$type$mime != content_type$mime) {
       throw("Expected content type '%s' but was sent '%s'",
