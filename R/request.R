@@ -17,7 +17,7 @@ plumber_request <- function(plumber, method, path, query = NULL,
     ## "content-type" = content_type, along with the "content-length"
     ## being a string which is the length.  Deal with that at the same
     ## time as the accept header?
-    req$HTTP_CONTENT_TYPE <- request_content_type(body, content_type)
+    req[["HTTP_CONTENT_TYPE"]] <- request_content_type(body, content_type)
   }
 
   res <- plumber_response()
