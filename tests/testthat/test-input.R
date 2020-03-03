@@ -3,7 +3,7 @@ context("input")
 
 test_that("Validate query parameters", {
   q <- pkgapi_input_query(a = "numeric", b = "numeric")
-  res <- pkgapi_input_validator_query(q, formals(function(a, b) NULL))
+  res <- pkgapi_input_validator_simple(q, formals(function(a, b) NULL))
   expect_equal(res(list(a = "1", b = "2")), list(a = 1, b = 2))
 
   err <- expect_error(res(list(a = "1", b = "x")), class = "pkgapi_error")
@@ -102,7 +102,7 @@ test_that("use routing parameter", {
 })
 
 
-test_that("use body", {
+test_that("use binary body", {
   mean_rds <- function(x) {
     jsonlite::unbox(mean(unserialize(x)))
   }
@@ -125,6 +125,36 @@ test_that("use body", {
   ## Through the api
   pr <- pkgapi$new()$handle(endpoint)
   res_api <- pr$request("POST", "/mean", body = payload)
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})
+
+
+test_that("Use json body", {
+  square <- function(n) {
+    x <- jsonlite::fromJSON(n)
+    jsonlite::unbox(x * x)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "POST", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_body = pkgapi_input_body_json("n", "Number", "schema"),
+    validate = TRUE)
+
+  data <- 3
+  payload <- to_json_string(jsonlite::unbox(data))
+
+  ## endpoint directly:
+  res <- endpoint$run(n = payload)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(9L))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- pr$request("POST", "/square", body = payload)
   expect_equal(res_api$status, 200)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)

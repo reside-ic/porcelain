@@ -54,7 +54,7 @@ pkgapi_input_body_binary <- function(name) {
 ##' @rdname pkgapi_input_body
 pkgapi_input_body_json <- function(name, schema, root) {
   assert_scalar_character(name)
-  validator <- pkgapi_validator(schema, schema_root(root))
+  validator <- pkgapi_validator(schema, schema_root(root), query = NULL)
   pkgapi_input(name, "json", "body", validator,
                content_type = "application/json")
 }
