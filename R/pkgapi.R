@@ -9,8 +9,7 @@ pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
-  public = list(
-    ##' @description Create a pkgapi object
+  public = list(##' @description Create a pkgapi object
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
     initialize = function(...) {
@@ -59,6 +58,11 @@ pkgapi <- R6::R6Class(
     ##'
     ##' @param body Optional body (only valid with \code{PUT}, \code{POST},
     ##' etc).
+    ##'
+    ##' @param content_type Optional content type (mime) which can be
+    ##' provided alongside \code{body}.  If not provided it is set to
+    ##' \code{application/octet-stream} if \code{body} is raw, or
+    ##' \code{application/json} otherwise.
     request = function(method, path, query = NULL, body = NULL,
                        content_type = NULL) {
       plumber_request(self, method, path, query, body = body,

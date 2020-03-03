@@ -48,7 +48,6 @@ A \code{pkgapi} object.  This extends (via
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
-Create a pkgapi object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pkgapi$new(...)}\if{html}{\out{</div>}}
 }
@@ -87,7 +86,7 @@ Sends a request to plumber so that the API can be easily
 tested without running the whole API. The interface here will
 probably change, and may end up using the interface of \code{httr}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi$request(method, path, query = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi$request(method, path, query = NULL, body = NULL, content_type = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -99,6 +98,14 @@ probably change, and may end up using the interface of \code{httr}.
 
 \item{\code{query}}{Optional query parameters as a named list or
 character vector.}
+
+\item{\code{body}}{Optional body (only valid with \code{PUT}, \code{POST},
+etc).}
+
+\item{\code{content_type}}{Optional content type (mime) which can be
+provided alongside \code{body}.  If not provided it is set to
+\code{application/octet-stream} if \code{body} is raw, or
+\code{application/json} otherwise.}
 }
 \if{html}{\out{</div>}}
 }

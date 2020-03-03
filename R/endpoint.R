@@ -47,9 +47,14 @@ pkgapi_endpoint <- R6::R6Class(
     ##' enabled.  This should be set to \code{FALSE} in production
     ##' environments.
     ##'
-    ##' @param process Optional processing function that will serialise
-    ##' the data produced by \code{target} into an appropriate body to
-    ##' be returned by plumber.
+    ##' @param input_query Information on input parameters, using
+    ##' \code{\link{pkgapi_input_query}}.  The names used must match
+    ##' the names in \code{target}.
+    ##'
+    ##' @param input_body Information on body, using
+    ##' \code{\link{pkgapi_input_body_binary}} or
+    ##' \code{\link{pkgapi_input_body_json}}.  Only a single body
+    ##' element can be specified.
     ##'
     ##' @param validate_response Optional function that throws an error
     ##' of the processed body is "invalid".

@@ -20,6 +20,8 @@ Create a \code{pkgapi_endpoint} object that collects
 
 \item{\code{validate}}{Logical, indicating if response validation is used}
 
+\item{\code{inputs}}{Input control}
+
 \item{\code{returning}}{An \code{\link{pkgapi_returning}} object
 controlling the return type (content type, status code,
 serialisation and validation information).}
@@ -39,7 +41,15 @@ serialisation and validation information).}
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, returning, validate = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(
+  method,
+  path,
+  target,
+  returning,
+  input_query = NULL,
+  input_body = NULL,
+  validate = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -53,14 +63,19 @@ Create an endpoint
 
 \item{\code{returning}}{Information about what the endpoint returns,}
 
+\item{\code{input_query}}{Information on input parameters, using
+\code{\link{pkgapi_input_query}}.  The names used must match
+the names in \code{target}.}
+
+\item{\code{input_body}}{Information on body, using
+\code{\link{pkgapi_input_body_binary}} or
+\code{\link{pkgapi_input_body_json}}.  Only a single body
+element can be specified.}
+
 \item{\code{validate}}{Logical, indicating if any validation
 (implemented by the \code{validate_response} argument) should be
 enabled.  This should be set to \code{FALSE} in production
 environments.}
-
-\item{\code{process}}{Optional processing function that will serialise
-the data produced by \code{target} into an appropriate body to
-be returned by plumber.}
 
 \item{\code{validate_response}}{Optional function that throws an error
 of the processed body is "invalid".}
