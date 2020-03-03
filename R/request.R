@@ -1,21 +1,23 @@
 ## Support for easily sending requests to the plumber without running it
-plumber_request <- function(plumber, method, path, query = NULL, body = NULL) {
+plumber_request <- function(plumber, method, path, query = NULL,
+                            body = NULL, content_type = NULL) {
   req <- new.env(parent = emptyenv())
   req[["REQUEST_METHOD"]] <- toupper(method)
   req[["PATH_INFO"]] <- path
   req[["QUERY_STRING"]] <- query_string(query)
 
-  ## Some work here required to really nail the concept of the body,
-  ## but I believe that these are enough.
   req[["rook.input"]] <- list(
     read_lines = function() body,
     read = function() body)
 
   if (!is.null(body)) {
-    ## TODO: set the content type header here - default to
-    ## application/octet-stream for binary data?  This requires some
-    ## work running this up for real to work out what the correct mock
-    ## is.
+    ## TODO: could set this in the header too, especially when
+    ## starting to work with header inputs more generally.  We'd be
+    ## looking to set the HEADERS field with a lower case:
+    ## "content-type" = content_type, along with the "content-length"
+    ## being a string which is the length.  Deal with that at the same
+    ## time as the accept header?
+    req$HTTP_CONTENT_TYPE <- request_content_type(body, content_type)
   }
 
   res <- plumber_response()
@@ -45,4 +47,19 @@ query_string <- function(query) {
   assert_named(query)
   pairs <- sprintf("%s=%s", names(query), as.character(query))
   utils::URLencode(paste0("?", paste(pairs, collapse = "&")))
+}
+
+
+## Eventually we might move directly to using httr requests at which
+## point this goes away because we'd do perhaps httr::upload_file() or
+## something?
+request_content_type <- function(body, content_type) {
+  if (!is.null(content_type)) {
+    return(content_type)
+  }
+  if (is.raw(body)) {
+    return("application/octet-stream")
+  } else {
+    return("application/json")
+  }
 }

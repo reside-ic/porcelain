@@ -204,6 +204,9 @@ pkgapi_input_validator_body <- function(body, args) {
     ## TODO: Probably we should throw if a body *is* provided...
     return(function(body, content_type) NULL)
   }
+
+  ## This mostly does the checking against the target function to make
+  ## sure that body is being routed somewhere sensible.
   input <- pkgapi_input_init(body, args)
 
   throw <- function(msg, ...) {
@@ -212,18 +215,21 @@ pkgapi_input_validator_body <- function(body, args) {
 
   name <- input$name
   required <- input$required
-  validator <- input$validator
+  validator_content <- input$validator
+  content_type <- parse_mime(input$content_type)
 
-  ## TODO: This must act on content type, which requires work in the
-  ## mocks.
-  function(body, content_type) {
-    if (required && is.null(body)) { # or length zero?
+  function(body) {
+    if (required && is.null(body)) { # TODO: or length zero?
       throw("Body was not provided")
     }
+    if (body$type$mime != content_type$mime) {
+      throw("Expected content type '%s' but was sent '%s'",
+            content_type$mime, body$type$mime)
+    }
     tryCatch(
-      validator(body),
+      validator_content(body$value),
       error = function(e)
         throw("Invalid body provided: %s", e$message))
-    set_names(list(body), name)
+    set_names(list(body$value), name)
   }
 }

@@ -11,9 +11,13 @@ pkgapi_filter_query_string <- function(req, res) {
 
 
 pkgapi_filter_post_body <- function(req, res) {
-  ## We should look at req$HTTP_CONTENT_TYPE here and behave
-  ## accordingly, because we don't want to send the raw output through
-  ## to a text-wanting input!
-  req$pkgapi_body <- req[["rook.input"]]$read()
+  type <- parse_mime(req$HTTP_CONTENT_TYPE)
+  input <- req[["rook.input"]]
+  if (isTRUE(type$is_text)) {
+    value <- paste0(input$read_lines(), collapse = "\n")
+  } else {
+    value <- input$read()
+  }
+  req$pkgapi_body <- list(type = type, value = value)
   plumber::forward()
 }
