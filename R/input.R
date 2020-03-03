@@ -213,18 +213,21 @@ pkgapi_input_validator_simple <- function(inputs, args, where) {
 
 
 pkgapi_input_validator_body <- function(body, args) {
+  throw <- function(msg, ...) {
+    pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
+  }
+
   if (is.null(body)) {
-    ## TODO: Probably we should throw if a body *is* provided...
-    return(function(body, content_type) NULL)
+    return(function(body) {
+      if (body$provided) {
+        throw("This endpoint does not accept a body, but one was provided")
+      }
+    })
   }
 
   ## This mostly does the checking against the target function to make
   ## sure that body is being routed somewhere sensible.
   input <- pkgapi_input_init(body, args)
-
-  throw <- function(msg, ...) {
-    pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
-  }
 
   name <- input$name
   required <- input$required
