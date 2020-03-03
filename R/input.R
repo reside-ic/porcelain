@@ -135,6 +135,10 @@ pkgapi_input_validator_integer <- function(x) {
   if (is.na(res)) {
     stop(sprintf("Could not convert '%s' into an integer", x))
   }
+  if (abs(as.numeric(x) - res) > 1e-8) {
+    stop(sprintf("Could not convert '%s' into an integer (loses precision)",
+                 x))
+  }
   res
 }
 
@@ -150,12 +154,9 @@ pkgapi_input_validator_numeric <- function(x) {
 
 
 pkgapi_input_validator_string <- function(x) {
+  ## This will always come in as a string.
   assert_scalar(x)
-  res <- suppressWarnings(as.character(x))
-  if (is.na(res)) {
-    stop(sprintf("Could not convert '%s' into a string", x))
-  }
-  res
+  x
 }
 
 
