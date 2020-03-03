@@ -107,7 +107,8 @@ test_that("Can validate query parameters from plumber, throwing nice errors", {
     input_query = pkgapi_input_query(a = "numeric", b = "numeric"),
     returning = pkgapi_returning_json())
 
-  expect_equal(multiply$inputs(NULL, list(a = "1", b = "2"), NULL),
+  expect_equal(multiply$inputs(NULL, list(a = "1", b = "2"),
+                               list(provided = FALSE)),
                list(a = 1, b = 2))
 
   api <- pkgapi$new()
