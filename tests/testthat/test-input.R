@@ -286,6 +286,51 @@ test_that("validate binary body on input", {
 })
 
 
+test_that("Binary body can be optional", {
+  mean_rds <- function(x = NULL) {
+    if (is.null(x)) {
+      value <- 0
+    } else {
+      value <- mean(unserialize(x))
+    }
+    jsonlite::unbox(value)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "POST", "/mean", mean_rds,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_body = pkgapi_input_body_binary("x"),
+    validate = TRUE)
+
+  data <- runif(10)
+  payload <- serialize(data, NULL)
+
+  ## endpoint directly:
+  res1 <- endpoint$run()
+  expect_equal(res1$status_code, 200)
+  expect_equal(res1$content_type, "application/json")
+  expect_equal(res1$data, jsonlite::unbox(0))
+  expect_equal(res1$body, to_json_string(response_success(res1$data)))
+
+  res2 <- endpoint$run(payload)
+  expect_equal(res2$status_code, 200)
+  expect_equal(res2$content_type, "application/json")
+  expect_equal(res2$data, jsonlite::unbox(mean(data)))
+  expect_equal(res2$body, to_json_string(response_success(res2$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res1_api <- pr$request("POST", "/mean")
+  expect_equal(res1_api$status, 200)
+  expect_equal(res1_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res1_api$body, res1$body)
+
+  res2_api <- pr$request("POST", "/mean", body = payload)
+  expect_equal(res2_api$status, 200)
+  expect_equal(res2_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res2_api$body, res2$body)
+})
+
+
 test_that("Use json body", {
   square <- function(n) {
     x <- jsonlite::fromJSON(n)
@@ -357,4 +402,19 @@ test_that("Must provide all non-optional args", {
     input_query = pkgapi_input_query(a = "numeric"),
     validate = TRUE),
     NA)
+})
+
+
+test_that("body validator corner case", {
+  res <- pkgapi_input_validator_body(
+    pkgapi_input("name", "binary", "body",
+                 content_type = "application/octet-stream"),
+    formals(function(name) NULL))
+
+  err <- expect_error(res(list(provided = TRUE)), class = "pkgapi_error")
+  expect_equal(
+    err$data[[1]],
+    list(error = jsonlite::unbox("INVALID_INPUT"),
+         detail = jsonlite::unbox(
+           "Content-Type was not set (expected 'application/octet-stream')")))
 })
