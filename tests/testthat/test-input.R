@@ -279,3 +279,17 @@ test_that("Use json body", {
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
 })
+
+
+test_that("inputs must match function args", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  expect_error(pkgapi_endpoint$new(
+    "GET", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(m = "numeric"),
+    validate = TRUE),
+    "Argument 'm' (used in query) missing from the target function",
+    fixed = TRUE)
+})
