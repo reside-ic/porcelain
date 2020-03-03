@@ -87,13 +87,23 @@ pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
   validate_query <- pkgapi_input_validator_simple(inputs_query, args, "query")
   validate_body <- pkgapi_input_validator_body(inputs_body, args)
 
-  inputs <- c(inputs_path, inputs_query) # TODO: inputs_body not here yet
+  inputs <- c(inputs_path, inputs_query)
+  if (!is.null(inputs_body)) {
+    inputs <- c(inputs, list(inputs_body))
+  }
   nms <- vcapply(inputs, "[[", "name")
   if (anyDuplicated(nms)) {
     i <- nms %in% unique(nms[duplicated(nms)])
     err <- sort(vcapply(inputs[i], function(x)
       sprintf("'%s' (in %s)", x$name, x$where)))
     stop("Duplicated parameter names: ", paste(err, collapse = ", "),
+         call. = FALSE)
+  }
+
+  msg <- setdiff(input_required_args(args), nms)
+  if (length(msg) > 0L) {
+    stop("Required arguments to target function missing from inputs: ",
+         paste(squote(msg), collapse = ", "),
          call. = FALSE)
   }
 
@@ -235,4 +245,14 @@ pkgapi_input_validator_body <- function(body, args) {
         throw("Invalid body provided: %s", e$message))
     set_names(list(body$value), name)
   }
+}
+
+
+input_required_args <- function(args) {
+  required <- logical(length(args))
+  for (i in seq_along(args)) {
+    x <- args[[i]]
+    required[[i]] <- missing(x)
+  }
+  names(args)[required]
 }

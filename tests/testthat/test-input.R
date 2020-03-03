@@ -307,3 +307,19 @@ test_that("No duplicated args allowed", {
     "Duplicated parameter names: 'n' (in path), 'n' (in query)",
     fixed = TRUE)
 })
+
+
+test_that("Must provide all non-optional args", {
+  expect_error(pkgapi_endpoint$new(
+    "GET", "/add", function(a, b) jsonlite::unbox(a + b),
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(a = "numeric"),
+    validate = TRUE),
+    "Required arguments to target function missing from inputs: 'b'")
+  expect_error(pkgapi_endpoint$new(
+    "GET", "/add", function(a, b = 1) jsonlite::unbox(a + b),
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(a = "numeric"),
+    validate = TRUE),
+    NA)
+})
