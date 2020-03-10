@@ -81,40 +81,6 @@ pkgapi_input <- function(name, type, where, validator = NULL, ...) {
 }
 
 
-pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
-  inputs_path <- pkgapi_input_path(path)
-  validate_path <- pkgapi_input_validator_simple(inputs_path, args, "path")
-  validate_query <- pkgapi_input_validator_simple(inputs_query, args, "query")
-  validate_body <- pkgapi_input_validator_body(inputs_body, args)
-
-  inputs <- c(inputs_path, inputs_query)
-  if (!is.null(inputs_body)) {
-    inputs <- c(inputs, list(inputs_body))
-  }
-  nms <- vcapply(inputs, "[[", "name")
-  if (anyDuplicated(nms)) {
-    i <- nms %in% unique(nms[duplicated(nms)])
-    err <- sort(vcapply(inputs[i], function(x)
-      sprintf("'%s' (in %s)", x$name, x$where)))
-    stop("Duplicated parameter names: ", paste(err, collapse = ", "),
-         call. = FALSE)
-  }
-
-  msg <- setdiff(input_required_args(args), nms)
-  if (length(msg) > 0L) {
-    stop("Required arguments to target function missing from inputs: ",
-         paste(squote(msg), collapse = ", "),
-         call. = FALSE)
-  }
-
-  function(path, query, body) {
-    c(validate_path(path),
-      validate_query(query),
-      validate_body(body))
-  }
-}
-
-
 pkgapi_input_init <- function(input, args) {
   assert_is(input, "pkgapi_input")
   name <- input$name
@@ -266,3 +232,52 @@ input_required_args <- function(args) {
   }
   names(args)[required]
 }
+
+
+## Classes that hold the required data for input validation.
+pkgapi_inputs <- R6::R6Class(
+  "pkgapi_inputs",
+
+  private = list(
+    process_path = NULL,
+    process_query = NULL,
+    process_body = NULL
+  ),
+
+  public = list(
+    initialize = function(path, inputs_query, inputs_body, args) {
+
+      inputs_path <- pkgapi_input_path(path)
+      private$process_path <-
+        pkgapi_input_validator_simple(inputs_path, args, "path")
+      private$process_query <-
+        pkgapi_input_validator_simple(inputs_query, args, "query")
+      private$process_body <- pkgapi_input_validator_body(inputs_body, args)
+
+      inputs <- c(inputs_path, inputs_query)
+      if (!is.null(inputs_body)) {
+        inputs <- c(inputs, list(inputs_body))
+      }
+      nms <- vcapply(inputs, "[[", "name")
+      if (anyDuplicated(nms)) {
+        i <- nms %in% unique(nms[duplicated(nms)])
+        err <- sort(vcapply(inputs[i], function(x)
+          sprintf("'%s' (in %s)", x$name, x$where)))
+        stop("Duplicated parameter names: ", paste(err, collapse = ", "),
+             call. = FALSE)
+      }
+
+      msg <- setdiff(input_required_args(args), nms)
+      if (length(msg) > 0L) {
+        stop("Required arguments to target function missing from inputs: ",
+             paste(squote(msg), collapse = ", "),
+             call. = FALSE)
+      }
+    },
+
+    process = function(path, query, body) {
+      c(private$process_path(path),
+        private$process_query(query),
+        private$process_body(body))
+    }
+  ))

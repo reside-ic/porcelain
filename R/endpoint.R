@@ -67,8 +67,8 @@ pkgapi_endpoint <- R6::R6Class(
       assert_is(returning, "pkgapi_returning")
       self$returning <- returning
 
-      self$inputs <- pkgapi_inputs_init(path, input_query, input_body,
-                                        formals(target))
+      self$inputs <- pkgapi_inputs$new(path, input_query, input_body,
+                                       formals(target))
 
       self$validate <- validate
       lock_bindings(c("method", "path", "target", "returning"), self)
@@ -103,7 +103,8 @@ pkgapi_endpoint <- R6::R6Class(
       ## args, and they cannot be retrieved from the filters it seems.
       pkgapi_path <- req$args[seq_len(length(req$args) - 2L)]
       tryCatch({
-        args <- self$inputs(pkgapi_path, req$pkgapi_query, req$pkgapi_body)
+        args <- self$inputs$process(
+          pkgapi_path, req$pkgapi_query, req$pkgapi_body)
         do.call(self$run, args)
       }, error = pkgapi_process_error)
     }
