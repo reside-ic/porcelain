@@ -1,11 +1,10 @@
 con <- setup_db()
 
 add_book <- function(book) {
-  browser()
   DBI::dbAppendTable(con, "books", as_data_frame(book))
   id <- DBI::dbGetQuery(con, sprintf("SELECT id FROM books WHERE title = '%s'",
                                      book$title))[[1]]
-  list(id = id)
+  list(id = jsonlite::unbox(id))
 }
 
 get_book_details <- function(title, details = NULL) {
@@ -19,5 +18,5 @@ get_book_details <- function(title, details = NULL) {
   if (nrow(data) == 0) {
     stop(sprintf("Could not find book with title '%s'.", title))
   }
-  data
+  lapply(data, jsonlite::unbox)
 }

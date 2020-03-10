@@ -8,11 +8,17 @@ test_that("can add a new book to the db", {
     setting = "London"
   )
   id <- add_book(book)
-  expect_equal(id, list(id = 1))
+  expect_equal(id, list(id = jsonlite::unbox(1L)))
 
   out <- DBI::dbGetQuery(con,
                          "SELECT * FROM books WHERE author = 'Oscar Wilde'")
   expect_equal(nrow(out), 1)
+
+  book <- list(
+    author = "Oscar Wilde",
+    setting = "London"
+  )
+  expect_error(add_book(book), "NOT NULL constraint failed: books.title")
 })
 
 test_that("get book details", {

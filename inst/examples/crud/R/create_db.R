@@ -1,9 +1,5 @@
 setup_db <- function() {
-  path <- file.path("inst/crud-db.sqlite")
-  if (file.exists(path)) {
-    file.remove(path)
-  }
-  con <- DBI::dbConnect(RSQLite::SQLite(), "inst/crud-db.sqlite")
+  con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
   add_book_table(con)
   con
 }
@@ -17,7 +13,7 @@ clear_db <- function() {
 add_book_table <- function(con) {
   DBI::dbExecute(con,
                  "CREATE TABLE books(id INTEGER PRIMARY KEY ASC,
-                 title UNIQUE,
+                 title UNIQUE NOT NULL,
                  author,
                  setting)")
 }
