@@ -25,7 +25,7 @@ pkgapi_input_query <- function(..., .parameters = list(...)) {
                 sprintf("The 'type' of parameter %s", nms[[i]]))
   }
   types <- vcapply(.parameters, identity, USE.NAMES = FALSE)
-  unname(Map(pkgapi_input, nms, types, MoreArgs = list(where = "query")))
+  unname(Map(pkgapi_input$new, nms, types, MoreArgs = list(where = "query")))
 }
 
 
@@ -44,8 +44,8 @@ pkgapi_input_query <- function(..., .parameters = list(...)) {
 ##' @rdname pkgapi_input_body
 pkgapi_input_body_binary <- function(name) {
   assert_scalar_character(name)
-  pkgapi_input(name, "binary", "body", assert_raw,
-               content_type = "application/octet-stream")
+  pkgapi_input$new(name, "binary", "body", assert_raw,
+                   content_type = "application/octet-stream")
 }
 
 
@@ -55,8 +55,8 @@ pkgapi_input_body_binary <- function(name) {
 pkgapi_input_body_json <- function(name, schema, root) {
   assert_scalar_character(name)
   validator <- pkgapi_validator(schema, schema_root(root), query = NULL)
-  pkgapi_input(name, "json", "body", validator,
-               content_type = "application/json")
+  pkgapi_input$new(name, "json", "body", validator,
+                   content_type = "application/json")
 }
 
 
@@ -66,18 +66,7 @@ pkgapi_input_path <- function(path) {
     return(NULL)
   }
   apply(parse_plumber_path(path), 1, function(x)
-    pkgapi_input(x[[1]], x[[2]], "path"))
-}
-
-
-pkgapi_input <- function(name, type, where, validator = NULL, ...) {
-  res <- list(name = name, type = type, where = where, validator = validator,
-              ...)
-  if (is.null(validator)) {
-    res$validator <- pkgapi_input_validator_basic(type)
-  }
-  class(res) <- "pkgapi_input"
-  res
+    pkgapi_input$new(x[[1]], x[[2]], "path"))
 }
 
 
@@ -198,7 +187,8 @@ pkgapi_input_validator_body <- function(body, args) {
   name <- input$name
   required <- input$required
   validator_content <- input$validator
-  content_type <- parse_mime(input$content_type)
+  ## TODO: this is ugly, and should be dealt with some other way.
+  content_type <- parse_mime(input$data$content_type)
 
   function(body) {
     if (!body$provided) {
@@ -279,5 +269,37 @@ pkgapi_inputs <- R6::R6Class(
       c(private$process_path(path),
         private$process_query(query),
         private$process_body(body))
+    }
+  ))
+
+
+pkgapi_input <- R6::R6Class(
+  "pkgapi_input",
+
+  public = list(
+    name = NULL,
+    type = NULL,
+    where = NULL,
+    validator = NULL,
+    required = NULL,
+    data = NULL,
+
+    initialize = function(name, type, where, validator = NULL, ...) {
+      self$name <- name
+      self$type <- type
+      self$where <- where
+      self$validator <- validator %||% pkgapi_input_validator_basic(type)
+      self$data <- list(...)
+    },
+
+    create = function(args) {
+      if (!(name %in% names(args))) {
+        stop(sprintf(
+          "Argument '%s' (used in %s) missing from the target function",
+          name, input$where))
+      }
+      default <- args[[name]]
+      self$required <- missing(default)
+      invisible(self)
     }
   ))

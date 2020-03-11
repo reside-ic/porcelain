@@ -457,8 +457,8 @@ test_that("Must provide all non-optional args", {
 
 test_that("body validator corner case", {
   res <- pkgapi_input_validator_body(
-    pkgapi_input("name", "binary", "body",
-                 content_type = "application/octet-stream"),
+    pkgapi_input$new("name", "binary", "body",
+                     content_type = "application/octet-stream"),
     formals(function(name) NULL))
 
   err <- expect_error(res(list(provided = TRUE)), class = "pkgapi_error")
