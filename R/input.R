@@ -243,7 +243,7 @@ pkgapi_inputs <- R6::R6Class(
              call. = FALSE)
       }
 
-      msg <- setdiff(input_required_args(args), nms)
+      msg <- setdiff(formals_required(args), nms)
       if (length(msg) > 0L) {
         stop("Required arguments to target function missing from inputs: ",
              paste(squote(msg), collapse = ", "),

@@ -112,3 +112,15 @@ parse_mime <- function(mime) {
        subtype = subtype,
        is_text = is_text)
 }
+
+
+## Just a utility that works with an argslist and works out if they
+## are missing or not.
+formals_args <- function(args) {
+  required <- logical(length(args))
+  for (i in seq_along(args)) {
+    x <- args[[i]]
+    required[[i]] <- missing(x)
+  }
+  names(args)[required]
+}
