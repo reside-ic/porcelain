@@ -70,22 +70,6 @@ pkgapi_input_path <- function(path) {
 }
 
 
-pkgapi_input_init <- function(input, args) {
-  assert_is(input, "pkgapi_input")
-  name <- input$name
-
-  if (!(name %in% names(args))) {
-    stop(sprintf(
-      "Argument '%s' (used in %s) missing from the target function",
-      name, input$where))
-  }
-  default <- args[[name]]
-  input$required <- missing(default)
-
-  input
-}
-
-
 pkgapi_input_validator_logical <- function(x) {
   assert_scalar(x)
   res <- as.logical(x)
@@ -137,7 +121,9 @@ pkgapi_input_validator_basic <- function(type) {
 
 
 pkgapi_input_validator_simple <- function(inputs, args, where) {
-  inputs <- lapply(inputs, pkgapi_input_init, args)
+  for (i in inputs) {
+    i$check_target_args(args)
+  }
   nms <- vcapply(inputs, "[[", "name")
 
   throw <- function(msg, ...) {
@@ -182,7 +168,7 @@ pkgapi_input_validator_body <- function(body, args) {
 
   ## This mostly does the checking against the target function to make
   ## sure that body is being routed somewhere sensible.
-  input <- pkgapi_input_init(body, args)
+  input <- body$check_target_args(args)
 
   name <- input$name
   required <- input$required
@@ -292,13 +278,13 @@ pkgapi_input <- R6::R6Class(
       self$data <- list(...)
     },
 
-    create = function(args) {
-      if (!(name %in% names(args))) {
+    check_target_args = function(args) {
+      if (!(self$name %in% names(args))) {
         stop(sprintf(
           "Argument '%s' (used in %s) missing from the target function",
-          name, input$where))
+          self$name, self$where))
       }
-      default <- args[[name]]
+      default <- args[[self$name]]
       self$required <- missing(default)
       invisible(self)
     }
