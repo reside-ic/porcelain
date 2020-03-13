@@ -116,7 +116,8 @@ parse_mime <- function(mime) {
 
 ## Just a utility that works with an argslist and works out if they
 ## are missing or not.
-formals_args <- function(args) {
+formals_required <- function(f) {
+  args <- formals(f)
   required <- logical(length(args))
   for (i in seq_along(args)) {
     x <- args[[i]]

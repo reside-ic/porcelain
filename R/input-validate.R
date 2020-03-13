@@ -1,0 +1,61 @@
+## Validation functions used to deal with inputs
+pkgapi_input_validator_logical <- function(x) {
+  assert_scalar(x)
+  res <- as.logical(x)
+  if (is.na(res)) {
+    stop(sprintf("Could not convert '%s' into a logical", x))
+  }
+  res
+}
+
+
+pkgapi_input_validator_integer <- function(x) {
+  assert_scalar(x)
+  res <- suppressWarnings(as.integer(x))
+  if (is.na(res)) {
+    stop(sprintf("Could not convert '%s' into an integer", x))
+  }
+  if (abs(as.numeric(x) - res) > 1e-8) {
+    stop(sprintf("Could not convert '%s' into an integer (loses precision)",
+                 x))
+  }
+  res
+}
+
+
+pkgapi_input_validator_numeric <- function(x) {
+  assert_scalar(x)
+  res <- suppressWarnings(as.numeric(x))
+  if (is.na(res)) {
+    stop(sprintf("Could not convert '%s' into a numeric", x))
+  }
+  res
+}
+
+
+pkgapi_input_validator_string <- function(x) {
+  ## This will always come in as a string.
+  assert_scalar(x)
+  x
+}
+
+
+pkgapi_input_validator_basic <- function(type) {
+  switch(type,
+         logical = pkgapi_input_validator_logical,
+         integer = pkgapi_input_validator_integer,
+         numeric = pkgapi_input_validator_numeric,
+         string  = pkgapi_input_validator_string)
+}
+
+
+pkgapi_input_validate_mime <- function(given, expected) {
+  if (is.null(given)) {
+    pkgapi_input_error(sprintf(
+      "Content-Type was not set (expected '%s')", expected))
+  }
+  if (given != expected) {
+    pkgapi_input_error(sprintf(
+      "Expected content type '%s' but was sent '%s'", expected, given))
+  }
+}
