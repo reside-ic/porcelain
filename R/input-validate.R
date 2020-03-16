@@ -59,3 +59,18 @@ pkgapi_input_validate_mime <- function(given, expected) {
       "Expected content type '%s' but was sent '%s'", expected, given))
   }
 }
+
+
+pkgapi_input_validate_expected <- function(given, expected) {
+  ## No point checking for additional path paramters; they are not
+  ## possible.  Additional headers and cookies will be ignored.
+  extra <- setdiff(names(given$query), expected$query)
+  if (length(extra) > 0L) {
+    stop("writeme")
+  }
+
+  if (isTRUE(given$body$provided) && is.null(expected$body)) {
+    msg <- "This endpoint does not accept a body, but one was provided"
+    pkgapi_error(list(INVALID_INPUT = msg))
+  }
+}

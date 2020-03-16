@@ -109,6 +109,10 @@ pkgapi_input_collection <- R6::R6Class(
 pkgapi_inputs <- R6::R6Class(
   "pkgapi_inputs",
 
+  private = list(
+    expected = NULL
+  ),
+
   public = list(
     inputs = NULL,
 
@@ -116,6 +120,10 @@ pkgapi_inputs <- R6::R6Class(
       ## This is a bit ugly, but flattens out the collections:
       self$inputs <- unlist(recursive = FALSE, lapply(inputs, function(x)
         if (inherits(x, "pkgapi_input_collection")) x$inputs else list(x)))
+
+      expected <- vapply(self$inputs, function(x) c(x$where, x$name),
+                         character(2), USE.NAMES = FALSE)
+      private$expected <- split(expected[2, ], expected[1, ])
 
       nms <- vcapply(self$inputs, "[[", "name")
       if (anyDuplicated(nms)) {
@@ -150,9 +158,8 @@ pkgapi_inputs <- R6::R6Class(
         ret[[i$name]] <- i$validate(given)
       }
 
-      ## Any unexpected?  This is a bit hard to get actually, but I
-      ## think we can do it; if we collect up the set of given things
-      ## as <where>-<name> we can find extras easily.
+      ## Validate all are expected:
+      pkgapi_input_validate_expected(given, private$expected)
 
       ret
     }

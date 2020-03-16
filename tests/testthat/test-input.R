@@ -451,7 +451,6 @@ test_that("validate json body against schema", {
 
 
 test_that("POST body is forbidden if not specified", {
-  skip("not yet implemented")
   square <- function(n) {
     jsonlite::unbox(n * n)
   }
