@@ -1,5 +1,5 @@
 ## Validation functions used to deal with inputs
-pkgapi_input_validator_logical <- function(x) {
+pkgapi_input_validate_logical <- function(x) {
   assert_scalar(x)
   res <- as.logical(x)
   if (is.na(res)) {
@@ -9,7 +9,7 @@ pkgapi_input_validator_logical <- function(x) {
 }
 
 
-pkgapi_input_validator_integer <- function(x) {
+pkgapi_input_validate_integer <- function(x) {
   assert_scalar(x)
   res <- suppressWarnings(as.integer(x))
   if (is.na(res)) {
@@ -23,7 +23,7 @@ pkgapi_input_validator_integer <- function(x) {
 }
 
 
-pkgapi_input_validator_numeric <- function(x) {
+pkgapi_input_validate_numeric <- function(x) {
   assert_scalar(x)
   res <- suppressWarnings(as.numeric(x))
   if (is.na(res)) {
@@ -33,19 +33,19 @@ pkgapi_input_validator_numeric <- function(x) {
 }
 
 
-pkgapi_input_validator_string <- function(x) {
+pkgapi_input_validate_string <- function(x) {
   ## This will always come in as a string.
   assert_scalar(x)
   x
 }
 
 
-pkgapi_input_validator_basic <- function(type) {
+pkgapi_input_validate_basic <- function(type) {
   switch(type,
-         logical = pkgapi_input_validator_logical,
-         integer = pkgapi_input_validator_integer,
-         numeric = pkgapi_input_validator_numeric,
-         string  = pkgapi_input_validator_string)
+         logical = pkgapi_input_validate_logical,
+         integer = pkgapi_input_validate_integer,
+         numeric = pkgapi_input_validate_numeric,
+         string  = pkgapi_input_validate_string)
 }
 
 

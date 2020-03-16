@@ -83,20 +83,23 @@ pkgapi_input <- R6::R6Class(
       assert_scalar_character(name)
       assert_scalar_character(type)
       assert_scalar_character(where)
+      if (is.null(validator)) {
+        validator <- pkgapi_input_validate_basic(type)
+      } else {
+        assert_is(validator, "function")
+      }
 
       self$name <- name
       self$type <- type
       self$where <- where
+      self$validator <- validator
+
       if (where == "query") {
         types <- c("logical", "numeric", "integer", "string")
         match_value(type, types,
                     sprintf("The 'type' of query parameter %s", nms[[i]]))
       }
 
-      ## TODO: a bit more work required here to deal with the
-      ## harmonisation betwen json and non-json types; that will
-      ## largely follow the swagger spec I think.
-      self$validator <- validator %||% pkgapi_input_validator_basic(type)
       self$data <- list(...)
     },
 

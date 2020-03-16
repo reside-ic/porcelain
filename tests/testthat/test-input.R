@@ -84,55 +84,55 @@ test_that("inputs collector works", {
 
 
 test_that("logical validator works", {
-  expect_true(pkgapi_input_validator_logical("TRUE"))
-  expect_true(pkgapi_input_validator_logical("True"))
-  expect_true(pkgapi_input_validator_logical("true"))
-  expect_true(pkgapi_input_validator_logical("T"))
-  expect_false(pkgapi_input_validator_logical("FALSE"))
-  expect_false(pkgapi_input_validator_logical("False"))
-  expect_false(pkgapi_input_validator_logical("false"))
-  expect_false(pkgapi_input_validator_logical("F"))
+  expect_true(pkgapi_input_validate_logical("TRUE"))
+  expect_true(pkgapi_input_validate_logical("True"))
+  expect_true(pkgapi_input_validate_logical("true"))
+  expect_true(pkgapi_input_validate_logical("T"))
+  expect_false(pkgapi_input_validate_logical("FALSE"))
+  expect_false(pkgapi_input_validate_logical("False"))
+  expect_false(pkgapi_input_validate_logical("false"))
+  expect_false(pkgapi_input_validate_logical("F"))
 
-  expect_error(pkgapi_input_validator_logical("1"),
+  expect_error(pkgapi_input_validate_logical("1"),
                "Could not convert '1' into a logical")
-  expect_error(pkgapi_input_validator_logical("maybe"),
+  expect_error(pkgapi_input_validate_logical("maybe"),
                "Could not convert 'maybe' into a logical")
 })
 
 
 test_that("integer validator works", {
-  expect_equal(pkgapi_input_validator_integer("1"), 1L)
-  expect_equal(pkgapi_input_validator_integer("-100"), -100L)
+  expect_equal(pkgapi_input_validate_integer("1"), 1L)
+  expect_equal(pkgapi_input_validate_integer("-100"), -100L)
 
-  expect_error(pkgapi_input_validator_integer("one"),
+  expect_error(pkgapi_input_validate_integer("one"),
                "Could not convert 'one' into an integer")
-  expect_error(pkgapi_input_validator_integer("string"),
+  expect_error(pkgapi_input_validate_integer("string"),
                "Could not convert 'string' into an integer")
 
-  expect_error(pkgapi_input_validator_integer("1.4"),
+  expect_error(pkgapi_input_validate_integer("1.4"),
                "Could not convert '1.4' into an integer (loses precision)",
                fixed = TRUE)
 })
 
 
 test_that("integer validator works", {
-  expect_equal(pkgapi_input_validator_numeric("1"), 1)
-  expect_equal(pkgapi_input_validator_numeric("-100"), -100)
-  expect_equal(pkgapi_input_validator_numeric("1.23"), 1.23)
-  expect_equal(pkgapi_input_validator_numeric("1e-5"), 1e-5)
+  expect_equal(pkgapi_input_validate_numeric("1"), 1)
+  expect_equal(pkgapi_input_validate_numeric("-100"), -100)
+  expect_equal(pkgapi_input_validate_numeric("1.23"), 1.23)
+  expect_equal(pkgapi_input_validate_numeric("1e-5"), 1e-5)
 
-  expect_error(pkgapi_input_validator_numeric("one"),
+  expect_error(pkgapi_input_validate_numeric("one"),
                "Could not convert 'one' into a numeric")
-  expect_error(pkgapi_input_validator_numeric("string"),
+  expect_error(pkgapi_input_validate_numeric("string"),
                "Could not convert 'string' into a numeric")
 })
 
 
 test_that("string validator", {
-  expect_equal(pkgapi_input_validator_string("1"), "1")
-  expect_equal(pkgapi_input_validator_string("TRUE"), "TRUE")
-  expect_equal(pkgapi_input_validator_string("string"), "string")
-  expect_error(pkgapi_input_validator_string(letters), "must be a scalar")
+  expect_equal(pkgapi_input_validate_string("1"), "1")
+  expect_equal(pkgapi_input_validate_string("TRUE"), "TRUE")
+  expect_equal(pkgapi_input_validate_string("string"), "string")
+  expect_error(pkgapi_input_validate_string(letters), "must be a scalar")
 })
 
 
