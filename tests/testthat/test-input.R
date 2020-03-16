@@ -539,19 +539,3 @@ test_that("Must provide all non-optional args", {
       validate = TRUE),
     NA)
 })
-
-
-test_that("body validator corner case", {
-  skip("WIP")
-  res <- pkgapi_input_validator_body(
-    pkgapi_input$new("name", "binary", "body",
-                     content_type = "application/octet-stream"),
-    formals(function(name) NULL))
-
-  err <- expect_error(res(list(provided = TRUE)), class = "pkgapi_error")
-  expect_equal(
-    err$data[[1]],
-    list(error = jsonlite::unbox("INVALID_INPUT"),
-         detail = jsonlite::unbox(
-           "Content-Type was not set (expected 'application/octet-stream')")))
-})
