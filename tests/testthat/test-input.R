@@ -462,12 +462,35 @@ test_that("POST body is forbidden if not specified", {
 
   pr <- pkgapi$new()$handle(endpoint)
   res <- pr$request("POST", "/square", c(n = 4), body = '{"a":2}')
+
   expect_equal(res$status, 400)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   errs <- from_json(res$body)$errors[[1]]
   expect_equal(errs$error, "INVALID_INPUT")
   expect_equal(errs$detail,
                "This endpoint does not accept a body, but one was provided")
+})
+
+
+test_that("Reject unknown query parameters", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(n = "numeric"),
+    validate = TRUE)
+
+  pr <- pkgapi$new()$handle(endpoint)
+  res <- pr$request("GET", "/square", c(n = 4, m = 2))
+
+  expect_equal(res$status, 400)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  errs <- from_json(res$body)$errors[[1]]
+  expect_equal(errs$error, "INVALID_INPUT")
+  expect_equal(errs$detail,
+               "Unconsumed query paramter: 'm'")
 })
 
 

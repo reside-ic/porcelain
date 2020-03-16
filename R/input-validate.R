@@ -66,11 +66,12 @@ pkgapi_input_validate_expected <- function(given, expected) {
   ## possible.  Additional headers and cookies will be ignored.
   extra <- setdiff(names(given$query), expected$query)
   if (length(extra) > 0L) {
-    stop("writeme")
+    pkgapi_input_error(sprintf(
+      "Unconsumed query paramter: %s", paste(squote(extra), collapse = ", ")))
   }
 
   if (isTRUE(given$body$provided) && is.null(expected$body)) {
-    msg <- "This endpoint does not accept a body, but one was provided"
-    pkgapi_error(list(INVALID_INPUT = msg))
+    pkgapi_input_error(
+      "This endpoint does not accept a body, but one was provided")
   }
 }
