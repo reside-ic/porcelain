@@ -48,6 +48,7 @@ A \code{pkgapi} object.  This extends (via
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
 \subsection{Method \code{new()}}{
+Create a pkgapi object
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pkgapi$new(...)}\if{html}{\out{</div>}}
 }

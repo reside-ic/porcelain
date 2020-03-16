@@ -54,7 +54,7 @@ set_names <- function(x, nms) {
 
 ## NOTE: plumber does not expose a parser here so we just bodge one
 ## together
-parse_plumber_path <- function(x) {
+parse_path_parameters <- function(x) {
   p <- strsplit(x, "/", fixed = TRUE)[[1]]
   i <- grepl("^<([^>]+)>$", p)
   name <- p[i]

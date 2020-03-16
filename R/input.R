@@ -53,7 +53,7 @@ pkgapi_input_body_json <- function(name, schema, root) {
 
 ## This one gets called internally
 pkgapi_input_path <- function(path) {
-  parts <- parse_plumber_path(path)
+  parts <- parse_path_parameters(path)
   if (is.null(parts)) {
     return(NULL)
   }
