@@ -24,6 +24,7 @@ pkgapi_validator <- function(schema, root, query) {
   v <- jsonvalidate::json_validator(path_schema, "ajv")
   function(json) {
     pkgapi_validate(json, v, query)
+    invisible(json)
   }
 }
 

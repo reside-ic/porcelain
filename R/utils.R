@@ -54,7 +54,7 @@ set_names <- function(x, nms) {
 
 ## NOTE: plumber does not expose a parser here so we just bodge one
 ## together
-parse_plumber_path <- function(x) {
+parse_path_parameters <- function(x) {
   p <- strsplit(x, "/", fixed = TRUE)[[1]]
   i <- grepl("^<([^>]+)>$", p)
   name <- p[i]
@@ -111,4 +111,17 @@ parse_mime <- function(mime) {
        type = type,
        subtype = subtype,
        is_text = is_text)
+}
+
+
+## Just a utility that works with an argslist and works out if they
+## are missing or not.
+formals_required <- function(f) {
+  args <- formals(f)
+  required <- logical(length(args))
+  for (i in seq_along(args)) {
+    x <- args[[i]]
+    required[[i]] <- missing(x)
+  }
+  names(args)[required]
 }

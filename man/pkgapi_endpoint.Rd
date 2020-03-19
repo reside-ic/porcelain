@@ -41,15 +41,7 @@ serialisation and validation information).}
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(
-  method,
-  path,
-  target,
-  returning,
-  input_query = NULL,
-  input_body = NULL,
-  validate = FALSE
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, ..., returning, validate = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -63,6 +55,11 @@ Create an endpoint
 
 \item{\code{returning}}{Information about what the endpoint returns,}
 
+\item{\code{validate}}{Logical, indicating if any validation
+(implemented by the \code{validate_response} argument) should be
+enabled.  This should be set to \code{FALSE} in production
+environments.}
+
 \item{\code{input_query}}{Information on input parameters, using
 \code{\link{pkgapi_input_query}}.  The names used must match
 the names in \code{target}.}
@@ -71,11 +68,6 @@ the names in \code{target}.}
 \code{\link{pkgapi_input_body_binary}} or
 \code{\link{pkgapi_input_body_json}}.  Only a single body
 element can be specified.}
-
-\item{\code{validate}}{Logical, indicating if any validation
-(implemented by the \code{validate_response} argument) should be
-enabled.  This should be set to \code{FALSE} in production
-environments.}
 
 \item{\code{validate_response}}{Optional function that throws an error
 of the processed body is "invalid".}
@@ -107,7 +99,8 @@ through the \code{process} method and returned by plumber) and
 \if{html}{\out{<a id="method-plumber"></a>}}
 \subsection{Method \code{plumber()}}{
 Helper method for use with plumber - not designed
-for end-user use.
+for end-user use.  This is what gets called by plumber when the
+endpoint recieves a request.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$plumber(req, res, ...)}\if{html}{\out{</div>}}
 }

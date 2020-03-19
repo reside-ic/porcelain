@@ -58,8 +58,7 @@ pkgapi_endpoint <- R6::R6Class(
     ##'
     ##' @param validate_response Optional function that throws an error
     ##' of the processed body is "invalid".
-    initialize = function(method, path, target, returning,
-                          input_query = NULL, input_body = NULL,
+    initialize = function(method, path, target, ..., returning,
                           validate = FALSE) {
       self$method <- method
       self$path <- path
@@ -67,11 +66,32 @@ pkgapi_endpoint <- R6::R6Class(
       assert_is(returning, "pkgapi_returning")
       self$returning <- returning
 
-      self$inputs <- pkgapi_inputs_init(path, input_query, input_body,
-                                        formals(target))
+      other <- list(...)
+      done <- logical(length(other))
+
+      input_classes <- c("pkgapi_input", "pkgapi_input_collection")
+      is_input <- vlapply(other, inherits, input_classes)
+      self$inputs <- pkgapi_inputs$new(
+        c(pkgapi_input_path(path), other[is_input]))$bind(target)
+      done[is_input] <- TRUE
+
+      if (any(!done)) {
+        ## NOTE: this is really hard to get a great error message out
+        ## of, as these arguments could be anywhere.  httr does not do
+        ## a much better job (httr::GET("https://example.com", 1)) but
+        ## it would be nice to be able to guide the user here.
+        err <- other[!done]
+        nms <- names(err) %||% rep("", length(err))
+        nms[!nzchar(nms)] <- "unnamed argument"
+        cl <- vcapply(err, function(x) paste(class(x), collapse = "/"))
+        stop("Unconsumed dot arguments: ",
+             paste(sprintf("%s (%s)", cl, nms), collapse = ", "),
+             call. = FALSE)
+      }
 
       self$validate <- validate
-      lock_bindings(c("method", "path", "target", "returning"), self)
+      lock_bindings(c("method", "path", "target", "inputs", "returning"),
+                    self)
     },
 
     ##' @description Run the endpoint.  This will produce a
@@ -94,16 +114,20 @@ pkgapi_endpoint <- R6::R6Class(
     },
 
     ##' @description Helper method for use with plumber - not designed
-    ##' for end-user use.
+    ##' for end-user use.  This is what gets called by plumber when the
+    ##' endpoint recieves a request.
     ##'
     ##' @param req,res Conventional plumber request/response objects
     ##' @param ... Additional arguments passed through to \code{run}
     plumber = function(req, res, ...) {
       ## It's not abundantly clear here what we do to get the path
       ## args, and they cannot be retrieved from the filters it seems.
-      pkgapi_path <- req$args[seq_len(length(req$args) - 2L)]
       tryCatch({
-        args <- self$inputs(pkgapi_path, req$pkgapi_query, req$pkgapi_body)
+        given <- list(
+          path = req$args[seq_len(length(req$args) - 2L)],
+          query = req$pkgapi_query,
+          body = req$pkgapi_body)
+        args <- self$inputs$validate(given)
         do.call(self$run, args)
       }, error = pkgapi_process_error)
     }

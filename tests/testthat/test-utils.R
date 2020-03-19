@@ -17,19 +17,19 @@ test_that("lock_bindings", {
 })
 
 
-test_that("parse_plumber_path", {
-  expect_null(parse_plumber_path("/"))
-  expect_null(parse_plumber_path("/no/routing/at/all"))
-  expect_equal(parse_plumber_path("/my/<id>"),
+test_that("parse_path_parameters", {
+  expect_null(parse_path_parameters("/"))
+  expect_null(parse_path_parameters("/no/routing/at/all"))
+  expect_equal(parse_path_parameters("/my/<id>"),
                cbind(name = "id", type = "string"))
-  expect_equal(parse_plumber_path("/my/<dynamic>/path"),
+  expect_equal(parse_path_parameters("/my/<dynamic>/path"),
                cbind(name = "dynamic", type = "string"))
-  expect_equal(parse_plumber_path("/my/<id:int>"),
+  expect_equal(parse_path_parameters("/my/<id:int>"),
                cbind(name = "id", type = "integer"))
-  expect_equal(parse_plumber_path("/my/<id:int>/<action>"),
+  expect_equal(parse_path_parameters("/my/<id:int>/<action>"),
                cbind(name = c("id", "action"),
                      type = c("integer", "string")))
-  expect_equal(parse_plumber_path("/my/<id:apple>/<action>"),
+  expect_equal(parse_path_parameters("/my/<id:apple>/<action>"),
                cbind(name = c("id", "action"),
                      type = c("string", "string")))
 })

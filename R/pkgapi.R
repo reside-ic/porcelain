@@ -9,7 +9,8 @@ pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
-  public = list(##' @description Create a pkgapi object
+  ##' @description Create a pkgapi object
+  public = list(
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
     initialize = function(...) {

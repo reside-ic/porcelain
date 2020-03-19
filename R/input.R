@@ -16,16 +16,7 @@
 ##' pkgapi::pkgapi_input_query(number = "integer")
 pkgapi_input_query <- function(..., .parameters = list(...)) {
   assert_named(.parameters, TRUE)
-  nms <- names(.parameters)
-
-  types <- c("logical", "numeric", "integer", "string")
-
-  for (i in seq_along(.parameters)) {
-    match_value(.parameters[[i]], types,
-                sprintf("The 'type' of parameter %s", nms[[i]]))
-  }
-  types <- vcapply(.parameters, identity, USE.NAMES = FALSE)
-  unname(Map(pkgapi_input, nms, types, MoreArgs = list(where = "query")))
+  pkgapi_input_collection$new(names(.parameters), .parameters, "query")
 }
 
 
@@ -44,8 +35,8 @@ pkgapi_input_query <- function(..., .parameters = list(...)) {
 ##' @rdname pkgapi_input_body
 pkgapi_input_body_binary <- function(name) {
   assert_scalar_character(name)
-  pkgapi_input(name, "binary", "body", assert_raw,
-               content_type = "application/octet-stream")
+  pkgapi_input$new(name, "binary", "body", assert_raw,
+                   content_type = "application/octet-stream")
 }
 
 
@@ -55,214 +46,192 @@ pkgapi_input_body_binary <- function(name) {
 pkgapi_input_body_json <- function(name, schema, root) {
   assert_scalar_character(name)
   validator <- pkgapi_validator(schema, schema_root(root), query = NULL)
-  pkgapi_input(name, "json", "body", validator,
-               content_type = "application/json")
+  pkgapi_input$new(name, "json", "body", validator,
+                   content_type = "application/json")
 }
 
 
+## This one gets called internally
 pkgapi_input_path <- function(path) {
-  data <- parse_plumber_path(path)
-  if (is.null(data)) {
+  parts <- parse_path_parameters(path)
+  if (is.null(parts)) {
     return(NULL)
   }
-  apply(parse_plumber_path(path), 1, function(x)
-    pkgapi_input(x[[1]], x[[2]], "path"))
+  pkgapi_input_collection$new(parts[, "name"], parts[, "type"], "path")
 }
 
 
-pkgapi_input <- function(name, type, where, validator = NULL, ...) {
-  res <- list(name = name, type = type, where = where, validator = validator,
-              ...)
-  if (is.null(validator)) {
-    res$validator <- pkgapi_input_validator_basic(type)
-  }
-  class(res) <- "pkgapi_input"
-  res
-}
+## TODO: I think that content_type and schema probably end up
+## throughout this class, not just within the 'data' element, we'll
+## follow the swagger spec for what do do here.  I think that the
+## general approach is to have a "format" field that implies the
+## content type.  This can wait until later.
 
+pkgapi_input <- R6::R6Class(
+  "pkgapi_input",
 
-pkgapi_inputs_init <- function(path, inputs_query, inputs_body, args) {
-  inputs_path <- pkgapi_input_path(path)
-  validate_path <- pkgapi_input_validator_simple(inputs_path, args, "path")
-  validate_query <- pkgapi_input_validator_simple(inputs_query, args, "query")
-  validate_body <- pkgapi_input_validator_body(inputs_body, args)
+  public = list(
+    name = NULL,
+    type = NULL,
+    where = NULL,
+    validator = NULL, # make this private, use a method for access?
+    required = NULL,
+    default = NULL,
+    data = NULL,
 
-  inputs <- c(inputs_path, inputs_query)
-  if (!is.null(inputs_body)) {
-    inputs <- c(inputs, list(inputs_body))
-  }
-  nms <- vcapply(inputs, "[[", "name")
-  if (anyDuplicated(nms)) {
-    i <- nms %in% unique(nms[duplicated(nms)])
-    err <- sort(vcapply(inputs[i], function(x)
-      sprintf("'%s' (in %s)", x$name, x$where)))
-    stop("Duplicated parameter names: ", paste(err, collapse = ", "),
-         call. = FALSE)
-  }
-
-  msg <- setdiff(input_required_args(args), nms)
-  if (length(msg) > 0L) {
-    stop("Required arguments to target function missing from inputs: ",
-         paste(squote(msg), collapse = ", "),
-         call. = FALSE)
-  }
-
-  function(path, query, body) {
-    c(validate_path(path),
-      validate_query(query),
-      validate_body(body))
-  }
-}
-
-
-pkgapi_input_init <- function(input, args) {
-  assert_is(input, "pkgapi_input")
-  name <- input$name
-
-  if (!(name %in% names(args))) {
-    stop(sprintf(
-      "Argument '%s' (used in %s) missing from the target function",
-      name, input$where))
-  }
-  default <- args[[name]]
-  input$required <- missing(default)
-
-  input
-}
-
-
-pkgapi_input_validator_logical <- function(x) {
-  assert_scalar(x)
-  res <- as.logical(x)
-  if (is.na(res)) {
-    stop(sprintf("Could not convert '%s' into a logical", x))
-  }
-  res
-}
-
-
-pkgapi_input_validator_integer <- function(x) {
-  assert_scalar(x)
-  res <- suppressWarnings(as.integer(x))
-  if (is.na(res)) {
-    stop(sprintf("Could not convert '%s' into an integer", x))
-  }
-  if (abs(as.numeric(x) - res) > 1e-8) {
-    stop(sprintf("Could not convert '%s' into an integer (loses precision)",
-                 x))
-  }
-  res
-}
-
-
-pkgapi_input_validator_numeric <- function(x) {
-  assert_scalar(x)
-  res <- suppressWarnings(as.numeric(x))
-  if (is.na(res)) {
-    stop(sprintf("Could not convert '%s' into a numeric", x))
-  }
-  res
-}
-
-
-pkgapi_input_validator_string <- function(x) {
-  ## This will always come in as a string.
-  assert_scalar(x)
-  x
-}
-
-
-pkgapi_input_validator_basic <- function(type) {
-  switch(type,
-         logical = pkgapi_input_validator_logical,
-         integer = pkgapi_input_validator_integer,
-         numeric = pkgapi_input_validator_numeric,
-         string  = pkgapi_input_validator_string)
-}
-
-
-pkgapi_input_validator_simple <- function(inputs, args, where) {
-  inputs <- lapply(inputs, pkgapi_input_init, args)
-  nms <- vcapply(inputs, "[[", "name")
-
-  throw <- function(msg, ...) {
-    pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
-  }
-
-  function(given) {
-    for (i in inputs) {
-      value <- given[[i$name]]
-      if (i$required || !is.null(value)) {
-        given[[i$name]] <- tryCatch(
-          i$validator(value),
-          error = function(e)
-            throw("Error parsing %s parameter '%s': %s",
-                  i$where, i$name, e$message))
-      }
-    }
-
-    extra <- setdiff(names(given), nms)
-    if (length(extra) > 0L) {
-      throw("Recieved extra %s parameters: %s",
-            where, paste(squote(extra), collapse = ", "))
-    }
-
-    given
-  }
-}
-
-
-pkgapi_input_validator_body <- function(body, args) {
-  throw <- function(msg, ...) {
-    pkgapi_error(list(INVALID_INPUT = sprintf(msg, ...)))
-  }
-
-  if (is.null(body)) {
-    return(function(body) {
-      if (body$provided) {
-        throw("This endpoint does not accept a body, but one was provided")
-      }
-    })
-  }
-
-  ## This mostly does the checking against the target function to make
-  ## sure that body is being routed somewhere sensible.
-  input <- pkgapi_input_init(body, args)
-
-  name <- input$name
-  required <- input$required
-  validator_content <- input$validator
-  content_type <- parse_mime(input$content_type)
-
-  function(body) {
-    if (!body$provided) {
-      if (required) {
-        throw("Body was not provided")
+    initialize = function(name, type, where, validator = NULL, ...) {
+      assert_scalar_character(name)
+      assert_scalar_character(type)
+      assert_scalar_character(where)
+      if (is.null(validator)) {
+        validator <- pkgapi_input_validate_basic(type)
       } else {
-        return(NULL)
+        assert_is(validator, "function")
       }
+
+      self$name <- name
+      self$type <- type
+      self$where <- where
+      self$validator <- validator
+
+      if (where == "query") {
+        types <- c("logical", "numeric", "integer", "string")
+        match_value(type, types,
+                    sprintf("The 'type' of query parameter %s", nms[[i]]))
+      }
+
+      self$data <- list(...)
+    },
+
+    bind = function(target) {
+      args <- formals(target)
+      if (!(self$name %in% names(args))) {
+        stop(sprintf(
+          "Argument '%s' (used in %s) missing from the target function",
+          self$name, self$where))
+      }
+      default <- args[[self$name]]
+      self$required <- missing(default)
+      if (!self$required) {
+        ## TODO: might need to force a promise here?
+        self$default <- default
+      }
+      invisible(self)
+    },
+
+    ## TODO: default behaviour not given here, should collect that?
+    ##
+    ## TODO: this is pretty ugly for body; should this move around the
+    ## validator or is that just weird?  Might be nicer, can adjust
+    ## later
+    ##
+    ## NOTE: this is basically two functions - pull out into two free fns
+    validate = function(given) {
+      if (self$where == "body") {
+        body <- given[["body"]]
+        if (self$required && !isTRUE(body$provided)) {
+          pkgapi_input_error("Body was not provided")
+        }
+        if (isTRUE(body$provided)) {
+          pkgapi_input_validate_mime(body$type$mime, self$data$content_type)
+          value <- body$value
+        } else {
+          value <- NULL
+        }
+      } else {
+        value <- given[[self$where]][[self$name]]
+        if (self$required && is.null(value)) {
+          pkgapi_input_error(sprintf(
+            "%s parameter '%s' is missing but required",
+            self$where, self$name))
+        }
+      }
+      if (!is.null(value)) {
+        value <- tryCatch(
+          self$validator(value),
+          error = function(e)
+            ## NOTE: not a lovely error message for the body
+            pkgapi_input_error(sprintf("Error parsing %s parameter '%s': %s",
+                                  self$where, self$name, e$message)))
+      }
+      value
     }
-    if (is.null(body$type$mime)) {
-      throw("Content-Type was not set (expected '%s')", content_type$mime)
-    }
-    if (body$type$mime != content_type$mime) {
-      throw("Expected content type '%s' but was sent '%s'",
-            content_type$mime, body$type$mime)
-    }
-    tryCatch(
-      validator_content(body$value),
-      error = function(e)
-        throw("Invalid body provided: %s", e$message))
-    set_names(list(body$value), name)
-  }
-}
+  ))
 
 
-input_required_args <- function(args) {
-  required <- logical(length(args))
-  for (i in seq_along(args)) {
-    x <- args[[i]]
-    required[[i]] <- missing(x)
-  }
-  names(args)[required]
+## This one is just to shepherd things through for now - could be an
+## S3 class I think, but we'll probably pop a print method on this at
+## some point, and R6 makes that easy
+pkgapi_input_collection <- R6::R6Class(
+  "pkgapi_input_collection",
+  public = list(
+    inputs = NULL,
+    initialize = function(names, types, where) {
+      self$inputs <- unname(Map(pkgapi_input$new, names, types,
+                                MoreArgs = list(where = where)))
+    }))
+
+
+pkgapi_inputs <- R6::R6Class(
+  "pkgapi_inputs",
+
+  private = list(
+    expected = NULL
+  ),
+
+  public = list(
+    inputs = NULL,
+
+    initialize = function(inputs) {
+      ## This is a bit ugly, but flattens out the collections:
+      self$inputs <- unlist(recursive = FALSE, lapply(inputs, function(x)
+        if (inherits(x, "pkgapi_input_collection")) x$inputs else list(x)))
+
+      expected <- vapply(self$inputs, function(x) c(x$where, x$name),
+                         character(2), USE.NAMES = FALSE)
+      private$expected <- split(expected[2, ], expected[1, ])
+
+      nms <- vcapply(self$inputs, "[[", "name")
+      if (anyDuplicated(nms)) {
+        i <- nms %in% unique(nms[duplicated(nms)])
+        err <- sort(vcapply(self$inputs[i], function(x)
+          sprintf("'%s' (in %s)", x$name, x$where)))
+        stop("Duplicated parameter names: ", paste(err, collapse = ", "),
+             call. = FALSE)
+      }
+    },
+
+    bind = function(target) {
+      for (i in self$inputs) {
+        i$bind(target)
+      }
+
+      nms <- vcapply(self$inputs, "[[", "name")
+      msg <- setdiff(formals_required(target), nms)
+      if (length(msg) > 0L) {
+        stop("Required arguments to target function missing from inputs: ",
+             paste(squote(msg), collapse = ", "),
+             call. = FALSE)
+      }
+
+      invisible(self)
+    },
+
+    validate = function(given) {
+      ret <- vector("list", length(self$inputs))
+      names(ret) <- vcapply(self$inputs, "[[", "name")
+      for (i in self$inputs) {
+        ret[[i$name]] <- i$validate(given)
+      }
+
+      ## Validate all are expected:
+      pkgapi_input_validate_expected(given, private$expected)
+
+      ret
+    }
+  ))
+
+
+pkgapi_input_error <- function(msg) {
+  pkgapi_error(list(INVALID_INPUT = msg))
 }

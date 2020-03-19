@@ -1,77 +1,138 @@
 context("input")
 
+test_that("Basic input", {
+  obj <- pkgapi_input$new("a", "numeric", "query")$bind(function(a) NULL)
+  expect_equal(obj$name, "a")
+  expect_equal(obj$type, "numeric")
+  expect_equal(obj$where, "query")
+  expect_true(obj$required)
+  expect_null(obj$default)
+
+  expect_equal(obj$validate(list(query = list(a = "1"))), 1)
+  err <- expect_error(
+    obj$validate(list()),
+    class = "pkgapi_error")
+  err <- expect_error(
+    obj$validate(list(query = list(a = "one"))),
+    class = "pkgapi_error")
+})
+
+
+test_that("Binary input", {
+  obj <- pkgapi_input_body_binary("a")$bind(function(a) NULL)
+  expect_equal(obj$name, "a")
+  expect_equal(obj$type, "binary")
+  expect_equal(obj$where, "body")
+  expect_true(obj$required)
+  expect_null(obj$default)
+
+  r <- as.raw(0:255)
+  body <- pkgapi_body(parse_mime("application/octet-stream"), r)
+  expect_equal(obj$validate(list(body = body)), r)
+
+  err <- expect_error(
+    obj$validate(list(body = pkgapi_body(NULL, NULL))),
+    class = "pkgapi_error")
+  body <- pkgapi_body(parse_mime("application/json"), "{}")
+  err <- expect_error(
+    obj$validate(list(body = body)),
+    class = "pkgapi_error")
+})
+
+
+test_that("JSON input", {
+  obj <- pkgapi_input_body_json("a", "Number", "schema")$bind(function(a) NULL)
+  expect_equal(obj$name, "a")
+  expect_equal(obj$type, "json")
+  expect_equal(obj$where, "body")
+  expect_true(obj$required)
+  expect_null(obj$default)
+  body <- pkgapi_body(parse_mime("application/json"), "1")
+  expect_equal(obj$validate(list(body = body)), "1")
+  err <- expect_error(
+    obj$validate(list()),
+    class = "pkgapi_error")
+
+  body$value <- '{"one": 1}'
+  err <- expect_error(
+    obj$validate(list(body = list(a = body))),
+    class = "pkgapi_error")
+})
+
+
+test_that("inputs collector works", {
+  target <- function(x, a, b, c) {
+    NULL
+  }
+  inputs <- list(
+    pkgapi_input_path("/foo/<x>"),
+    pkgapi_input_query(a = "numeric", b = "string"),
+    pkgapi_input_body_binary("c"))
+  obj <- pkgapi_inputs$new(inputs)$bind(target)
+  body <- pkgapi_body(parse_mime("application/octet-stream"), as.raw(0:4))
+  expect_equal(
+    obj$validate(list(path = list(x = "x"),
+                      query = list(a = "1", b = "b"),
+                      body = body)),
+    list(x = "x", a = 1, b = "b", c = as.raw(0:4)))
+  err <- expect_error(
+    obj$validate(list(path = list(x = "x"),
+                      query = list(a = "one", b = "b"),
+                      body = as.raw(0:4))),
+    class = "pkgapi_error")
+})
+
 
 test_that("logical validator works", {
-  expect_true(pkgapi_input_validator_logical("TRUE"))
-  expect_true(pkgapi_input_validator_logical("True"))
-  expect_true(pkgapi_input_validator_logical("true"))
-  expect_true(pkgapi_input_validator_logical("T"))
-  expect_false(pkgapi_input_validator_logical("FALSE"))
-  expect_false(pkgapi_input_validator_logical("False"))
-  expect_false(pkgapi_input_validator_logical("false"))
-  expect_false(pkgapi_input_validator_logical("F"))
+  expect_true(pkgapi_input_validate_logical("TRUE"))
+  expect_true(pkgapi_input_validate_logical("True"))
+  expect_true(pkgapi_input_validate_logical("true"))
+  expect_true(pkgapi_input_validate_logical("T"))
+  expect_false(pkgapi_input_validate_logical("FALSE"))
+  expect_false(pkgapi_input_validate_logical("False"))
+  expect_false(pkgapi_input_validate_logical("false"))
+  expect_false(pkgapi_input_validate_logical("F"))
 
-  expect_error(pkgapi_input_validator_logical("1"),
+  expect_error(pkgapi_input_validate_logical("1"),
                "Could not convert '1' into a logical")
-  expect_error(pkgapi_input_validator_logical("maybe"),
+  expect_error(pkgapi_input_validate_logical("maybe"),
                "Could not convert 'maybe' into a logical")
 })
 
 
 test_that("integer validator works", {
-  expect_equal(pkgapi_input_validator_integer("1"), 1L)
-  expect_equal(pkgapi_input_validator_integer("-100"), -100L)
+  expect_equal(pkgapi_input_validate_integer("1"), 1L)
+  expect_equal(pkgapi_input_validate_integer("-100"), -100L)
 
-  expect_error(pkgapi_input_validator_integer("one"),
+  expect_error(pkgapi_input_validate_integer("one"),
                "Could not convert 'one' into an integer")
-  expect_error(pkgapi_input_validator_integer("string"),
+  expect_error(pkgapi_input_validate_integer("string"),
                "Could not convert 'string' into an integer")
 
-  expect_error(pkgapi_input_validator_integer("1.4"),
+  expect_error(pkgapi_input_validate_integer("1.4"),
                "Could not convert '1.4' into an integer (loses precision)",
                fixed = TRUE)
 })
 
 
 test_that("integer validator works", {
-  expect_equal(pkgapi_input_validator_numeric("1"), 1)
-  expect_equal(pkgapi_input_validator_numeric("-100"), -100)
-  expect_equal(pkgapi_input_validator_numeric("1.23"), 1.23)
-  expect_equal(pkgapi_input_validator_numeric("1e-5"), 1e-5)
+  expect_equal(pkgapi_input_validate_numeric("1"), 1)
+  expect_equal(pkgapi_input_validate_numeric("-100"), -100)
+  expect_equal(pkgapi_input_validate_numeric("1.23"), 1.23)
+  expect_equal(pkgapi_input_validate_numeric("1e-5"), 1e-5)
 
-  expect_error(pkgapi_input_validator_numeric("one"),
+  expect_error(pkgapi_input_validate_numeric("one"),
                "Could not convert 'one' into a numeric")
-  expect_error(pkgapi_input_validator_numeric("string"),
+  expect_error(pkgapi_input_validate_numeric("string"),
                "Could not convert 'string' into a numeric")
 })
 
 
 test_that("string validator", {
-  expect_equal(pkgapi_input_validator_string("1"), "1")
-  expect_equal(pkgapi_input_validator_string("TRUE"), "TRUE")
-  expect_equal(pkgapi_input_validator_string("string"), "string")
-  expect_error(pkgapi_input_validator_string(letters), "must be a scalar")
-})
-
-
-test_that("Validate query parameters", {
-  q <- pkgapi_input_query(a = "numeric", b = "numeric")
-  args <- formals(function(a, b) NULL)
-  res <- pkgapi_input_validator_simple(q, args, "query")
-  expect_equal(res(list(a = "1", b = "2")), list(a = 1, b = 2))
-
-  err <- expect_error(res(list(a = "1", b = "x")), class = "pkgapi_error")
-  expect_match(
-    err$message,
-    "Error parsing query parameter 'b': Could not convert 'x'",
-    fixed = TRUE)
-
-  err <- expect_error(res(list(a = "1", b = "2", c = "3")),
-                      class = "pkgapi_error")
-  expect_match(
-    err$message,
-    "Recieved extra query parameters: 'c'",
-    fixed = TRUE)
+  expect_equal(pkgapi_input_validate_string("1"), "1")
+  expect_equal(pkgapi_input_validate_string("TRUE"), "TRUE")
+  expect_equal(pkgapi_input_validate_string("string"), "string")
+  expect_error(pkgapi_input_validate_string(letters), "must be a scalar")
 })
 
 
@@ -82,7 +143,7 @@ test_that("Can use single query parameter", {
   endpoint <- pkgapi_endpoint$new(
     "GET", "/square", square,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(n = "numeric"),
+    pkgapi_input_query(n = "numeric"),
     validate = TRUE)
 
   ## endpoint directly:
@@ -104,15 +165,14 @@ test_that("Can use single query parameter", {
 test_that("Can validate query parameters from plumber, throwing nice errors", {
   multiply <- pkgapi_endpoint$new(
     "GET", "/multiply", function(a, b) jsonlite::unbox(a * b),
-    input_query = pkgapi_input_query(a = "numeric", b = "numeric"),
+    pkgapi_input_query(a = "numeric", b = "numeric"),
     returning = pkgapi_returning_json())
 
-  expect_equal(multiply$inputs(NULL, list(a = "1", b = "2"),
-                               list(provided = FALSE)),
-               list(a = 1, b = 2))
+  expect_equal(
+    multiply$inputs$validate(list(query = list(a = "1", b = "2"))),
+    list(a = 1, b = 2))
 
-  api <- pkgapi$new()
-  api$handle(multiply)
+  api <- pkgapi$new()$handle(multiply)
 
   res <- api$request("GET", "/multiply", c(a = 1, b = 2))
   expect_equal(res$status, 200)
@@ -138,7 +198,7 @@ test_that("use routing parameter", {
   endpoint <- pkgapi_endpoint$new(
     "GET", "/power/<m:int>", power,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(n = "numeric"),
+    pkgapi_input_query(n = "numeric"),
     validate = TRUE)
 
   ## endpoint directly:
@@ -167,7 +227,7 @@ test_that("use text routing parameter", {
   endpoint <- pkgapi_endpoint$new(
     "GET", "/operation/<type>", operation,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(x = "numeric", y = "numeric"),
+    pkgapi_input_query(x = "numeric", y = "numeric"),
     validate = TRUE)
 
   res <- endpoint$run(type = "plus", x = 3, y = 4)
@@ -192,7 +252,7 @@ test_that("Can use an optional logical parameter", {
   endpoint <- pkgapi_endpoint$new(
     "GET", "/hello", hello,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(positive = "logical"),
+    pkgapi_input_query(positive = "logical"),
     validate = TRUE)
 
   ## endpoint directly:
@@ -230,7 +290,7 @@ test_that("use binary body", {
   endpoint <- pkgapi_endpoint$new(
     "POST", "/mean", mean_rds,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_body = pkgapi_input_body_binary("x"),
+    pkgapi_input_body_binary("x"),
     validate = TRUE)
 
   data <- runif(10)
@@ -259,7 +319,7 @@ test_that("validate binary body on input", {
   endpoint <- pkgapi_endpoint$new(
     "POST", "/mean", mean_rds,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_body = pkgapi_input_body_binary("x"),
+    pkgapi_input_body_binary("x"),
     validate = TRUE)
 
   data <- runif(10)
@@ -299,7 +359,7 @@ test_that("Binary body can be optional", {
   endpoint <- pkgapi_endpoint$new(
     "POST", "/mean", mean_rds,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_body = pkgapi_input_body_binary("x"),
+    pkgapi_input_body_binary("x"),
     validate = TRUE)
 
   data <- runif(10)
@@ -340,7 +400,7 @@ test_that("Use json body", {
   endpoint <- pkgapi_endpoint$new(
     "POST", "/square", square,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_body = pkgapi_input_body_json("n", "Number", "schema"),
+    pkgapi_input_body_json("n", "Number", "schema"),
     validate = TRUE)
 
   data <- 3
@@ -370,7 +430,7 @@ test_that("validate json body against schema", {
   endpoint <- pkgapi_endpoint$new(
     "POST", "/square", square,
     returning = pkgapi_returning_json("Number", "schema"),
-    input_body = pkgapi_input_body_json("n", "Number", "schema"),
+    pkgapi_input_body_json("n", "Number", "schema"),
     validate = TRUE)
 
   data <- "not a number"
@@ -385,7 +445,7 @@ test_that("validate json body against schema", {
   expect_equal(res$headers[["Content-Type"]], "application/json")
   errs <- from_json(res$body)$errors[[1]]
   expect_equal(errs$error, "INVALID_INPUT")
-  expect_match(errs$detail, "^Invalid body provided:")
+  expect_match(errs$detail, "^Error parsing body parameter")
   expect_match(errs$detail, get_error(v(payload))$message, fixed = TRUE)
 })
 
@@ -402,6 +462,7 @@ test_that("POST body is forbidden if not specified", {
 
   pr <- pkgapi$new()$handle(endpoint)
   res <- pr$request("POST", "/square", c(n = 4), body = '{"a":2}')
+
   expect_equal(res$status, 400)
   expect_equal(res$headers[["Content-Type"]], "application/json")
   errs <- from_json(res$body)$errors[[1]]
@@ -411,15 +472,38 @@ test_that("POST body is forbidden if not specified", {
 })
 
 
+test_that("Reject unknown query parameters", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    input_query = pkgapi_input_query(n = "numeric"),
+    validate = TRUE)
+
+  pr <- pkgapi$new()$handle(endpoint)
+  res <- pr$request("GET", "/square", c(n = 4, m = 2))
+
+  expect_equal(res$status, 400)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  errs <- from_json(res$body)$errors[[1]]
+  expect_equal(errs$error, "INVALID_INPUT")
+  expect_equal(errs$detail,
+               "Unconsumed query paramter: 'm'")
+})
+
+
 test_that("inputs must match function args", {
   square <- function(n) {
     jsonlite::unbox(n * n)
   }
-  expect_error(pkgapi_endpoint$new(
-    "GET", "/square", square,
-    returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(m = "numeric"),
-    validate = TRUE),
+  expect_error(
+    pkgapi_endpoint$new(
+      "GET", "/square", square,
+      returning = pkgapi_returning_json("Number", "schema"),
+      pkgapi_input_query(m = "numeric"),
+      validate = TRUE),
     "Argument 'm' (used in query) missing from the target function",
     fixed = TRUE)
 })
@@ -429,42 +513,29 @@ test_that("No duplicated args allowed", {
   square <- function(n) {
     jsonlite::unbox(n * n)
   }
-  expect_error(pkgapi_endpoint$new(
-    "GET", "/square/<n>", square,
-    returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(n = "numeric"),
-    validate = TRUE),
+  expect_error(
+    pkgapi_endpoint$new(
+      "GET", "/square/<n>", square,
+      returning = pkgapi_returning_json("Number", "schema"),
+      pkgapi_input_query(n = "numeric")),
     "Duplicated parameter names: 'n' (in path), 'n' (in query)",
     fixed = TRUE)
 })
 
 
 test_that("Must provide all non-optional args", {
-  expect_error(pkgapi_endpoint$new(
-    "GET", "/add", function(a, b) jsonlite::unbox(a + b),
-    returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(a = "numeric"),
-    validate = TRUE),
+  expect_error(
+    pkgapi_endpoint$new(
+      "GET", "/add", function(a, b) jsonlite::unbox(a + b),
+      returning = pkgapi_returning_json("Number", "schema"),
+      input_query = pkgapi_input_query(a = "numeric"),
+      validate = TRUE),
     "Required arguments to target function missing from inputs: 'b'")
-  expect_error(pkgapi_endpoint$new(
-    "GET", "/add", function(a, b = 1) jsonlite::unbox(a + b),
-    returning = pkgapi_returning_json("Number", "schema"),
-    input_query = pkgapi_input_query(a = "numeric"),
-    validate = TRUE),
+  expect_error(
+    pkgapi_endpoint$new(
+      "GET", "/add", function(a, b = 1) jsonlite::unbox(a + b),
+      returning = pkgapi_returning_json("Number", "schema"),
+      input_query = pkgapi_input_query(a = "numeric"),
+      validate = TRUE),
     NA)
-})
-
-
-test_that("body validator corner case", {
-  res <- pkgapi_input_validator_body(
-    pkgapi_input("name", "binary", "body",
-                 content_type = "application/octet-stream"),
-    formals(function(name) NULL))
-
-  err <- expect_error(res(list(provided = TRUE)), class = "pkgapi_error")
-  expect_equal(
-    err$data[[1]],
-    list(error = jsonlite::unbox("INVALID_INPUT"),
-         detail = jsonlite::unbox(
-           "Content-Type was not set (expected 'application/octet-stream')")))
 })

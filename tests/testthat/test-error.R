@@ -34,7 +34,9 @@ test_that("Catch an error in a json endpoint", {
   }
   err <- get_error(hello())
 
-  endpoint <- pkgapi_endpoint$new("GET", "/", hello, pkgapi_returning_json())
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", hello,
+    returning = pkgapi_returning_json())
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -58,7 +60,8 @@ test_that("Catch error in a binary endpoint", {
   err <- get_error(binary())
 
   endpoint <- pkgapi_endpoint$new(
-    "GET", "/binary", binary, pkgapi_returning_binary())
+    "GET", "/binary", binary,
+    returning = pkgapi_returning_binary())
   expect_error(endpoint$target(), class = "pkgapi_error")
 
   res <- endpoint$run()
@@ -147,7 +150,7 @@ test_that("Error during serialisation", {
   }
   returning <- pkgapi_returning_json()
   returning$content_type <- NULL
-  endpoint <- pkgapi_endpoint$new("GET", "/", hello, returning)
+  endpoint <- pkgapi_endpoint$new("GET", "/", hello, returning = returning)
   val <- endpoint$run()
 
   ## First, work our what the error should look like:
