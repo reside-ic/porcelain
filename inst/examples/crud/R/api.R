@@ -1,4 +1,5 @@
 build_api <- function() {
+  setup_db()
   api <- pkgapi::pkgapi$new()
   api$handle(create_endpoint())
   api$handle(details_endpoint())
@@ -7,7 +8,7 @@ build_api <- function() {
 
 create_endpoint <- function() {
   ## TODO: Shouldn't have to paste root here but it isn't picking up the
-  ## schema directory automratically
+  ## schema directory automatically
   root <- system.file("schema", package = "crud")
   create_response <- pkgapi::pkgapi_returning_json("create_response", root)
   book_input <- pkgapi::pkgapi_input_body_json("book", "book_input", root)
@@ -15,7 +16,7 @@ create_endpoint <- function() {
                                         "/books",
                                         add_book,
                                         returning = create_response,
-                                        input_body = book_input,
+                                        book_input,
                                         validate = TRUE)
 }
 
@@ -29,6 +30,6 @@ details_endpoint <- function() {
                                       "/book/<title>",
                                       get_book_details,
                                       returning = read_response,
-                                      input_query = read_input,
+                                      read_input,
                                       validate = TRUE)
 }

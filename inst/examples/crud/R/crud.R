@@ -1,9 +1,10 @@
 con <- setup_db()
 
 add_book <- function(book) {
-  DBI::dbAppendTable(con, "books", as_data_frame(book))
+  book_df <- as_data_frame(jsonlite::fromJSON(book))
+  DBI::dbAppendTable(con, "books", book_df)
   id <- DBI::dbGetQuery(con, sprintf("SELECT id FROM books WHERE title = '%s'",
-                                     book$title))[[1]]
+                                     book_df$title))[[1]]
   list(id = jsonlite::unbox(id))
 }
 
@@ -11,6 +12,8 @@ get_book_details <- function(title, details = NULL) {
   if (is.null(details)) {
     details <- "*"
   }
+  title <- URLdecode(title)
+  details <- vapply(details, URLdecode, character(1))
   data <- DBI::dbGetQuery(con, sprintf(
     "SELECT %s FROM books WHERE title = '%s'",
     paste(details, collapse = ", "),
