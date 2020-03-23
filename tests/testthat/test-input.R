@@ -539,3 +539,24 @@ test_that("Must provide all non-optional args", {
       validate = TRUE),
     NA)
 })
+
+
+test_that("default parameters", {
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/multiply", function(a, b = 2) jsonlite::unbox(a * b),
+    pkgapi_input_query(a = "numeric", b = "numeric"),
+    returning = pkgapi_returning_json())
+
+  res <- endpoint$run(10)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(20))
+  expect_equal(res$body, to_json_string(response_success(res$data)))
+
+  ## Through the api
+  pr <- pkgapi$new()$handle(endpoint)
+  res_api <- pr$request("GET", "/multiply", c(a = 10))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "application/json")
+  expect_equal(res_api$body, res$body)
+})

@@ -119,8 +119,6 @@ pkgapi_input <- R6::R6Class(
       invisible(self)
     },
 
-    ## TODO: default behaviour not given here, should collect that?
-    ##
     ## TODO: this is pretty ugly for body; should this move around the
     ## validator or is that just weird?  Might be nicer, can adjust
     ## later
