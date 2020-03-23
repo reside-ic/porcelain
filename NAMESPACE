@@ -2,6 +2,9 @@
 
 export(pkgapi)
 export(pkgapi_endpoint)
+export(pkgapi_input_body_binary)
+export(pkgapi_input_body_json)
+export(pkgapi_input_query)
 export(pkgapi_returning)
 export(pkgapi_returning_binary)
 export(pkgapi_returning_json)

@@ -20,6 +20,8 @@ Create a \code{pkgapi_endpoint} object that collects
 
 \item{\code{validate}}{Logical, indicating if response validation is used}
 
+\item{\code{inputs}}{Input control}
+
 \item{\code{returning}}{An \code{\link{pkgapi_returning}} object
 controlling the return type (content type, status code,
 serialisation and validation information).}
@@ -39,7 +41,7 @@ serialisation and validation information).}
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, returning, validate = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, ..., returning, validate = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -51,16 +53,20 @@ Create an endpoint
 
 \item{\code{target}}{An R function to run as the endpoint}
 
+\item{\code{...}}{Additional parameters, currently representing
+\emph{inputs}.  You can use the functions
+\code{\link{pkgapi_input_query}},
+\code{\link{pkgapi_input_body_binary}} and
+\code{\link{pkgapi_input_body_json}} to define inputs and pass
+them into this method.  The names used must match those in
+\code{target}.}
+
 \item{\code{returning}}{Information about what the endpoint returns,}
 
 \item{\code{validate}}{Logical, indicating if any validation
 (implemented by the \code{validate_response} argument) should be
 enabled.  This should be set to \code{FALSE} in production
 environments.}
-
-\item{\code{process}}{Optional processing function that will serialise
-the data produced by \code{target} into an appropriate body to
-be returned by plumber.}
 
 \item{\code{validate_response}}{Optional function that throws an error
 of the processed body is "invalid".}
@@ -92,7 +98,8 @@ through the \code{process} method and returned by plumber) and
 \if{html}{\out{<a id="method-plumber"></a>}}
 \subsection{Method \code{plumber()}}{
 Helper method for use with plumber - not designed
-for end-user use.
+for end-user use.  This is what gets called by plumber when the
+endpoint recieves a request.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$plumber(req, res, ...)}\if{html}{\out{</div>}}
 }

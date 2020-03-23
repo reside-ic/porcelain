@@ -9,12 +9,14 @@ pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
+  ##' @description Create a pkgapi object
   public = list(
-    ##' @description Create a pkgapi object
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
     initialize = function(...) {
-      super$initialize(...)
+      ## NOTE: it's not totally clear what the correct environment
+      ## here is.
+      super$initialize(NULL, pkgapi_filters(), new.env(parent = .GlobalEnv))
       self$setErrorHandler(pkgapi_error_handler)
     },
 
@@ -54,8 +56,18 @@ pkgapi <- R6::R6Class(
     ##'
     ##' @param query Optional query parameters as a named list or
     ##' character vector.
-    request = function(method, path, query = NULL) {
-      plumber_request(self, method, path, query)
+    ##'
+    ##' @param body Optional body (only valid with \code{PUT}, \code{POST},
+    ##' etc).
+    ##'
+    ##' @param content_type Optional content type (mime) which can be
+    ##' provided alongside \code{body}.  If not provided it is set to
+    ##' \code{application/octet-stream} if \code{body} is raw, or
+    ##' \code{application/json} otherwise.
+    request = function(method, path, query = NULL, body = NULL,
+                       content_type = NULL) {
+      plumber_request(self, method, path, query, body = body,
+                      content_type = content_type)
     }
   ))
 
