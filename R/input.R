@@ -119,42 +119,57 @@ pkgapi_input <- R6::R6Class(
       invisible(self)
     },
 
-    ## TODO: this is pretty ugly for body; should this move around the
-    ## validator or is that just weird?  Might be nicer, can adjust
-    ## later
-    ##
-    ## NOTE: this is basically two functions - pull out into two free fns
     validate = function(given) {
       if (self$where == "body") {
-        body <- given[["body"]]
-        if (self$required && !isTRUE(body$provided)) {
-          pkgapi_input_error("Body was not provided")
-        }
-        if (isTRUE(body$provided)) {
-          pkgapi_input_validate_mime(body$type$mime, self$data$content_type)
-          value <- body$value
-        } else {
-          value <- NULL
-        }
+        pkgapi_input_validate_body(given, self)
       } else {
-        value <- given[[self$where]][[self$name]]
-        if (self$required && is.null(value)) {
-          pkgapi_input_error(sprintf(
-            "%s parameter '%s' is missing but required",
-            self$where, self$name))
-        }
+        pkgapi_input_validate_parameter(given, self)
       }
-      if (!is.null(value)) {
-        value <- tryCatch(
-          self$validator(value),
-          error = function(e)
-            ## NOTE: not a lovely error message for the body
-            pkgapi_input_error(sprintf("Error parsing %s parameter '%s': %s",
-                                  self$where, self$name, e$message)))
-      }
-      value
     }
   ))
+
+
+## query and path (eventually also cookie and header)
+pkgapi_input_validate_parameter <- function(given, self) {
+  value <- given[[self$where]][[self$name]]
+  if (self$required && is.null(value)) {
+    pkgapi_input_error(sprintf(
+      "%s parameter '%s' is missing but required",
+      self$where, self$name))
+  }
+  if (!is.null(value)) {
+    value <- tryCatch(
+      self$validator(value),
+      error = function(e)
+        ## NOTE: not a lovely error message for the body
+        pkgapi_input_error(sprintf("Error parsing %s parameter '%s': %s",
+                                   self$where, self$name, e$message)))
+  }
+  value
+}
+
+
+pkgapi_input_validate_body <- function(given, self) {
+  body <- given[["body"]]
+  if (self$required && !isTRUE(body$provided)) {
+    pkgapi_input_error("Body was not provided")
+  }
+  if (isTRUE(body$provided)) {
+    pkgapi_input_validate_mime(body$type$mime, self$data$content_type)
+    value <- body$value
+  } else {
+    value <- NULL
+  }
+
+  if (!is.null(value)) {
+    value <- tryCatch(
+      self$validator(value),
+      error = function(e)
+        pkgapi_input_error(sprintf("Error parsing body (for '%s'): %s",
+                                   self$name, e$message)))
+  }
+  value
+}
 
 
 ## This one is just to shepherd things through for now - could be an

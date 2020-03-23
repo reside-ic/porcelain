@@ -445,7 +445,7 @@ test_that("validate json body against schema", {
   expect_equal(res$headers[["Content-Type"]], "application/json")
   errs <- from_json(res$body)$errors[[1]]
   expect_equal(errs$error, "INVALID_INPUT")
-  expect_match(errs$detail, "^Error parsing body parameter")
+  expect_match(errs$detail, "Error parsing body (for 'n')", fixed = TRUE)
   expect_match(errs$detail, get_error(v(payload))$message, fixed = TRUE)
 })
 
