@@ -14,9 +14,7 @@ pkgapi_input_body_json(name, schema, root)
 
 \item{schema}{The name of the json schema to use}
 
-\item{root}{The root of the schema directory.  If not provided,
-and if \code{target} is in a package, then we'll look in that
-package's installed \code{schema} directory.}
+\item{root}{The root of the schema directory.}
 }
 \description{
 Control for body parameters.  This might change.  There are

@@ -37,14 +37,13 @@ pkgapi_returning <- function(content_type, process, validate,
 
 ##' @param schema The name of the json schema to use
 ##'
-##' @param root The root of the schema directory.  If not provided,
-##'   and if \code{target} is in a package, then we'll look in that
-##'   package's installed \code{schema} directory.
+##' @param root The root of the schema directory.
 ##'
 ##' @export
 ##' @rdname pkgapi_returning
 pkgapi_returning_json <- function(schema = NULL, root = NULL,
                                   status_code = 200L) {
+  ## TODO(RESIDE-121): root can be inferred from the target function
   content_type <- "application/json"
   process <- function(data) to_json_string(response_success(data))
   validate <- pkgapi_validator(schema, schema_root(root), query = "data")
