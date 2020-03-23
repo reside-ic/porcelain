@@ -53,21 +53,20 @@ Create an endpoint
 
 \item{\code{target}}{An R function to run as the endpoint}
 
+\item{\code{...}}{Additional parameters, currently representing
+\emph{inputs}.  You can use the functions
+\code{\link{pkgapi_input_query}},
+\code{\link{pkgapi_input_body_binary}} and
+\code{\link{pkgapi_input_body_json}} to define inputs and pass
+them into this method.  The names used must match those in
+\code{target}.}
+
 \item{\code{returning}}{Information about what the endpoint returns,}
 
 \item{\code{validate}}{Logical, indicating if any validation
 (implemented by the \code{validate_response} argument) should be
 enabled.  This should be set to \code{FALSE} in production
 environments.}
-
-\item{\code{input_query}}{Information on input parameters, using
-\code{\link{pkgapi_input_query}}.  The names used must match
-the names in \code{target}.}
-
-\item{\code{input_body}}{Information on body, using
-\code{\link{pkgapi_input_body_binary}} or
-\code{\link{pkgapi_input_body_json}}.  Only a single body
-element can be specified.}
 
 \item{\code{validate_response}}{Optional function that throws an error
 of the processed body is "invalid".}
