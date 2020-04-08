@@ -37,3 +37,14 @@ test_that("use mutable state from an endpoint", {
   expect_equal(res1_api$body, res1$body)
   expect_equal(res2_api$body, res2$body)
 })
+
+
+test_that("Validate state against target", {
+  expect_error(
+    pkgapi_endpoint$new(
+      "POST", "/increment", function(arg) NULL,
+      pkgapi_state(msg = 1),
+      returning = pkgapi_returning_json("Number", "schema")),
+    "Argument 'msg' (used in state) missing from the target function",
+    fixed = TRUE)
+})
