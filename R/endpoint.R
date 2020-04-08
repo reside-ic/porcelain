@@ -75,8 +75,11 @@ pkgapi_endpoint <- R6::R6Class(
       ## arguments:
       is_state <- vlapply(other, inherits, "pkgapi_state")
       if (any(is_state)) {
+        ## It's possible that this can be relaxed (to allow multiple
+        ## state arguments to be added) but that feels pretty weird so
+        ## just error.
         if (sum(is_state) != 1L) {
-          stop("only one state can be given") # this can be relaxed
+          stop("Only one 'pkgapi_state' can be passed to an endpoint")
         }
         ## This alters the target function by binding state into it.
         ## One downside of this is that if an input tries to work with

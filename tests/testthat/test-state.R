@@ -48,3 +48,14 @@ test_that("Validate state against target", {
     "Argument 'msg' (used in state) missing from the target function",
     fixed = TRUE)
 })
+
+
+test_that("Mutiple state entries are not allowed", {
+  expect_error(
+    pkgapi_endpoint$new(
+      "GET", "/add", function(a, b, c) NULL,
+      pkgapi_state(a = 1),
+      pkgapi_state(b = 2),
+      returning = pkgapi_returning_json("Number", "schema")),
+    "Only one 'pkgapi_state' can be passed to an endpoint")
+})
