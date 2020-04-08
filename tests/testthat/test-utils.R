@@ -53,3 +53,19 @@ test_that("parse_mime", {
     parse_mime("text/plain;charset=UTF-8"),
     parse_mime("text/plain"))
 })
+
+
+test_that("bind_args", {
+  f <- function(a, b, c) {
+    list(a, b, c)
+  }
+
+  g <- bind_args(f, list(a = 1))
+  expect_equal(g(2, 3), list(1, 2, 3))
+
+  g <- bind_args(f, list(a = 1, c = 3))
+  expect_equal(g(2), list(1, 2, 3))
+
+  g <- bind_args(f, list(c = 3, b = 2))
+  expect_equal(g(1), list(1, 2, 3))
+})

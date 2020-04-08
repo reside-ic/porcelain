@@ -125,3 +125,18 @@ formals_required <- function(f) {
   }
   names(args)[required]
 }
+
+
+## This can be done better - I don't love the .target name at all -
+## but it will work at least, and the interface is good.
+bind_args <- function(target, data) {
+  args <- formals(target)
+  keep <- args[!(names(args) %in% names(data))]
+
+  env <- list2env(data, new.env(parent = baseenv()))
+  env$.target <- target
+  body <- call("{", as.call(c(list(quote(.target)),
+                              lapply(names(args), as.name))))
+
+  as.function(c(keep, body), env)
+}
