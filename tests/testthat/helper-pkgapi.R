@@ -1,6 +1,19 @@
 ## TODO: required with current plumber?
 options(plumber.debug = FALSE)
 
+counter <- R6::R6Class(
+  "counter",
+  public = list(
+    value = 0L,
+    increment = function(by = 1L) {
+      self$value <- self$value + by
+    },
+    reset = function() {
+      self$value <- 0L
+    }
+  ))
+
+
 get_error <- function(expr) {
   tryCatch(expr, error = identity)
 }

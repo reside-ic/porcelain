@@ -26,6 +26,8 @@ pkgapi_endpoint <- R6::R6Class(
     validate = NULL,
     ##' @field inputs Input control
     inputs = NULL,
+    ##' @field state Possibly mutable state
+    state = NULL,
     ##' @field returning An \code{\link{pkgapi_returning}} object
     ##' controlling the return type (content type, status code,
     ##' serialisation and validation information).
@@ -68,10 +70,30 @@ pkgapi_endpoint <- R6::R6Class(
       other <- list(...)
       done <- logical(length(other))
 
+      ## There are a number of ways of achieving this, but by far the
+      ## simplest is to create a closure that binds the appropriate
+      ## arguments:
+      is_state <- vlapply(other, inherits, "pkgapi_state")
+      if (any(is_state)) {
+        ## It's possible that this can be relaxed (to allow multiple
+        ## state arguments to be added) but that feels pretty weird so
+        ## just error.
+        if (sum(is_state) != 1L) {
+          stop("Only one 'pkgapi_state' can be passed to an endpoint")
+        }
+        ## This alters the target function by binding state into it.
+        ## One downside of this is that if an input tries to work with
+        ## an argument that is already bound to state then the error
+        ## is just "this is not an argument" rather than "this
+        ## argument is already bound as state" which is not ideal.
+        self$target <- other[[which(is_state)]]$bind(self$target)
+        done[is_state] <- TRUE
+      }
+
       input_classes <- c("pkgapi_input", "pkgapi_input_collection")
       is_input <- vlapply(other, inherits, input_classes)
       self$inputs <- pkgapi_inputs$new(
-        c(pkgapi_input_path(path), other[is_input]))$bind(target)
+        c(pkgapi_input_path(path), other[is_input]))$bind(self$target)
       done[is_input] <- TRUE
 
       if (any(!done)) {
@@ -89,8 +111,9 @@ pkgapi_endpoint <- R6::R6Class(
       }
 
       self$validate <- validate
-      lock_bindings(c("method", "path", "target", "inputs", "returning"),
-                    self)
+      lock_bindings(
+        c("method", "path", "target", "inputs", "state", "returning"),
+        self)
     },
 
     ##' @description Run the endpoint.  This will produce a
