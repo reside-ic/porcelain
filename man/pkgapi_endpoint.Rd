@@ -22,6 +22,8 @@ Create a \code{pkgapi_endpoint} object that collects
 
 \item{\code{inputs}}{Input control}
 
+\item{\code{state}}{Possibly mutable state}
+
 \item{\code{returning}}{An \code{\link{pkgapi_returning}} object
 controlling the return type (content type, status code,
 serialisation and validation information).}

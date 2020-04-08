@@ -13,6 +13,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
+Requires: R (>= 3.5.0)
 Imports:
     R6,
     jsonlite,
