@@ -97,7 +97,7 @@ pkgapi_input <- R6::R6Class(
       if (where == "query") {
         types <- c("logical", "numeric", "integer", "string")
         match_value(type, types,
-                    sprintf("The 'type' of query parameter %s", nms[[i]]))
+                    sprintf("The 'type' of query parameter %s", self$name))
       }
 
       self$data <- list(...)
