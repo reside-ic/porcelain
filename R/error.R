@@ -1,3 +1,34 @@
+##' Throw an error from an endpoint.  This function is intended to
+##' allow target functions to throw nice errors back through the API.
+##'
+##' @title Throw an error from an endpoint
+##'
+##' @param message The human-readable message of the error.  Ignored
+##'   if \code{errors} is given.
+##'
+##' @param code Optional code for the error - if not given, then
+##'   \code{ERROR} is used.  Ignored if \code{errors} is given.
+##'
+##' @param errors A named list of errors - use this to signal multiple
+##'   error conditions as key/value pairs
+##'
+##' @param status_code The HTTP status code to use.  The default (400)
+##'   means "bad request" which should be a reasonable catch-all for
+##'   bad user data.
+##'
+##' @return Nothing, as this function throws an error
+##' @export
+pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
+                        status_code = 400L) {
+  if (is.null(errors)) {
+    assert_scalar_character(message)
+    assert_scalar_character(code)
+    errors <- set_names(list(message), code)
+  }
+  pkgapi_error(errors, status_code)
+}
+
+
 pkgapi_error <- function(errors, status_code = 400L) {
   stop(pkgapi_error_object(errors, status_code))
 }
