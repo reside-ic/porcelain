@@ -75,14 +75,15 @@ continuous integration systems.}
 \subsection{Method \code{handle()}}{
 Handle an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi$handle(endpoint)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi$handle(...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{endpoint}}{A \code{\link{pkgapi_endpoint}} object representing
-an endpoint.  Unlike plumber, an R function will \emph{not} work.}
+\item{\code{...}}{Either a single argument, being a
+ \code{\link{pkgapi_endpoint}} object representing an endpoint, or
+arguments to pass through to \code{plumber}.}
 }
 \if{html}{\out{</div>}}
 }

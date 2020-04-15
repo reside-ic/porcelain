@@ -36,9 +36,10 @@ pkgapi <- R6::R6Class(
 
     ##' @description Handle an endpoint
     ##'
-    ##' @param endpoint A \code{\link{pkgapi_endpoint}} object representing
-    ##' an endpoint.  Unlike plumber, an R function will \emph{not} work.
-    handle = function(endpoint) {
+    ##' @param ... Either a single argument, being a
+    ##'   \code{\link{pkgapi_endpoint}} object representing an endpoint, or
+    ##'  arguments to pass through to \code{plumber}.
+    handle = function(...) {
       ## NOTE: this ignores the 'preempt' arg - because the underlying
       ## logic of the super method uses missing() it's not
       ## straightforward to wrap.
@@ -50,8 +51,14 @@ pkgapi <- R6::R6Class(
       ##
       ## NOTE: We could use a different method here rather than
       ## overloading handle, as to add plain plumber endpoints.
-      assert_is(endpoint, "pkgapi_endpoint")
-      super$handle(endpoint = endpoint$create(private$envir, private$validate))
+      if (inherits(..1, "pkgapi_endpoint")) {
+        if (...length() > 1L) {
+          stop("nope!")
+        }
+        super$handle(endpoint = ..1$create(private$envir, private$validate))
+      } else {
+        super$handle(...)
+      }
       invisible(self)
     },
 
