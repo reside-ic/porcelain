@@ -53,7 +53,7 @@ pkgapi <- R6::R6Class(
       ## overloading handle, as to add plain plumber endpoints.
       if (inherits(..1, "pkgapi_endpoint")) {
         if (...length() > 1L) {
-          stop("nope!")
+          stop("If first argument is a 'pkgapi_endpoint' no others allowed")
         }
         super$handle(endpoint = ..1$create(private$envir, private$validate))
       } else {

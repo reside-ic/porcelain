@@ -122,3 +122,15 @@ test_that("allow plain plumber endpoints to be used", {
   expect_equal(res$status, 200)
   expect_equal(res$body, structure('"hello"', class = "json"))
 })
+
+
+test_that("disallow additional arguments with a pkgapendpoint", {
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", function() jsonlite::unbox("hello"),
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
+  pr <- pkgapi$new()
+  expect_error(
+    pr$handle(endpoint, "/hello"),
+    "If first argument is a 'pkgapi_endpoint' no others allowed")
+})
