@@ -37,6 +37,8 @@ serialisation and validation information).}
 \item \href{#method-run}{\code{pkgapi_endpoint$run()}}
 \item \href{#method-request}{\code{pkgapi_endpoint$request()}}
 \item \href{#method-plumber}{\code{pkgapi_endpoint$plumber()}}
+\item \href{#method-create}{\code{pkgapi_endpoint$create()}}
+\item \href{#method-clone}{\code{pkgapi_endpoint$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -44,7 +46,7 @@ serialisation and validation information).}
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, ..., returning, validate = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$new(method, path, target, ..., returning, validate = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -64,12 +66,17 @@ Create an endpoint
 them into this method.  The names used must match those in
 \code{target}.}
 
-\item{\code{returning}}{Information about what the endpoint returns,}
+\item{\code{returning}}{Information about what the endpoint returns,
+as created by \code{\link{pkgapi_returning}}}
 
 \item{\code{validate}}{Logical, indicating if any validation
-(implemented by the \code{validate_response} argument) should be
-enabled.  This should be set to \code{FALSE} in production
-environments.}
+(implemented by the \code{validate_response} argument) should
+be enabled.  This should be set to \code{FALSE} in production
+environments.  By default (if \code{validate} is \code{NULL}),
+we look at the value of the environment \code{PKGAPI_VALIDATE}
+- if \code{true} (case insensitive) then we will validate.
+This is intended to support easy use of validation on
+continuous integration systems.}
 
 \item{\code{validate_response}}{Optional function that throws an error
 of the processed body is "invalid".}
@@ -134,6 +141,42 @@ endpoint recieves a request.
 \item{\code{req, res}}{Conventional plumber request/response objects}
 
 \item{\code{...}}{Additional arguments passed through to \code{run}}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-create"></a>}}
+\subsection{Method \code{create()}}{
+Create a plumber endpoint
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$create(envir, validate)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{envir}}{Environment as used by plumber (currently unclear)}
+
+\item{\code{validate}}{Logical, allowing override of validation at the api
+level.  This takes precedence over the value set when creating the
+endpoint.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
 }
 \if{html}{\out{</div>}}
 }

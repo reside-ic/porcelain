@@ -170,6 +170,12 @@ pkgapi_endpoint <- R6::R6Class(
     },
 
     ##' @description Create a plumber endpoint
+    ##'
+    ##' @param envir Environment as used by plumber (currently unclear)
+    ##'
+    ##' @param validate Logical, allowing override of validation at the api
+    ##'   level.  This takes precedence over the value set when creating the
+    ##'   endpoint.
     create = function(envir, validate) {
       if (!identical(validate, self$validate)) {
         self <- self$clone()
