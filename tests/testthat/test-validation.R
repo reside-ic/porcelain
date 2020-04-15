@@ -110,6 +110,22 @@ test_that("can skip validation", {
 })
 
 
+test_that("validation respects default", {
+  f <- function() {
+    pkgapi_endpoint$new(
+    "GET", "/", function() jsonlite::unbox(1),
+    returning = pkgapi_returning_json("String", "schema"))$run()$status_code
+  }
+
+  withr::with_envvar(c("PKGAPI_VALIDATE" = NA_character_),
+                     expect_equal(f(), 200))
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "false"),
+                     expect_equal(f(), 200))
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "true"),
+                     expect_equal(f(), 500))
+})
+
+
 test_that("allow missing schema", {
   hello <- function() {
     jsonlite::unbox(1)

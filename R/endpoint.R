@@ -42,12 +42,16 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param target An R function to run as the endpoint
     ##'
     ##' @param returning Information about what the endpoint returns,
-    ##    as created by \code{\link{pkgapi_returning}}
+    ##'    as created by \code{\link{pkgapi_returning}}
     ##'
     ##' @param validate Logical, indicating if any validation
-    ##' (implemented by the \code{validate_response} argument) should be
-    ##' enabled.  This should be set to \code{FALSE} in production
-    ##' environments.
+    ##'   (implemented by the \code{validate_response} argument) should
+    ##'   be enabled.  This should be set to \code{FALSE} in production
+    ##'   environments.  By default (if \code{validate} is \code{NULL}),
+    ##'   we look at the value of the environment \code{PKGAPI_VALIDATE}
+    ##'   - if \code{true} (case insensitive) then we will validate.
+    ##'   This is intended to support easy use of validation on
+    ##'   continuous integration systems.
     ##'
     ##' @param ... Additional parameters, currently representing
     ##' \emph{inputs}.  You can use the functions
@@ -60,7 +64,7 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param validate_response Optional function that throws an error
     ##' of the processed body is "invalid".
     initialize = function(method, path, target, ..., returning,
-                          validate = FALSE) {
+                          validate = NULL) {
       self$method <- method
       self$path <- path
       self$target <- target
@@ -110,7 +114,7 @@ pkgapi_endpoint <- R6::R6Class(
              call. = FALSE)
       }
 
-      self$validate <- validate
+      self$validate <- pkgapi_validate_default(validate)
       lock_bindings(
         c("method", "path", "target", "inputs", "state", "returning"),
         self)
