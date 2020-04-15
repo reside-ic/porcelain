@@ -7,6 +7,27 @@ test_that("find schema root", {
 })
 
 
+test_that("default validation", {
+  withr::with_envvar(c("PKGAPI_VALIDATE" = NA_character_), {
+    expect_true(pkgapi_validate_default(TRUE))
+    expect_false(pkgapi_validate_default(FALSE))
+    expect_false(pkgapi_validate_default(NULL))
+  })
+
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "true"), {
+    expect_true(pkgapi_validate_default(TRUE))
+    expect_false(pkgapi_validate_default(FALSE))
+    expect_true(pkgapi_validate_default(NULL))
+  })
+
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "false"), {
+    expect_true(pkgapi_validate_default(TRUE))
+    expect_false(pkgapi_validate_default(FALSE))
+    expect_false(pkgapi_validate_default(NULL))
+  })
+})
+
+
 test_that("validate successful return", {
   path <- system_file("schema/response-success.json", package = "pkgapi")
   v <- jsonvalidate::json_validator(path, "ajv")
