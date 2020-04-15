@@ -1,6 +1,6 @@
 Package: pkgapi
 Title: Turn a Package into an HTTP API
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
                     email = "rich.fitzjohn@gmail.com"),
              person("Imperial College of Science, Technology and Medicine",
@@ -13,7 +13,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
-Requires: R (>= 3.5.0)
 Imports:
     R6,
     jsonlite,

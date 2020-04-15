@@ -82,3 +82,31 @@ test_that("build api - binary endpoint", {
   expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
   expect_equal(res$body, binary())
 })
+
+
+test_that("throw error", {
+  target_sqrt <- function(x) {
+    if (x < 0) {
+      pkgapi_stop("'x' must be positive")
+    }
+    jsonlite::unbox(sqrt(x))
+  }
+
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/sqrt", target_sqrt,
+    pkgapi_input_query(x = "numeric"),
+    returning = pkgapi_returning_json("Number", "schema"))
+
+  res <- endpoint$run(-1)
+
+  expect_equal(res$status_code, 400)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$value$status, jsonlite::unbox("failure"))
+  expect_null(res$value$data)
+  expect_equal(res$value$errors,
+               list(list(error = jsonlite::unbox("ERROR"),
+                         detail = jsonlite::unbox("'x' must be positive"))))
+  expect_equal(res$body, to_json_string(res$value))
+  expect_is(res$error, "pkgapi_error")
+  expect_equal(res$error$status_code, 400)
+})
