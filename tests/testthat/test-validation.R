@@ -126,6 +126,20 @@ test_that("validation respects default", {
 })
 
 
+test_that("override validation defaults at the api level", {
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", function() jsonlite::unbox(1),
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
+  api <- pkgapi$new(validate = FALSE)
+  api$handle(endpoint)
+  expect_true(endpoint$validate)
+
+  expect_equal(endpoint$run()$status_code, 500)
+  expect_equal(api$request("GET", "/")$status, 200)
+})
+
+
 test_that("allow missing schema", {
   hello <- function() {
     jsonlite::unbox(1)

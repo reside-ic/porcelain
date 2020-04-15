@@ -9,14 +9,28 @@ pkgapi <- R6::R6Class(
   "pkgapi",
   inherit = plumber::plumber,
 
+  private = list(
+    validate = NULL
+  ),
+
   ##' @description Create a pkgapi object
   public = list(
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
-    initialize = function(...) {
+    ##'
+    ##' @param validate Logical, indicating if any validation
+    ##'   (implemented by the \code{validate_response} argument) should
+    ##'   be enabled.  This should be set to \code{FALSE} in production
+    ##'   environments.  By default (if \code{validate} is \code{NULL}),
+    ##'   we look at the value of the environment \code{PKGAPI_VALIDATE}
+    ##'   - if \code{true} (case insensitive) then we will validate.
+    ##'   This is intended to support easy use of validation on
+    ##'   continuous integration systems.
+    initialize = function(..., validate = FALSE) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
       super$initialize(NULL, pkgapi_filters(), new.env(parent = .GlobalEnv))
+      private$validate <- validate
       self$setErrorHandler(pkgapi_error_handler)
     },
 
@@ -37,10 +51,7 @@ pkgapi <- R6::R6Class(
       ## NOTE: We could use a different method here rather than
       ## overloading handle, as to add plain plumber endpoints.
       assert_is(endpoint, "pkgapi_endpoint")
-      endpoint <- plumber::PlumberEndpoint$new(
-        endpoint$method, endpoint$path, endpoint$plumber, private$envir,
-        serializer = pkgapi_serialize_pass)
-      super$handle(endpoint = endpoint)
+      super$handle(endpoint = endpoint$create(private$envir, private$validate))
       invisible(self)
     },
 

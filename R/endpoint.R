@@ -8,7 +8,6 @@
 ##' @export
 pkgapi_endpoint <- R6::R6Class(
   "pkgapi_endpoint",
-  cloneable = FALSE,
 
   private = list(
     process = NULL,
@@ -168,5 +167,16 @@ pkgapi_endpoint <- R6::R6Class(
         args <- self$inputs$validate(given)
         do.call(self$run, args)
       }, error = pkgapi_process_error)
+    },
+
+    ##' @description Create a plumber endpoint
+    create = function(envir, validate) {
+      if (!identical(validate, self$validate)) {
+        self <- self$clone()
+        self$validate <- validate
+      }
+      plumber::PlumberEndpoint$new(
+        self$method, self$path, self$plumber, envir,
+        serializer = pkgapi_serialize_pass)
     }
   ))
