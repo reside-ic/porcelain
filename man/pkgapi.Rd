@@ -50,13 +50,22 @@ A \code{pkgapi} object.  This extends (via
 \subsection{Method \code{new()}}{
 Create a pkgapi object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{pkgapi$new(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi$new(..., validate = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{Parameters passed to \code{\link{plumber}}}
+
+\item{\code{validate}}{Logical, indicating if any validation
+(implemented by the \code{validate_response} argument) should
+be enabled.  This should be set to \code{FALSE} in production
+environments.  By default (if \code{validate} is \code{NULL}),
+we look at the value of the environment \code{PKGAPI_VALIDATE}
+- if \code{true} (case insensitive) then we will validate.
+This is intended to support easy use of validation on
+continuous integration systems.}
 }
 \if{html}{\out{</div>}}
 }

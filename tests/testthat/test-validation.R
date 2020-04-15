@@ -7,6 +7,27 @@ test_that("find schema root", {
 })
 
 
+test_that("default validation", {
+  withr::with_envvar(c("PKGAPI_VALIDATE" = NA_character_), {
+    expect_true(pkgapi_validate_default(TRUE))
+    expect_false(pkgapi_validate_default(FALSE))
+    expect_false(pkgapi_validate_default(NULL))
+  })
+
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "true"), {
+    expect_true(pkgapi_validate_default(TRUE))
+    expect_false(pkgapi_validate_default(FALSE))
+    expect_true(pkgapi_validate_default(NULL))
+  })
+
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "false"), {
+    expect_true(pkgapi_validate_default(TRUE))
+    expect_false(pkgapi_validate_default(FALSE))
+    expect_false(pkgapi_validate_default(NULL))
+  })
+})
+
+
 test_that("validate successful return", {
   path <- system_file("schema/response-success.json", package = "pkgapi")
   v <- jsonvalidate::json_validator(path, "ajv")
@@ -86,6 +107,36 @@ test_that("can skip validation", {
     validate = FALSE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
+})
+
+
+test_that("validation respects default", {
+  f <- function() {
+    pkgapi_endpoint$new(
+    "GET", "/", function() jsonlite::unbox(1),
+    returning = pkgapi_returning_json("String", "schema"))$run()$status_code
+  }
+
+  withr::with_envvar(c("PKGAPI_VALIDATE" = NA_character_),
+                     expect_equal(f(), 200))
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "false"),
+                     expect_equal(f(), 200))
+  withr::with_envvar(c("PKGAPI_VALIDATE" = "true"),
+                     expect_equal(f(), 500))
+})
+
+
+test_that("override validation defaults at the api level", {
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/", function() jsonlite::unbox(1),
+    returning = pkgapi_returning_json("String", "schema"),
+    validate = TRUE)
+  api <- pkgapi$new(validate = FALSE)
+  api$handle(endpoint)
+  expect_true(endpoint$validate)
+
+  expect_equal(endpoint$run()$status_code, 500)
+  expect_equal(api$request("GET", "/")$status, 200)
 })
 
 

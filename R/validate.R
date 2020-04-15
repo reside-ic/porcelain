@@ -44,3 +44,12 @@ schema_root <- function(root) {
   assert_is_directory(root)
   normalizePath(root, mustWork = TRUE)
 }
+
+
+## Ugly name...
+pkgapi_validate_default <- function(value) {
+  if (is.null(value)) {
+    value <- tolower(Sys.getenv("PKGAPI_VALIDATE", "")) == "true"
+  }
+  value
+}
