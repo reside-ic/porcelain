@@ -19,5 +19,6 @@ Imports:
     jsonvalidate (>= 1.2.2),
     plumber
 Suggests:
-    testthat
+    testthat,
+    withr
 RoxygenNote: 7.0.2
