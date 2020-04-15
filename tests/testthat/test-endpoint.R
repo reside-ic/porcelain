@@ -23,3 +23,19 @@ test_that("endpoints reject unconsumed dots", {
     "Unconsumed dot arguments: integer (unnamed argument)",
     fixed = TRUE)
 })
+
+
+test_that("Can serve endpoint directly", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/square", square,
+    returning = pkgapi_returning_json("Number", "schema"),
+    pkgapi_input_query(n = "numeric"),
+    validate = TRUE)
+
+  cmp <- pkgapi$new()$handle(endpoint)$request("GET", "/square", list(n = 3))
+  res <- endpoint$request(list(n = 3))
+  expect_equal(cmp, res)
+})
