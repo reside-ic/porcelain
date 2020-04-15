@@ -35,6 +35,7 @@ serialisation and validation information).}
 \itemize{
 \item \href{#method-new}{\code{pkgapi_endpoint$new()}}
 \item \href{#method-run}{\code{pkgapi_endpoint$run()}}
+\item \href{#method-request}{\code{pkgapi_endpoint$request()}}
 \item \href{#method-plumber}{\code{pkgapi_endpoint$plumber()}}
 }
 }
@@ -92,6 +93,27 @@ through the \code{process} method and returned by plumber) and
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{Arguments passed through to the \code{target} function}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-request"></a>}}
+\subsection{Method \code{request()}}{
+Test the endpoint.  This creates a full plumber
+object and serves one request to the endpoint.  Argument are as
+passed through to \code{\link{pkgapi}}'s \code{$request()}
+method, except that \code{method} and \code{path} are
+automatically taken from the endpoint itself.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{pkgapi_endpoint$request(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Arguments passed through to the \code{request} method
+(\code{query}, \code{body} and \code{content_type}).}
 }
 \if{html}{\out{</div>}}
 }

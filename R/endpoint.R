@@ -135,14 +135,16 @@ pkgapi_endpoint <- R6::R6Class(
       }, error = pkgapi_process_error)
     },
 
-    ## @description Test the endpoint.  This creates a full plumber
-    ## object and serves one request to the endpoint.  Argument are as
-    ## passed through to \code{\link{pkgapi}}'s \code{$request()}
-    ## method, except that \code{method} and \code{path} are
-    ## automatically taken from the endpoint itself.
-    request = function(query = NULL, body = NULL, content_type = NULL) {
-      pkgapi$new()$handle(self)$request(self$method, self$path, query, body,
-                                        content_type)
+    ##' @description Test the endpoint.  This creates a full plumber
+    ##' object and serves one request to the endpoint.  Argument are as
+    ##' passed through to \code{\link{pkgapi}}'s \code{$request()}
+    ##' method, except that \code{method} and \code{path} are
+    ##' automatically taken from the endpoint itself.
+    ##'
+    ##' @param ... Arguments passed through to the \code{request} method
+    ##'   (\code{query}, \code{body} and \code{content_type}).
+    request = function(...) {
+      pkgapi$new()$handle(self)$request(self$method, self$path, ...)
     },
 
     ##' @description Helper method for use with plumber - not designed
