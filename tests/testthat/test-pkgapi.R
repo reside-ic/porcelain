@@ -110,3 +110,15 @@ test_that("throw error", {
   expect_is(res$error, "pkgapi_error")
   expect_equal(res$error$status_code, 400)
 })
+
+
+test_that("allow plain plumber endpoints to be used", {
+  hello <- function() {
+    jsonlite::unbox("hello")
+  }
+  pr <- pkgapi$new()
+  pr$handle("GET", "/", hello)
+  res <- pr$request("GET", "/")
+  expect_equal(res$status, 200)
+  expect_equal(res$body, structure('"hello"', class = "json"))
+})
