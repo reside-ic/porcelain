@@ -32,6 +32,7 @@ pkgapi <- R6::R6Class(
       super$initialize(NULL, pkgapi_filters(), new.env(parent = .GlobalEnv))
       private$validate <- validate
       self$setErrorHandler(pkgapi_error_handler)
+      self$set404Handler(pkgapi_404_handler)
     },
 
     ##' @description Handle an endpoint
@@ -121,6 +122,16 @@ pkgapi_do_serialize_pass <- function(val, res) {
 pkgapi_error_handler <- function(req, res, e) {
   val <- pkgapi_process_error(e)
   pkgapi_serialize_pass(val, req, res, function(...) NULL)
+}
+
+
+## This causes a proper fight with plumber as it bypasses all our
+## serialisers and error handlers in hard to deal with ways.
+pkgapi_404_handler <- function(req, res) {
+  e <- pkgapi_error_object(c("NOT_FOUND" = "Resource not found"), 404L)
+  val <- pkgapi_process_error(e)
+  pkgapi_do_serialize_pass(val, res)
+  val$value
 }
 
 
