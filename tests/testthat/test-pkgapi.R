@@ -138,7 +138,6 @@ test_that("disallow additional arguments with a pkgapendpoint", {
 
 test_that("404 handler", {
   p <- pkgapi$new()
-  # # environment(p$initialize)$private$serializer
   res <- p$request("GET", "/somewhere")
   expect_equal(res$status, 404)
   expect_equal(res$headers[["Content-Type"]], "application/json")

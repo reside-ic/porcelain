@@ -37,6 +37,6 @@ test_that("Can serve endpoint directly", {
 
   cmp <- pkgapi$new()$handle(endpoint)$request("GET", "/square", list(n = 3))
   res <- endpoint$request(list(n = 3))
-  res$headers$Date <- cmp$headers$Date
+  res$headers[["Date"]] <- cmp$headers[["Date"]]
   expect_equal(cmp, res)
 })
