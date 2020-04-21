@@ -130,7 +130,8 @@ pkgapi_error_handler <- function(req, res, e) {
 pkgapi_404_handler <- function(req, res) {
   e <- pkgapi_error_object(c("NOT_FOUND" = "Resource not found"), 404L)
   val <- pkgapi_process_error(e)
-  pkgapi_do_serialize_pass(val, res)
+  res$status <- 404
+  val$value$data <- jsonlite::unbox(NA)
   val$value
 }
 
