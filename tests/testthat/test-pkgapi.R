@@ -134,3 +134,17 @@ test_that("disallow additional arguments with a pkgapendpoint", {
     pr$handle(endpoint, "/hello"),
     "If first argument is a 'pkgapi_endpoint' no others allowed")
 })
+
+
+test_that("404 handler", {
+  p <- pkgapi$new()
+  res <- p$request("GET", "/somewhere")
+  expect_equal(res$status, 404)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+
+  cmp <- list(
+    status = jsonlite::unbox("failure"),
+    errors = pkgapi_error_data(list(NOT_FOUND = "Resource not found")),
+    data = NULL)
+  expect_equal(res$body, to_json(cmp))
+})
