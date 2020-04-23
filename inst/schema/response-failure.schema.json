@@ -11,17 +11,7 @@
         "errors": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "error" : {
-                        "type": "string"
-                    },
-                    "detail": {
-                        "type": ["string", "null"]
-                    }
-                },
-                "additionalProperties": true,
-                "required": [ "error", "detail" ]
+                "$ref": "error-detail.schema.json"
             }
         }
     },
