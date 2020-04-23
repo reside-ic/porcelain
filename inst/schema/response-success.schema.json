@@ -11,6 +11,6 @@
             "type": "null"
         }
     },
-    "required": ["success", "data", "errors"],
+    "required": ["status", "data", "errors"],
     "additionalProperties": false
 }
