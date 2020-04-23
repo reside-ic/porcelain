@@ -29,7 +29,7 @@ test_that("default validation", {
 
 
 test_that("validate successful return", {
-  path <- system_file("schema/response-success.json", package = "pkgapi")
+  path <- system_file("schema/response-success.schema.json", package = "pkgapi")
   v <- jsonvalidate::json_validator(path, "ajv")
   expect_true(v(to_json(response_success(NULL))))
   expect_true(v(to_json(response_success(1))))
@@ -37,7 +37,7 @@ test_that("validate successful return", {
 
 
 test_that("validate errors", {
-  path <- system_file("schema/response-failure.json", package = "pkgapi")
+  path <- system_file("schema/response-failure.schema.json", package = "pkgapi")
   v <- jsonvalidate::json_validator(path, "ajv")
 
   f <- function(x) {
@@ -55,6 +55,14 @@ test_that("validate errors", {
   expect_true(v(e2$body))
 
   e3 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
+  expect_equal(e3$value$errors,
+               list(list(error = jsonlite::unbox("ERROR"),
+                         detail = NULL),
+                    list(error = jsonlite::unbox("OTHER"),
+                         detail = jsonlite::unbox("reason"))))
+  expect_true(v(e3$body))
+
+  e4 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
   expect_equal(e3$value$errors,
                list(list(error = jsonlite::unbox("ERROR"),
                          detail = NULL),
