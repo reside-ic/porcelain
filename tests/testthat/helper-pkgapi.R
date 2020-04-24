@@ -25,8 +25,8 @@ from_json <- function(x) {
 
 
 validator_response_failure <- jsonvalidate::json_validator(
-  system_file("schema/response-failure.json", package = "pkgapi"),
+  system_file("schema/response-failure.schema.json", package = "pkgapi"),
   engine = "ajv")
 validator_response_success <- jsonvalidate::json_validator(
-  system_file("schema/response-success.json", package = "pkgapi"),
+  system_file("schema/response-success.schema.json", package = "pkgapi"),
   engine = "ajv")

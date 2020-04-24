@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
         "status": {
-            "const": "success"
+            "enum": ["success"]
         },
         "data": {
         },
@@ -11,6 +11,6 @@
             "type": "null"
         }
     },
-    "requiredProperties": ["success", "data", "errors"],
+    "required": ["status", "data", "errors"],
     "additionalProperties": false
 }
