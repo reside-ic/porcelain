@@ -7,3 +7,5 @@
 ^\.lintr$
 ^\.hadolint\.yaml$
 ^scripts$
+^.*\.Rproj$
+^\.Rproj\.user$

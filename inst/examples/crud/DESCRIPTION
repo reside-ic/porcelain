@@ -1,0 +1,15 @@
+Package: crud
+Title: An example CRUD (create, read, update, delete) API
+Version: 0.0.1
+Authors@R: 
+    person(given = "First",
+           family = "Last",
+           role = c("aut", "cre"),
+           email = "first.last@example.com")
+Description: Example package which exposes an API enabling CRUD operations on a
+    SQLite db using pkgapi
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat
