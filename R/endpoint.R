@@ -130,11 +130,15 @@ pkgapi_endpoint <- R6::R6Class(
       tryCatch({
         data <- self$target(...)
         body <- self$returning$process(data)
+        ## Remove headers attribute as we don't want to serialize this in
+        ## the response
+        attr(body, "headers") <- NULL
         if (self$validate) {
           self$returning$validate(body)
         }
         pkgapi_response(self$returning$status_code,
-                        self$returning$content_type, body, data = data)
+                        self$returning$content_type, body, data = data,
+                        headers = headers(data))
       }, error = pkgapi_process_error)
     },
 

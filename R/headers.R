@@ -12,6 +12,10 @@
 #' @examples
 #' pkgapi_add_headers("output", list("Content-Dispotition" = "output_file.txt"))
 pkgapi_add_headers <- function(data, headers) {
-  attributes(data) <- headers
+  attributes(data) <- list("headers" = headers)
   data
+}
+
+headers <- function(data) {
+  attr(data, "headers")
 }

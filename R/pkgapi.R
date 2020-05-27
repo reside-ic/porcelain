@@ -91,10 +91,11 @@ pkgapi <- R6::R6Class(
   ))
 
 
-pkgapi_response <- function(status_code, content_type, body, ...) {
+pkgapi_response <- function(status_code, content_type, body, headers, ...) {
   ret <- list(status_code = status_code,
               content_type = content_type,
               body = body,
+              headers = headers,
               ...)
   class(ret) <- "pkgapi_response"
   ret
@@ -109,6 +110,14 @@ pkgapi_serialize_pass <- function(val, req, res, error_handler) {
 
 pkgapi_do_serialize_pass <- function(val, res) {
   res$setHeader("Content-Type", val$content_type)
+  if (!is.null(val$headers)) {
+    for (header in names(val$headers)) {
+      ## TODO: What do we want to do if a header already exists?
+      ## Looks like adding another one like Content-Type here ends up with
+      ## 2 Content-Type headers
+      res$setHeader(header, val$headers[[header]])
+    }
+  }
   if (val$content_type == "application/json") {
     res$body <- as.character(val$body)
   } else {
