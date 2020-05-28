@@ -132,7 +132,7 @@ pkgapi_endpoint <- R6::R6Class(
         body <- self$returning$process(data)
         ## Remove headers attribute as we don't want to serialize this in
         ## the response
-        attr(body, "headers") <- NULL
+        body <- remove_pkgapi_headers(body)
         if (self$validate) {
           self$returning$validate(body)
         }

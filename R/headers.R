@@ -19,3 +19,8 @@ pkgapi_add_headers <- function(data, headers) {
 get_pkgapi_headers <- function(data) {
   attr(data, "pkgapi_headers", exact = TRUE)
 }
+
+remove_pkgapi_headers <- function(data) {
+  attr(data, "pkgapi_headers") <- NULL
+  data
+}
