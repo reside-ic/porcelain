@@ -10,7 +10,8 @@
 ##' @export
 ##'
 ##' @examples
-##' pkgapi_add_headers("output", list("Content-Dispotition" = "output_file.txt"))
+##' pkgapi_add_headers("output",
+##'                    list("Content-Dispotition" = "output_file.txt"))
 pkgapi_add_headers <- function(data, headers) {
   attributes(data) <- list("pkgapi_headers" = headers)
   data
