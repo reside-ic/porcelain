@@ -9,3 +9,4 @@
 ^scripts$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.idea$

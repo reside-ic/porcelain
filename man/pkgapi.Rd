@@ -9,7 +9,7 @@ A \code{pkgapi} object.  This extends (via
   plumber API are documented here.
 }
 \section{Super classes}{
-\code{\link[plumber:hookable]{plumber::hookable}} -> \code{\link[plumber:plumber]{plumber::plumber}} -> \code{pkgapi}
+\code{\link[plumber:plumber]{plumber::plumber}} -> \code{pkgapi}
 }
 \section{Methods}{
 \subsection{Public methods}{
