@@ -138,7 +138,7 @@ pkgapi_endpoint <- R6::R6Class(
         }
         pkgapi_response(self$returning$status_code,
                         self$returning$content_type, body, data = data,
-                        headers = headers(data))
+                        headers = get_pkgapi_headers(data))
       }, error = pkgapi_process_error)
     },
 

@@ -178,7 +178,7 @@ test_that("headers can be added to output", {
   expect_equal(res$headers, list("Content-Disposition" = "new_file.txt"))
 })
 
-test_that("build api - binary endpoint", {
+test_that("build api - headers", {
   binary <- function() {
     as.raw(0:255)
   }
@@ -198,4 +198,29 @@ test_that("build api - binary endpoint", {
   expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
   expect_equal(res$headers[["Content-Disposition"]], "new_file.txt")
   expect_equal(res$body, binary())
+})
+
+test_that("build api - dupe headers throws error", {
+  binary <- function() {
+    as.raw(0:255)
+  }
+  binary_with_header <- function() {
+    data <- binary()
+    pkgapi_add_headers(data, list("Content-Type" = "image/png"))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary_with_header,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
+  pr <- pkgapi$new()
+  pr$handle(endpoint)
+
+  res <- pr$request("GET", "/binary")
+  expect_equal(res$status, 500L)
+  body <- from_json(res$body)
+  expect_equal(body$status, "failure")
+  expect_equal(body$errors[[1]]$error, "SERVER_ERROR")
+  expect_equal(body$errors[[1]]$detail, paste0(
+    "Can't add header 'Content-Type' with value 'image/png'. Header already ",
+    "exists with value 'application/octet-stream'."))
 })

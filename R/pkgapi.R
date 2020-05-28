@@ -112,10 +112,13 @@ pkgapi_do_serialize_pass <- function(val, res) {
   res$setHeader("Content-Type", val$content_type)
   if (!is.null(val$headers)) {
     for (header in names(val$headers)) {
-      ## TODO: What do we want to do if a header already exists?
-      ## Looks like adding another one like Content-Type here ends up with
-      ## 2 Content-Type headers
-      res$setHeader(header, val$headers[[header]])
+      if (header %in% names(res$headers)) {
+        stop(sprintf(paste0("Can't add header '%s' with value '%s'. ",
+                            "Header already exists with value '%s'."),
+                     header, val$headers[[header]], res$headers[[header]]))
+      } else {
+        res$setHeader(header, val$headers[[header]])
+      }
     }
   }
   if (val$content_type == "application/json") {
