@@ -83,5 +83,6 @@ pkgapi_process_error <- function(error) {
   content_type <- "application/json"
   body <- to_json_string(value)
   pkgapi_response(status_code, content_type, body,
-                  error = error, value = value)
+                  error = error, value = value,
+                  headers = NULL)
 }

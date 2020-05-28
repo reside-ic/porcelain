@@ -91,10 +91,11 @@ pkgapi <- R6::R6Class(
   ))
 
 
-pkgapi_response <- function(status_code, content_type, body, ...) {
+pkgapi_response <- function(status_code, content_type, body, headers, ...) {
   ret <- list(status_code = status_code,
               content_type = content_type,
               body = body,
+              headers = headers,
               ...)
   class(ret) <- "pkgapi_response"
   ret
@@ -109,6 +110,17 @@ pkgapi_serialize_pass <- function(val, req, res, error_handler) {
 
 pkgapi_do_serialize_pass <- function(val, res) {
   res$setHeader("Content-Type", val$content_type)
+  if (!is.null(val$headers)) {
+    for (header in names(val$headers)) {
+      if (header %in% names(res$headers)) {
+        stop(sprintf(paste0("Can't add header '%s' with value '%s'. ",
+                            "Header already exists with value '%s'."),
+                     header, val$headers[[header]], res$headers[[header]]))
+      } else {
+        res$setHeader(header, val$headers[[header]])
+      }
+    }
+  }
   if (val$content_type == "application/json") {
     res$body <- as.character(val$body)
   } else {

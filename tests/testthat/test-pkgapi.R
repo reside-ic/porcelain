@@ -16,11 +16,12 @@ test_that("wrap endpoint", {
   res <- endpoint$run()
   expect_is(res, "pkgapi_response")
   expect_setequal(names(res),
-                  c("status_code", "content_type", "body", "data"))
+                  c("status_code", "content_type", "body", "data", "headers"))
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
   expect_equal(res$body, to_json_string(response_success(res$data)))
   expect_equal(res$data, hello())
+  expect_equal(res$headers, NULL)
 
   expect_true(validator_response_success(res$body))
 })
@@ -45,6 +46,7 @@ test_that("wrap raw output", {
   expect_equal(res$content_type, "application/octet-stream")
   expect_equal(res$body, binary())
   expect_equal(res$data, binary())
+  expect_equal(res$headers, NULL)
 })
 
 
@@ -147,4 +149,78 @@ test_that("404 handler", {
     errors = pkgapi_error_data(list(NOT_FOUND = "Resource not found")),
     data = NULL)
   expect_equal(res$body, to_json(cmp))
+})
+
+
+test_that("headers can be added to output", {
+  binary <- function() {
+    as.raw(0:255)
+  }
+  binary_with_header <- function() {
+    data <- binary()
+    pkgapi_add_headers(data, list("Content-Disposition" = "new_file.txt"))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary_with_header,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
+
+  expect_is(endpoint, "pkgapi_endpoint")
+  expect_equal(endpoint$returning$content_type, "application/octet-stream")
+  expect_identical(endpoint$target, binary_with_header)
+
+  res <- endpoint$run()
+  expect_is(res, "pkgapi_response")
+  expect_equal(res$status_code, 200L)
+  expect_equal(res$content_type, "application/octet-stream")
+  expect_equal(res$body, binary())
+  expect_equal(res$data, binary_with_header())
+  expect_equal(res$headers, list("Content-Disposition" = "new_file.txt"))
+})
+
+test_that("build api - headers", {
+  binary <- function() {
+    as.raw(0:255)
+  }
+  binary_with_header <- function() {
+    data <- binary()
+    pkgapi_add_headers(data, list("Content-Disposition" = "new_file.txt"))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary_with_header,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
+  pr <- pkgapi$new()
+  pr$handle(endpoint)
+
+  res <- pr$request("GET", "/binary")
+  expect_equal(res$status, 200L)
+  expect_equal(res$headers[["Content-Type"]], "application/octet-stream")
+  expect_equal(res$headers[["Content-Disposition"]], "new_file.txt")
+  expect_equal(res$body, binary())
+})
+
+test_that("build api - dupe headers throws error", {
+  binary <- function() {
+    as.raw(0:255)
+  }
+  binary_with_header <- function() {
+    data <- binary()
+    pkgapi_add_headers(data, list("Content-Type" = "image/png"))
+  }
+  endpoint <- pkgapi_endpoint$new(
+    "GET", "/binary", binary_with_header,
+    returning = pkgapi_returning_binary(),
+    validate = TRUE)
+  pr <- pkgapi$new()
+  pr$handle(endpoint)
+
+  res <- pr$request("GET", "/binary")
+  expect_equal(res$status, 500L)
+  body <- from_json(res$body)
+  expect_equal(body$status, "failure")
+  expect_equal(body$errors[[1]]$error, "SERVER_ERROR")
+  expect_equal(body$errors[[1]]$detail, paste0(
+    "Can't add header 'Content-Type' with value 'image/png'. Header already ",
+    "exists with value 'application/octet-stream'."))
 })
