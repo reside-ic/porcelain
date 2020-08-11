@@ -50,8 +50,17 @@ pkgapi_error_data <- function(errors) {
   if (!all(vlapply(detail, function(x) is.null(x) || is.character(x)))) {
     stop("All error details must be character or NULL", call. = FALSE)
   }
-  Map(function(e, d)
-    list(error = jsonlite::unbox(e), detail = jsonlite::unbox(d)),
+  Map(function(e, d) {
+    if (!is.null(d)) {
+      detail <- jsonlite::unbox(as.character(d))
+    } else {
+      detail <- NULL
+    }
+    ret <- list(error = jsonlite::unbox(e),
+                detail = detail,
+                key = jsonlite::unbox(ids::proquint(n_words = 3)))
+    ret <- c(ret, attributes(d))
+    },
     error, detail, USE.NAMES = FALSE)
 }
 

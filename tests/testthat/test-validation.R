@@ -40,35 +40,56 @@ test_that("validate errors", {
   path <- system_file("schema/response-failure.schema.json", package = "pkgapi")
   v <- jsonvalidate::json_validator(path, "ajv")
 
+  mock_key <- mockery::mock("fake_key", cycle = TRUE)
   f <- function(x) {
-    pkgapi_process_error(pkgapi_error_object(x, 400L))
+    with_mock("ids::proquint" = mock_key, {
+      pkgapi_process_error(pkgapi_error_object(x, 400L))
+    })
   }
 
   e1 <- f(c("ERROR" = "reason"))
   expect_equal(e1$value$errors, list(list(error = jsonlite::unbox("ERROR"),
-                                          detail = jsonlite::unbox("reason"))))
+                                          detail = jsonlite::unbox("reason"),
+                                          key = jsonlite::unbox("fake_key"))))
   expect_true(v(e1$body))
 
   e2 <- f(list("ERROR" = NULL))
   expect_equal(e2$value$errors, list(list(error = jsonlite::unbox("ERROR"),
-                                          detail = NULL)))
+                                          detail = NULL,
+                                          key = jsonlite::unbox("fake_key"))))
   expect_true(v(e2$body))
 
   e3 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
   expect_equal(e3$value$errors,
                list(list(error = jsonlite::unbox("ERROR"),
-                         detail = NULL),
+                         detail = NULL,
+                         key = jsonlite::unbox("fake_key")),
                     list(error = jsonlite::unbox("OTHER"),
-                         detail = jsonlite::unbox("reason"))))
+                         detail = jsonlite::unbox("reason"),
+                         key = jsonlite::unbox("fake_key"))))
   expect_true(v(e3$body))
 
   e4 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
-  expect_equal(e3$value$errors,
+  expect_equal(e4$value$errors,
                list(list(error = jsonlite::unbox("ERROR"),
-                         detail = NULL),
+                         detail = NULL,
+                         key = jsonlite::unbox("fake_key")),
                     list(error = jsonlite::unbox("OTHER"),
-                         detail = jsonlite::unbox("reason"))))
-  expect_true(v(e3$body))
+                         detail = jsonlite::unbox("reason"),
+                         key = jsonlite::unbox("fake_key"))))
+  expect_true(v(e4$body))
+
+  detail <- "Error occured"
+  attr(detail, "trace") <- c(jsonlite::unbox("the"),
+                             jsonlite::unbox("trace"))
+  e5 <- f(list("ERROR" = detail))
+  expect_equal(e5$value$errors,
+               list(list(error = jsonlite::unbox("ERROR"),
+                         detail = jsonlite::unbox("Error occured"),
+                         key = jsonlite::unbox("fake_key"),
+                         trace = c(jsonlite::unbox("the"),
+                                   jsonlite::unbox("trace")))))
+  expect_true(v(e5$body))
 })
 
 
