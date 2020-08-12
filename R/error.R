@@ -16,14 +16,30 @@
 ##'   means "bad request" which should be a reasonable catch-all for
 ##'   bad user data.
 ##'
+##' @param ... Additional named vars to be applied to
+##'
 ##' @return Nothing, as this function throws an error
 ##' @export
 pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
-                        status_code = 400L) {
+                        status_code = 400L, ...) {
+  if (!is.null(errors)) {
+    ## Convert from key - value pairs to
+    ## key - list(detail = value)
+    errors <- lapply(errors, function(error) list(detail = error))
+  }
   if (is.null(errors)) {
     assert_scalar_character(message)
     assert_scalar_character(code)
-    errors <- set_names(list(message), code)
+    extra <- list(...)
+    for (i in seq_along(extra)) {
+      ## Each entry must be named, and each value must be a scalar character
+      assert_named(extra[i], name = sprintf("Additional arg: %s", extra[[i]]))
+      assert_character(extra[[i]],
+                       name = sprintf("Additional arg: %s", names(extra[i])))
+    }
+    errors <- list()
+    errors[[code]] <- extra
+    errors[[code]]$detail <- message
   }
   pkgapi_error(errors, status_code)
 }
@@ -45,25 +61,25 @@ pkgapi_error_object <- function(errors, status_code) {
 
 pkgapi_error_data <- function(errors) {
   assert_named(errors)
-  error <- names(errors)
-  detail <- unname(errors)
-  if (!all(vlapply(detail, function(x) is.null(x) || is.character(x)))) {
+  detail_valid <- vlapply(errors, function(error) {
+    is.null(error$detail) || is.character(error$detail)
+  })
+  if (!all(detail_valid)) {
     stop("All error details must be character or NULL", call. = FALSE)
   }
-  Map(function(e, d) {
-    if (!is.null(d)) {
-      detail <- jsonlite::unbox(as.character(d))
-    } else {
-      detail <- NULL
+  lapply(names(errors), function(error) {
+    err <- errors[[error]]
+    out <- list(
+      error = jsonlite::unbox(error),
+      detail = jsonlite::unbox(err$detail)
+    )
+    additional_args <- err[names(err) != "detail"]
+    if (!is.null(additional_args)) {
+      out <- c(out, additional_args)
     }
-    ret <- list(error = jsonlite::unbox(e),
-                detail = detail,
-                key = jsonlite::unbox(ids::proquint(n_words = 3)))
-    ret <- c(ret, attributes(d))
-    },
-    error, detail, USE.NAMES = FALSE)
+    out
+  })
 }
-
 
 pkgapi_error_message <- function(data) {
   error <- vcapply(data, "[[", "error")
@@ -78,13 +94,15 @@ pkgapi_error_message <- function(data) {
 
 pkgapi_process_error <- function(error) {
   if (inherits(error, "pkgapi_validation_error")) {
-    error_data <- pkgapi_error_data(c(VALIDATION_ERROR = error$message))
+    error_data <- pkgapi_error_data(list(VALIDATION_ERROR = list(
+      detail = error$message)))
     status_code <- 500L
   } else if (inherits(error, "pkgapi_error")) {
     error_data <- error$data
     status_code <- error$status_code
   } else {
-    error_data <- pkgapi_error_data(c(SERVER_ERROR = error$message))
+    error_data <- pkgapi_error_data(list(SERVER_ERROR = list(
+      detail = error$message)))
     status_code <- 500L
   }
 

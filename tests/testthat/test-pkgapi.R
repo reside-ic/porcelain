@@ -105,9 +105,9 @@ test_that("throw error", {
   expect_equal(res$content_type, "application/json")
   expect_equal(res$value$status, jsonlite::unbox("failure"))
   expect_null(res$value$data)
-  expect_equal(res$value$errors[[1]]$error, jsonlite::unbox("ERROR"))
-  expect_equal(res$value$errors[[1]]$detail,
-               jsonlite::unbox("'x' must be positive"))
+  expect_equal(res$value$errors,
+               list(list(error = jsonlite::unbox("ERROR"),
+                         detail = jsonlite::unbox("'x' must be positive"))))
   expect_equal(res$body, to_json_string(res$value))
   expect_is(res$error, "pkgapi_error")
   expect_equal(res$error$status_code, 400)
@@ -140,19 +140,14 @@ test_that("disallow additional arguments with a pkgapendpoint", {
 
 test_that("404 handler", {
   p <- pkgapi$new()
-  mock_key <- mockery::mock("fake_key", cycle = TRUE)
-  with_mock("ids::proquint" = mock_key, {
-    res <- p$request("GET", "/somewhere")
-  })
+  res <- p$request("GET", "/somewhere")
   expect_equal(res$status, 404)
   expect_equal(res$headers[["Content-Type"]], "application/json")
 
-  with_mock("ids::proquint" = mock_key, {
-    cmp <- list(
-      status = jsonlite::unbox("failure"),
-      errors = pkgapi_error_data(list(NOT_FOUND = "Resource not found")),
-      data = NULL)
-  })
+  cmp <- list(
+    status = jsonlite::unbox("failure"),
+    errors = pkgapi_error_data(list(NOT_FOUND = "Resource not found")),
+    data = NULL)
   expect_equal(res$body, to_json(cmp))
 })
 

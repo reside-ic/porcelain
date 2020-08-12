@@ -330,19 +330,20 @@ test_that("validate binary body on input", {
   res <- pr$request("POST", "/mean")
   expect_equal(res$status, 400)
   expect_equal(res$headers[["Content-Type"]], "application/json")
-  err <- from_json(res$body)$errors[[1]]
-  expect_equal(err$error, "INVALID_INPUT")
-  expect_equal(err$detail, "Body was not provided")
+  expect_equal(from_json(res$body)$errors[[1]],
+               list(error = "INVALID_INPUT",
+                    detail = "Body was not provided"))
 
   res <- pr$request("POST", "/mean", body = "[1,2,3]",
                     content_type = "application/json")
   expect_equal(res$status, 400)
   expect_equal(res$headers[["Content-Type"]], "application/json")
-  err <- from_json(res$body)$errors[[1]]
-  expect_equal(err$error, "INVALID_INPUT")
-  expect_equal(err$detail,
-               paste("Expected content type 'application/octet-stream'",
-                     "but was sent 'application/json'"))
+  expect_equal(
+    from_json(res$body)$errors[[1]],
+    list(
+      error = "INVALID_INPUT",
+      detail = paste("Expected content type 'application/octet-stream'",
+                     "but was sent 'application/json'")))
 })
 
 
