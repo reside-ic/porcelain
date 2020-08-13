@@ -40,8 +40,7 @@ pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
       assert_named(extra, name = "... args")
       content <- c(content, extra)
     }
-    errors <- list()
-    errors[[code]] <- content # or errors <- set_names(list(content), code)
+    errors <- set_names(list(content), code)
   }
   pkgapi_error(errors, status_code)
 }
