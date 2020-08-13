@@ -36,6 +36,8 @@ test_that("assert_named", {
   expect_error(assert_named(setNames(1:2, c("a", "a")), TRUE),
                "must have unique names")
   expect_silent(assert_named(setNames(1:2, c("a", "a")), FALSE))
+  expect_error(assert_named(list(a = "one", "two")),
+               "must be named")
 })
 
 

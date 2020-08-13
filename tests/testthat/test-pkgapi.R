@@ -146,7 +146,8 @@ test_that("404 handler", {
 
   cmp <- list(
     status = jsonlite::unbox("failure"),
-    errors = pkgapi_error_data(list(NOT_FOUND = "Resource not found")),
+    errors = pkgapi_error_data(
+      list(NOT_FOUND = list(detail = "Resource not found"))),
     data = NULL)
   expect_equal(res$body, to_json(cmp))
 })

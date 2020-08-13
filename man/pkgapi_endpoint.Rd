@@ -5,9 +5,9 @@
 \title{Basic endpoint object}
 \description{
 Create a \code{pkgapi_endpoint} object that collects
-  together an HTTP method (e.g., \code{GET}), a path (e.g.,
-  \code{/path}) and a target R function.  Unlike plumber
-  endpoints, pkgapi endpoints are meant to be used in testing.
+together an HTTP method (e.g., \code{GET}), a path (e.g.,
+\code{/path}) and a target R function.  Unlike plumber
+endpoints, pkgapi endpoints are meant to be used in testing.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -43,6 +43,7 @@ serialisation and validation information).}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
@@ -73,8 +74,8 @@ as created by \code{\link{pkgapi_returning}}}
 (implemented by the \code{validate_response} argument) should
 be enabled.  This should be set to \code{FALSE} in production
 environments.  By default (if \code{validate} is \code{NULL}),
-we look at the value of the environment \code{PKGAPI_VALIDATE}
-- if \code{true} (case insensitive) then we will validate.
+we look at the value of the environment \code{PKGAPI_VALIDATE} -
+if \code{true} (case insensitive) then we will validate.
 This is intended to support easy use of validation on
 continuous integration systems.}
 
@@ -86,6 +87,7 @@ of the processed body is "invalid".}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-run"></a>}}
+\if{latex}{\out{\hypertarget{method-run}{}}}
 \subsection{Method \code{run()}}{
 Run the endpoint.  This will produce a
 standardised response object that contains \code{status_code},
@@ -106,6 +108,7 @@ through the \code{process} method and returned by plumber) and
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-request"></a>}}
+\if{latex}{\out{\hypertarget{method-request}{}}}
 \subsection{Method \code{request()}}{
 Test the endpoint.  This creates a full plumber
 object and serves one request to the endpoint.  Argument are as
@@ -127,6 +130,7 @@ automatically taken from the endpoint itself.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-plumber"></a>}}
+\if{latex}{\out{\hypertarget{method-plumber}{}}}
 \subsection{Method \code{plumber()}}{
 Helper method for use with plumber - not designed
 for end-user use.  This is what gets called by plumber when the
@@ -147,6 +151,7 @@ endpoint recieves a request.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-create"></a>}}
+\if{latex}{\out{\hypertarget{method-create}{}}}
 \subsection{Method \code{create()}}{
 Create a plumber endpoint
 \subsection{Usage}{
@@ -167,6 +172,7 @@ endpoint.}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
