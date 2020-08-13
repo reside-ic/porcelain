@@ -7,13 +7,6 @@
     },
     "detail": {
       "type": ["string", "null"]
-    },
-    "key": { "type": "string" },
-    "trace": {
-      "type": "array",
-      "items": {
-        "type": "string"
-       }
     }
   },
   "additionalProperties": true,
