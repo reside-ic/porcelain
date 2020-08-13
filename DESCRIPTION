@@ -14,13 +14,11 @@ Encoding: UTF-8
 LazyData: true
 Language: en-GB
 Imports:
-    ids,
     R6,
     jsonlite,
     jsonvalidate (>= 1.2.2),
     plumber
 Suggests:
-    mockery,
     testthat,
     withr
 Roxygen: list(markdown = TRUE)
