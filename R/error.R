@@ -28,16 +28,14 @@ pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
   if (!is.null(errors)) {
     ## Convert from key - value pairs to key - list(detail = value)
     errors <- lapply(errors, function(error) list(detail = error))
-  }
-  if (is.null(errors)) {
+  } else {
     assert_scalar_character(message)
     assert_scalar_character(code)
     extra <- list(...)
     for (i in seq_along(extra)) {
       ## Each entry must be named, and each value must be a scalar character
-      assert_named(extra[i], name = sprintf("Additional arg: %s", extra[[i]]))
-      assert_character(extra[[i]],
-                       name = sprintf("Additional arg: %s", names(extra[i])))
+      assert_named(extra[i], name = "... args")
+      assert_character(extra[[i]], name = "... args")
     }
     errors <- list()
     errors[[code]] <- extra

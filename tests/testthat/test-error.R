@@ -214,3 +214,10 @@ test_that("Catch error from the api with additional args", {
   expect_equal(body$errors[[1]]$key, "fake_key")
   expect_equal(body$errors[[1]]$trace, list("the", "trace"))
 })
+
+test_that("pkgapi throws error from malformed additional args", {
+  expect_error(pkgapi_stop("msg", "ERROR", NULL, 400L, "another_arg"),
+               "'... args' must be named")
+  expect_error(pkgapi_stop("msg", "ERROR", additional = 5),
+               "'... args' must be character")
+})
