@@ -215,6 +215,22 @@ test_that("Catch error from the api with additional args", {
   expect_equal(body$errors[[1]]$trace, list("the", "trace"))
 })
 
+test_that("pkgapi_stop forms errors correctly", {
+  err <- get_error(pkgapi_stop(
+    errors = c("ERROR" = "First message", "ERROR2" = "2nd message")))
+  expect_equal(err$data, list(
+    list(
+      error = jsonlite::unbox("ERROR"),
+      detail = jsonlite::unbox("First message")
+    ),
+    list(
+      error = jsonlite::unbox("ERROR2"),
+      detail = jsonlite::unbox("2nd message")
+    )
+  ))
+  expect_equal(err$status_code, 400)
+})
+
 test_that("pkgapi throws error from malformed additional args", {
   expect_error(pkgapi_stop("msg", "ERROR", NULL, 400L, "another_arg"),
                "'... args' must be named")
