@@ -27,10 +27,11 @@ assert_nonmissing <- function(x, name = deparse(substitute(x))) {
 
 
 assert_named <- function(x, unique = FALSE, name = deparse(substitute(x))) {
-  if (is.null(names(x))) {
+  names <- names(x)
+  if (is.null(names) || any(names == "")) {
     stop(sprintf("'%s' must be named", name), call. = FALSE)
   }
-  if (unique && any(duplicated(names(x)))) {
+  if (unique && any(duplicated(names))) {
     stop(sprintf("'%s' must have unique names", name), call. = FALSE)
   }
 }

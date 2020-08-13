@@ -32,14 +32,16 @@ pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
     assert_scalar_character(message)
     assert_scalar_character(code)
     extra <- list(...)
-    for (i in seq_along(extra)) {
-      ## Each entry must be named, and each value must be a scalar character
-      assert_named(extra[i], name = "... args")
-      assert_character(extra[[i]], name = "... args")
+
+
+    content <- list(detail = message)
+    extra <- list(...)
+    if (length(extra) > 0) {
+      assert_named(extra, name = "... args")
+      content <- c(content, extra)
     }
     errors <- list()
-    errors[[code]] <- extra
-    errors[[code]]$detail <- message
+    errors[[code]] <- content # or errors <- set_names(list(content), code)
   }
   pkgapi_error(errors, status_code)
 }

@@ -234,6 +234,4 @@ test_that("pkgapi_stop forms errors correctly", {
 test_that("pkgapi throws error from malformed additional args", {
   expect_error(pkgapi_stop("msg", "ERROR", NULL, 400L, "another_arg"),
                "'... args' must be named")
-  expect_error(pkgapi_stop("msg", "ERROR", additional = 5),
-               "'... args' must be character")
 })
