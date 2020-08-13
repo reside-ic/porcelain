@@ -188,7 +188,7 @@ test_that("Error during serialisation", {
   expect_true(validator_response_failure(res_api$body))
 })
 
-test_that("Catch error from the api with trace", {
+test_that("Catch error from the api with additional args", {
   hello <- function() {
     pkgapi_stop("An error has occured", "an-error",
                 key = jsonlite::unbox("fake_key"),
