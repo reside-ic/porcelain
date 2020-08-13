@@ -67,16 +67,10 @@ pkgapi_error_data <- function(errors) {
   if (!all(detail_valid)) {
     stop("All error details must be character or NULL", call. = FALSE)
   }
-  lapply(names(errors), function(error) {
-    err <- errors[[error]]
-    out <- list(
-      error = jsonlite::unbox(error),
-      detail = jsonlite::unbox(err$detail)
-    )
-    additional_args <- err[names(err) != "detail"]
-    if (!is.null(additional_args)) {
-      out <- c(out, additional_args)
-    }
+  lapply(names(errors), function(error_name) {
+    out <- append(list(error = jsonlite::unbox(error_name)),
+                  as.list(errors[[error_name]]))
+    out["detail"] <- list(jsonlite::unbox(out$detail))
     out
   })
 }
