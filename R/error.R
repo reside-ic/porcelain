@@ -26,8 +26,7 @@
 pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
                         status_code = 400L, ...) {
   if (!is.null(errors)) {
-    ## Convert from key - value pairs to
-    ## key - list(detail = value)
+    ## Convert from key - value pairs to key - list(detail = value)
     errors <- lapply(errors, function(error) list(detail = error))
   }
   if (is.null(errors)) {
