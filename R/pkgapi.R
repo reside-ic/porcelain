@@ -22,8 +22,8 @@ pkgapi <- R6::R6Class(
     ##'   (implemented by the \code{validate_response} argument) should
     ##'   be enabled.  This should be set to \code{FALSE} in production
     ##'   environments.  By default (if \code{validate} is \code{NULL}),
-    ##'   we look at the value of the environment \code{PKGAPI_VALIDATE}
-    ##'   - if \code{true} (case insensitive) then we will validate.
+    ##'   we look at the value of the environment \code{PKGAPI_VALIDATE} -
+    ##'   if \code{true} (case insensitive) then we will validate.
     ##'   This is intended to support easy use of validation on
     ##'   continuous integration systems.
     initialize = function(..., validate = FALSE) {
@@ -140,7 +140,8 @@ pkgapi_error_handler <- function(req, res, e) {
 ## This causes a proper fight with plumber as it bypasses all our
 ## serialisers and error handlers in hard to deal with ways.
 pkgapi_404_handler <- function(req, res) {
-  e <- pkgapi_error_object(c("NOT_FOUND" = "Resource not found"), 404L)
+  e <- pkgapi_error_object(
+    list("NOT_FOUND" = list(detail = "Resource not found")), 404L)
   val <- pkgapi_process_error(e)
   res$status <- 404
   val$value$data <- jsonlite::unbox(NA)

@@ -10,13 +10,16 @@
 ##'   \code{ERROR} is used.  Ignored if \code{errors} is given.
 ##'
 ##' @param errors A named list of errors - use this to signal multiple
-##'   error conditions as key/value pairs
+##'   error conditions as key/value pairs.
 ##'
 ##' @param status_code The HTTP status code to use.  The default (400)
 ##'   means "bad request" which should be a reasonable catch-all for
 ##'   bad user data.
 ##'
-##' @param ... Additional named vars to be applied to
+##' @param ... Additional named args to be included as fields in the
+##' error response JSON. The values must be in format ready for
+##' serialization to JSON using [jsonlite::toJSON()] i.e. any unboxing
+##' using [jsonlite::unbox()] needs to already have been done.
 ##'
 ##' @return Nothing, as this function throws an error
 ##' @export

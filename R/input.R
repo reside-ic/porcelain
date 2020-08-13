@@ -246,5 +246,6 @@ pkgapi_inputs <- R6::R6Class(
 
 
 pkgapi_input_error <- function(msg) {
-  pkgapi_error(list(INVALID_INPUT = msg))
+  pkgapi_error(list(INVALID_INPUT = list(
+    detail = msg)))
 }

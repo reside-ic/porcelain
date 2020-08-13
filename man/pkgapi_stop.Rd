@@ -4,7 +4,7 @@
 \alias{pkgapi_stop}
 \title{Throw an error from an endpoint}
 \usage{
-pkgapi_stop(message, code = "ERROR", errors = NULL, status_code = 400L)
+pkgapi_stop(message, code = "ERROR", errors = NULL, status_code = 400L, ...)
 }
 \arguments{
 \item{message}{The human-readable message of the error.  Ignored
@@ -14,11 +14,16 @@ if \code{errors} is given.}
 \code{ERROR} is used.  Ignored if \code{errors} is given.}
 
 \item{errors}{A named list of errors - use this to signal multiple
-error conditions as key/value pairs}
+error conditions as key/value pairs.}
 
 \item{status_code}{The HTTP status code to use.  The default (400)
 means "bad request" which should be a reasonable catch-all for
 bad user data.}
+
+\item{...}{Additional named args to be included as fields in the
+error response JSON. The values must be in format ready for
+serialization to JSON using \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}} i.e. any unboxing
+using \code{\link[jsonlite:unbox]{jsonlite::unbox()}} needs to already have been done.}
 }
 \value{
 Nothing, as this function throws an error

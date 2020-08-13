@@ -5,11 +5,11 @@
 \title{A \code{pkgapi} object}
 \description{
 A \code{pkgapi} object.  This extends (via
-  inheritance) a plumber object, and so only changes to the
-  plumber API are documented here.
+inheritance) a plumber object, and so only changes to the
+plumber API are documented here.
 }
 \section{Super classes}{
-\code{\link[plumber:plumber]{plumber::plumber}} -> \code{pkgapi}
+\code{\link[plumber:hookable]{plumber::hookable}} -> \code{\link[plumber:plumber]{plumber::plumber}} -> \code{pkgapi}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -47,6 +47,7 @@ A \code{pkgapi} object.  This extends (via
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
 Create a pkgapi object
 \subsection{Usage}{
@@ -62,8 +63,8 @@ Create a pkgapi object
 (implemented by the \code{validate_response} argument) should
 be enabled.  This should be set to \code{FALSE} in production
 environments.  By default (if \code{validate} is \code{NULL}),
-we look at the value of the environment \code{PKGAPI_VALIDATE}
-- if \code{true} (case insensitive) then we will validate.
+we look at the value of the environment \code{PKGAPI_VALIDATE} -
+if \code{true} (case insensitive) then we will validate.
 This is intended to support easy use of validation on
 continuous integration systems.}
 }
@@ -72,6 +73,7 @@ continuous integration systems.}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-handle"></a>}}
+\if{latex}{\out{\hypertarget{method-handle}{}}}
 \subsection{Method \code{handle()}}{
 Handle an endpoint
 \subsection{Usage}{
@@ -82,7 +84,7 @@ Handle an endpoint
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{Either a single argument, being a
- \code{\link{pkgapi_endpoint}} object representing an endpoint, or
+\code{\link{pkgapi_endpoint}} object representing an endpoint, or
 arguments to pass through to \code{plumber}.}
 }
 \if{html}{\out{</div>}}
@@ -90,6 +92,7 @@ arguments to pass through to \code{plumber}.}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-request"></a>}}
+\if{latex}{\out{\hypertarget{method-request}{}}}
 \subsection{Method \code{request()}}{
 Send a request to plumber for debugging
 
@@ -123,6 +126,7 @@ provided alongside \code{body}.  If not provided it is set to
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

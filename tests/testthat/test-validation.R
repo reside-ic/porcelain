@@ -44,7 +44,7 @@ test_that("validate errors", {
     pkgapi_process_error(pkgapi_error_object(x, 400L))
   }
 
-  e1 <- f(c("ERROR" = "reason"))
+  e1 <- f(list("ERROR" = list(detail = "reason")))
   expect_equal(e1$value$errors, list(list(error = jsonlite::unbox("ERROR"),
                                           detail = jsonlite::unbox("reason"))))
   expect_true(v(e1$body))
@@ -54,7 +54,7 @@ test_that("validate errors", {
                                           detail = NULL)))
   expect_true(v(e2$body))
 
-  e3 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
+  e3 <- f(list("ERROR" = NULL, "OTHER" = list(detail = "reason")))
   expect_equal(e3$value$errors,
                list(list(error = jsonlite::unbox("ERROR"),
                          detail = NULL),
@@ -62,13 +62,25 @@ test_that("validate errors", {
                          detail = jsonlite::unbox("reason"))))
   expect_true(v(e3$body))
 
-  e4 <- f(list("ERROR" = NULL, "OTHER" = "reason"))
-  expect_equal(e3$value$errors,
+  e4 <- f(list("ERROR" = NULL, "OTHER" = list(detail = "reason")))
+  expect_equal(e4$value$errors,
                list(list(error = jsonlite::unbox("ERROR"),
                          detail = NULL),
                     list(error = jsonlite::unbox("OTHER"),
                          detail = jsonlite::unbox("reason"))))
-  expect_true(v(e3$body))
+  expect_true(v(e4$body))
+
+  e5 <- f(list("ERROR" = list(detail = "reason",
+                              key = jsonlite::unbox("key"),
+                              trace = c(jsonlite::unbox("the"),
+                                        jsonlite::unbox("trace")))))
+  expect_equal(e5$value$errors,
+               list(list(error = jsonlite::unbox("ERROR"),
+                         detail = jsonlite::unbox("reason"),
+                         key = jsonlite::unbox("key"),
+                         trace = c(jsonlite::unbox("the"),
+                                   jsonlite::unbox("trace")))))
+  expect_true(v(e5$body))
 })
 
 

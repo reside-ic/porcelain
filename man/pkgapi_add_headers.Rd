@@ -15,7 +15,7 @@ pkgapi_add_headers(data, headers)
 Data from endpoint target with headers
 }
 \description{
-Intended to be used from endpoint target function. Note `Content-Type`
+Intended to be used from endpoint target function. Note \code{Content-Type}
 headers are handled by returning arg to endpoint.
 }
 \examples{
