@@ -9,6 +9,5 @@ r_packages:
   - covr
 r_github_packages:
   - ropensci/jsonvalidate
-  - rstudio/plumber#659
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
