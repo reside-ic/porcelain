@@ -163,7 +163,7 @@ pkgapi_endpoint <- R6::R6Class(
     plumber = function(req, res, ...) {
       tryCatch({
         given <- list(
-          path = req$argsPath,
+          path = plumber_path_args(req),
           query = req$pkgapi_query,
           body = req$pkgapi_body)
         args <- self$inputs$validate(given)
