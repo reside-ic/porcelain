@@ -5,8 +5,8 @@ NULL
 
 cache <- new.env()
 
-.onLoad <- function(...) {
-  cache$plumber_1_0_0 <- utils::packageVersion("plumber") >= "0.9.9"
+.onLoad <- function(...) { # nolint
+  cache$plumber_1_0_0 <- utils::packageVersion("plumber") >= "0.9.9" # nocov
 }
 
 
