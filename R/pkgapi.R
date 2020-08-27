@@ -7,7 +7,7 @@
 ##' @export
 pkgapi <- R6::R6Class(
   "pkgapi",
-  inherit = plumber::plumber,
+  inherit = plumber::Plumber,
 
   private = list(
     validate = NULL

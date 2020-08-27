@@ -161,11 +161,9 @@ pkgapi_endpoint <- R6::R6Class(
     ##' @param req,res Conventional plumber request/response objects
     ##' @param ... Additional arguments passed through to \code{run}
     plumber = function(req, res, ...) {
-      ## It's not abundantly clear here what we do to get the path
-      ## args, and they cannot be retrieved from the filters it seems.
       tryCatch({
         given <- list(
-          path = req$args[seq_len(length(req$args) - 2L)],
+          path = req$argsPath,
           query = req$pkgapi_query,
           body = req$pkgapi_body)
         args <- self$inputs$validate(given)
