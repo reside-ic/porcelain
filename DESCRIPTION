@@ -17,7 +17,7 @@ Imports:
     R6,
     jsonlite,
     jsonvalidate (>= 1.2.2),
-    plumber (>= 0.9.9.9000)
+    plumber
 Suggests:
     testthat,
     withr
