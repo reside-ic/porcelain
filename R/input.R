@@ -13,10 +13,10 @@
 ##' @export
 ##'
 ##' @examples
-##' pkgapi::pkgapi_input_query(number = "integer")
-pkgapi_input_query <- function(..., .parameters = list(...)) {
+##' porcelain::porcelain_input_query(number = "integer")
+porcelain_input_query <- function(..., .parameters = list(...)) {
   assert_named(.parameters, TRUE)
-  pkgapi_input_collection$new(names(.parameters), .parameters, "query")
+  porcelain_input_collection$new(names(.parameters), .parameters, "query")
 }
 
 
@@ -32,32 +32,32 @@ pkgapi_input_query <- function(..., .parameters = list(...)) {
 ##' @param name Name of the parameter
 ##'
 ##' @export
-##' @rdname pkgapi_input_body
-pkgapi_input_body_binary <- function(name) {
+##' @rdname porcelain_input_body
+porcelain_input_body_binary <- function(name) {
   assert_scalar_character(name)
-  pkgapi_input$new(name, "binary", "body", assert_raw,
+  porcelain_input$new(name, "binary", "body", assert_raw,
                    content_type = "application/octet-stream")
 }
 
 
-##' @inheritParams pkgapi_returning_json
+##' @inheritParams porcelain_returning_json
 ##' @export
-##' @rdname pkgapi_input_body
-pkgapi_input_body_json <- function(name, schema, root) {
+##' @rdname porcelain_input_body
+porcelain_input_body_json <- function(name, schema, root) {
   assert_scalar_character(name)
-  validator <- pkgapi_validator(schema, schema_root(root), query = NULL)
-  pkgapi_input$new(name, "json", "body", validator,
+  validator <- porcelain_validator(schema, schema_root(root), query = NULL)
+  porcelain_input$new(name, "json", "body", validator,
                    content_type = "application/json")
 }
 
 
 ## This one gets called internally
-pkgapi_input_path <- function(path) {
+porcelain_input_path <- function(path) {
   parts <- parse_path_parameters(path)
   if (is.null(parts)) {
     return(NULL)
   }
-  pkgapi_input_collection$new(parts[, "name"], parts[, "type"], "path")
+  porcelain_input_collection$new(parts[, "name"], parts[, "type"], "path")
 }
 
 
@@ -67,8 +67,8 @@ pkgapi_input_path <- function(path) {
 ## general approach is to have a "format" field that implies the
 ## content type.  This can wait until later.
 
-pkgapi_input <- R6::R6Class(
-  "pkgapi_input",
+porcelain_input <- R6::R6Class(
+  "porcelain_input",
 
   public = list(
     name = NULL,
@@ -84,7 +84,7 @@ pkgapi_input <- R6::R6Class(
       assert_scalar_character(type)
       assert_scalar_character(where)
       if (is.null(validator)) {
-        validator <- pkgapi_input_validate_basic(type)
+        validator <- porcelain_input_validate_basic(type)
       } else {
         assert_is(validator, "function")
       }
@@ -121,19 +121,19 @@ pkgapi_input <- R6::R6Class(
 
     validate = function(given) {
       if (self$where == "body") {
-        pkgapi_input_validate_body(given, self)
+        porcelain_input_validate_body(given, self)
       } else {
-        pkgapi_input_validate_parameter(given, self)
+        porcelain_input_validate_parameter(given, self)
       }
     }
   ))
 
 
 ## query and path (eventually also cookie and header)
-pkgapi_input_validate_parameter <- function(given, self) {
+porcelain_input_validate_parameter <- function(given, self) {
   value <- given[[self$where]][[self$name]]
   if (self$required && is.null(value)) {
-    pkgapi_input_error(sprintf(
+    porcelain_input_error(sprintf(
       "%s parameter '%s' is missing but required",
       self$where, self$name))
   }
@@ -142,20 +142,20 @@ pkgapi_input_validate_parameter <- function(given, self) {
       self$validator(value),
       error = function(e)
         ## NOTE: not a lovely error message for the body
-        pkgapi_input_error(sprintf("Error parsing %s parameter '%s': %s",
+        porcelain_input_error(sprintf("Error parsing %s parameter '%s': %s",
                                    self$where, self$name, e$message)))
   }
   value
 }
 
 
-pkgapi_input_validate_body <- function(given, self) {
+porcelain_input_validate_body <- function(given, self) {
   body <- given[["body"]]
   if (self$required && !isTRUE(body$provided)) {
-    pkgapi_input_error("Body was not provided")
+    porcelain_input_error("Body was not provided")
   }
   if (isTRUE(body$provided)) {
-    pkgapi_input_validate_mime(body$type$mime, self$data$content_type)
+    porcelain_input_validate_mime(body$type$mime, self$data$content_type)
     value <- body$value
   } else {
     value <- NULL
@@ -165,7 +165,7 @@ pkgapi_input_validate_body <- function(given, self) {
     value <- tryCatch(
       self$validator(value),
       error = function(e)
-        pkgapi_input_error(sprintf("Error parsing body (for '%s'): %s",
+        porcelain_input_error(sprintf("Error parsing body (for '%s'): %s",
                                    self$name, e$message)))
   }
   value
@@ -175,18 +175,18 @@ pkgapi_input_validate_body <- function(given, self) {
 ## This one is just to shepherd things through for now - could be an
 ## S3 class I think, but we'll probably pop a print method on this at
 ## some point, and R6 makes that easy
-pkgapi_input_collection <- R6::R6Class(
-  "pkgapi_input_collection",
+porcelain_input_collection <- R6::R6Class(
+  "porcelain_input_collection",
   public = list(
     inputs = NULL,
     initialize = function(names, types, where) {
-      self$inputs <- unname(Map(pkgapi_input$new, names, types,
+      self$inputs <- unname(Map(porcelain_input$new, names, types,
                                 MoreArgs = list(where = where)))
     }))
 
 
-pkgapi_inputs <- R6::R6Class(
-  "pkgapi_inputs",
+porcelain_inputs <- R6::R6Class(
+  "porcelain_inputs",
 
   private = list(
     expected = NULL
@@ -198,7 +198,7 @@ pkgapi_inputs <- R6::R6Class(
     initialize = function(inputs) {
       ## This is a bit ugly, but flattens out the collections:
       self$inputs <- unlist(recursive = FALSE, lapply(inputs, function(x)
-        if (inherits(x, "pkgapi_input_collection")) x$inputs else list(x)))
+        if (inherits(x, "porcelain_input_collection")) x$inputs else list(x)))
 
       expected <- vapply(self$inputs, function(x) c(x$where, x$name),
                          character(2), USE.NAMES = FALSE)
@@ -238,14 +238,14 @@ pkgapi_inputs <- R6::R6Class(
       }
 
       ## Validate all are expected:
-      pkgapi_input_validate_expected(given, private$expected)
+      porcelain_input_validate_expected(given, private$expected)
 
       ret
     }
   ))
 
 
-pkgapi_input_error <- function(msg) {
-  pkgapi_error(list(INVALID_INPUT = list(
+porcelain_input_error <- function(msg) {
+  porcelain_error(list(INVALID_INPUT = list(
     detail = msg)))
 }

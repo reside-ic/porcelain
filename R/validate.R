@@ -1,9 +1,9 @@
-pkgapi_validate <- function(json, validator, query) {
+porcelain_validate <- function(json, validator, query) {
   ## TODO: do something more helpful with an error here; ideally
   ## we'll throw with all the data and then either restart or
   ## trycatch our way out of it.
   rethrow <- function(e) {
-    class(e) <- c("pkgapi_validation_error", class(e))
+    class(e) <- c("porcelain_validation_error", class(e))
     e$json <- json
     stop(e)
   }
@@ -15,7 +15,7 @@ pkgapi_validate <- function(json, validator, query) {
 
 ## TODO: make somewhat conditional on package load - we'll use an
 ## environment variable to also require it in tests.
-pkgapi_validator <- function(schema, root, query) {
+porcelain_validator <- function(schema, root, query) {
   if (is.null(schema)) {
     return(function(...) NULL)
   }
@@ -23,7 +23,7 @@ pkgapi_validator <- function(schema, root, query) {
   path_schema <- file.path(root, paste0(schema, ".json"))
   v <- jsonvalidate::json_validator(path_schema, "ajv")
   function(json) {
-    pkgapi_validate(json, v, query)
+    porcelain_validate(json, v, query)
     invisible(json)
   }
 }
@@ -38,7 +38,7 @@ pkgapi_validator <- function(schema, root, query) {
 ##
 ## but that would need harmonising with any other schema use - and
 ## that might want to come through the endpoint object or even the
-## whole pkgapi object.
+## whole porcelain object.
 ## nolint end
 schema_root <- function(root) {
   assert_is_directory(root)
@@ -47,9 +47,9 @@ schema_root <- function(root) {
 
 
 ## Ugly name...
-pkgapi_validate_default <- function(value) {
+porcelain_validate_default <- function(value) {
   if (is.null(value)) {
-    value <- tolower(Sys.getenv("PKGAPI_VALIDATE", "")) == "true"
+    value <- tolower(Sys.getenv("PORCELAIN_VALIDATE", "")) == "true"
   }
   value
 }

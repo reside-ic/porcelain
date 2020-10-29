@@ -7,11 +7,11 @@ test_that("use mutable state from an endpoint", {
   }
 
   x <- counter$new()
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "POST", "/increment", target_increment,
-    pkgapi_input_query(by = "numeric"),
-    pkgapi_state(counter = x),
-    returning = pkgapi_returning_json("Number", "schema"))
+    porcelain_input_query(by = "numeric"),
+    porcelain_state(counter = x),
+    returning = porcelain_returning_json("Number", "schema"))
 
   expect_equal(
     endpoint$target(),
@@ -30,7 +30,7 @@ test_that("use mutable state from an endpoint", {
   expect_equal(res2$data, jsonlite::unbox(11))
 
   x$reset()
-  pr <- pkgapi$new()$handle(endpoint)
+  pr <- porcelain$new()$handle(endpoint)
   res1_api <- pr$request("POST", "/increment")
   res2_api <- pr$request("POST", "/increment", query = list(by = 10))
 
@@ -41,10 +41,10 @@ test_that("use mutable state from an endpoint", {
 
 test_that("Validate state against target", {
   expect_error(
-    pkgapi_endpoint$new(
+    porcelain_endpoint$new(
       "POST", "/increment", function(arg) NULL,
-      pkgapi_state(msg = 1),
-      returning = pkgapi_returning_json("Number", "schema")),
+      porcelain_state(msg = 1),
+      returning = porcelain_returning_json("Number", "schema")),
     "Argument 'msg' (used in state) missing from the target function",
     fixed = TRUE)
 })
@@ -52,10 +52,10 @@ test_that("Validate state against target", {
 
 test_that("Mutiple state entries are not allowed", {
   expect_error(
-    pkgapi_endpoint$new(
+    porcelain_endpoint$new(
       "GET", "/add", function(a, b, c) NULL,
-      pkgapi_state(a = 1),
-      pkgapi_state(b = 2),
-      returning = pkgapi_returning_json("Number", "schema")),
-    "Only one 'pkgapi_state' can be passed to an endpoint")
+      porcelain_state(a = 1),
+      porcelain_state(b = 2),
+      returning = porcelain_returning_json("Number", "schema")),
+    "Only one 'porcelain_state' can be passed to an endpoint")
 })

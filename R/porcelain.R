@@ -1,19 +1,19 @@
-##' @title A \code{pkgapi} object
+##' @title A \code{porcelain} object
 ##'
-##' @description A \code{pkgapi} object.  This extends (via
+##' @description A \code{porcelain} object.  This extends (via
 ##'   inheritance) a plumber object, and so only changes to the
 ##'   plumber API are documented here.
 ##'
 ##' @export
-pkgapi <- R6::R6Class(
-  "pkgapi",
+porcelain <- R6::R6Class(
+  "porcelain",
   inherit = plumber_base_class(),
 
   private = list(
     validate = NULL
   ),
 
-  ##' @description Create a pkgapi object
+  ##' @description Create a porcelain object
   public = list(
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
@@ -22,23 +22,23 @@ pkgapi <- R6::R6Class(
     ##'   (implemented by the \code{validate_response} argument) should
     ##'   be enabled.  This should be set to \code{FALSE} in production
     ##'   environments.  By default (if \code{validate} is \code{NULL}),
-    ##'   we look at the value of the environment \code{PKGAPI_VALIDATE} -
+    ##'   we look at the value of the environment \code{PORCELAIN_VALIDATE} -
     ##'   if \code{true} (case insensitive) then we will validate.
     ##'   This is intended to support easy use of validation on
     ##'   continuous integration systems.
     initialize = function(..., validate = FALSE) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
-      super$initialize(NULL, pkgapi_filters(), new.env(parent = .GlobalEnv))
+      super$initialize(NULL, porcelain_filters(), new.env(parent = .GlobalEnv))
       private$validate <- validate
-      self$setErrorHandler(pkgapi_error_handler)
-      self$set404Handler(pkgapi_404_handler)
+      self$setErrorHandler(porcelain_error_handler)
+      self$set404Handler(porcelain_404_handler)
     },
 
     ##' @description Handle an endpoint
     ##'
     ##' @param ... Either a single argument, being a
-    ##'   \code{\link{pkgapi_endpoint}} object representing an endpoint, or
+    ##'   \code{\link{porcelain_endpoint}} object representing an endpoint, or
     ##'  arguments to pass through to \code{plumber}.
     handle = function(...) {
       ## NOTE: this ignores the 'preempt' arg - because the underlying
@@ -52,9 +52,9 @@ pkgapi <- R6::R6Class(
       ##
       ## NOTE: We could use a different method here rather than
       ## overloading handle, as to add plain plumber endpoints.
-      if (inherits(..1, "pkgapi_endpoint")) {
+      if (inherits(..1, "porcelain_endpoint")) {
         if (...length() > 1L) {
-          stop("If first argument is a 'pkgapi_endpoint' no others allowed")
+          stop("If first argument is a 'porcelain_endpoint' no others allowed")
         }
         super$handle(endpoint = ..1$create(private$envir, private$validate))
       } else {
@@ -91,24 +91,24 @@ pkgapi <- R6::R6Class(
   ))
 
 
-pkgapi_response <- function(status_code, content_type, body, headers, ...) {
+porcelain_response <- function(status_code, content_type, body, headers, ...) {
   ret <- list(status_code = status_code,
               content_type = content_type,
               body = body,
               headers = headers,
               ...)
-  class(ret) <- "pkgapi_response"
+  class(ret) <- "porcelain_response"
   ret
 }
 
 
-pkgapi_serialize_pass <- function(val, req, res, error_handler) {
-  tryCatch(pkgapi_do_serialize_pass(val, res),
+porcelain_serialize_pass <- function(val, req, res, error_handler) {
+  tryCatch(porcelain_do_serialize_pass(val, res),
            error = function(e) error_handler(req, res, e))
 }
 
 
-pkgapi_do_serialize_pass <- function(val, res) {
+porcelain_do_serialize_pass <- function(val, res) {
   res$setHeader("Content-Type", val$content_type)
   if (!is.null(val$headers)) {
     for (header in names(val$headers)) {
@@ -131,18 +131,18 @@ pkgapi_do_serialize_pass <- function(val, res) {
 }
 
 
-pkgapi_error_handler <- function(req, res, e) {
-  val <- pkgapi_process_error(e)
-  pkgapi_serialize_pass(val, req, res, function(...) NULL)
+porcelain_error_handler <- function(req, res, e) {
+  val <- porcelain_process_error(e)
+  porcelain_serialize_pass(val, req, res, function(...) NULL)
 }
 
 
 ## This causes a proper fight with plumber as it bypasses all our
 ## serialisers and error handlers in hard to deal with ways.
-pkgapi_404_handler <- function(req, res) {
-  e <- pkgapi_error_object(
+porcelain_404_handler <- function(req, res) {
+  e <- porcelain_error_object(
     list("NOT_FOUND" = list(detail = "Resource not found")), 404L)
-  val <- pkgapi_process_error(e)
+  val <- porcelain_process_error(e)
   res$status <- 404
   val$value$data <- jsonlite::unbox(NA)
   val$value

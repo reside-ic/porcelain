@@ -21,14 +21,14 @@
 ##'   the use of \code{\link{do.call}}.
 ##'
 ##' @export
-pkgapi_state <- function(..., .state = list(...)) {
+porcelain_state <- function(..., .state = list(...)) {
   assert_named(.state, TRUE)
-  pkgapi_state_collection$new(.state)
+  porcelain_state_collection$new(.state)
 }
 
 
-pkgapi_state_collection <- R6::R6Class(
-  "pkgapi_state",
+porcelain_state_collection <- R6::R6Class(
+  "porcelain_state",
   public = list(
     names = NULL,
     state = NULL,
