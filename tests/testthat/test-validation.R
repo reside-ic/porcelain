@@ -136,7 +136,8 @@ test_that("validation respects default", {
   f <- function() {
     porcelain_endpoint$new(
       "GET", "/", function() jsonlite::unbox(1),
-      returning = porcelain_returning_json("String", "schema"))$run()$status_code
+      returning = porcelain_returning_json(
+        "String", "schema"))$run()$status_code
   }
 
   withr::with_envvar(c("PORCELAIN_VALIDATE" = NA_character_),
