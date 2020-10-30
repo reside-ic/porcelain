@@ -13,8 +13,8 @@ test_all:
 roxygen:
 	@mkdir -p man
 	${RSCRIPT} -e "library(methods); devtools::document()"
-	sed -i.bak 's/^.*plumber::hookable}} -> //' man/pkgapi.Rd
-	rm -f man/pkgapi.Rd.bak
+	sed -i.bak 's/^.*plumber::hookable}} -> //' man/porcelain.Rd
+	rm -f man/porcelain.Rd.bak
 
 install:
 	R CMD INSTALL .

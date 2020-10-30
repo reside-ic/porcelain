@@ -5,6 +5,7 @@ addons:
   apt:
     packages:
       - libnode-dev
+      - libsodium-dev
 r_packages:
   - covr
 r_github_packages:

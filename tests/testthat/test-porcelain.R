@@ -1,20 +1,20 @@
-context("pkgapi")
+context("porcelain")
 
 test_that("wrap endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", hello,
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
 
-  expect_is(endpoint, "pkgapi_endpoint")
+  expect_is(endpoint, "porcelain_endpoint")
   expect_equal(endpoint$returning$content_type, "application/json")
   expect_identical(endpoint$target, hello)
 
   res <- endpoint$run()
-  expect_is(res, "pkgapi_response")
+  expect_is(res, "porcelain_response")
   expect_setequal(names(res),
                   c("status_code", "content_type", "body", "data", "headers"))
   expect_equal(res$status_code, 200L)
@@ -31,17 +31,17 @@ test_that("wrap raw output", {
   binary <- function() {
     as.raw(0:255)
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/binary", binary,
-    returning = pkgapi_returning_binary(),
+    returning = porcelain_returning_binary(),
     validate = TRUE)
 
-  expect_is(endpoint, "pkgapi_endpoint")
+  expect_is(endpoint, "porcelain_endpoint")
   expect_equal(endpoint$returning$content_type, "application/octet-stream")
   expect_identical(endpoint$target, binary)
 
   res <- endpoint$run()
-  expect_is(res, "pkgapi_response")
+  expect_is(res, "porcelain_response")
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/octet-stream")
   expect_equal(res$body, binary())
@@ -54,11 +54,11 @@ test_that("build api - json endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", hello,
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
-  pr <- pkgapi$new()
+  pr <- porcelain$new()
   pr$handle(endpoint)
 
   res <- pr$request("GET", "/")
@@ -72,11 +72,11 @@ test_that("build api - binary endpoint", {
   binary <- function() {
     as.raw(0:255)
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/binary", binary,
-    returning = pkgapi_returning_binary(),
+    returning = porcelain_returning_binary(),
     validate = TRUE)
-  pr <- pkgapi$new()
+  pr <- porcelain$new()
   pr$handle(endpoint)
 
   res <- pr$request("GET", "/binary")
@@ -89,15 +89,15 @@ test_that("build api - binary endpoint", {
 test_that("throw error", {
   target_sqrt <- function(x) {
     if (x < 0) {
-      pkgapi_stop("'x' must be positive")
+      porcelain_stop("'x' must be positive")
     }
     jsonlite::unbox(sqrt(x))
   }
 
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/sqrt", target_sqrt,
-    pkgapi_input_query(x = "numeric"),
-    returning = pkgapi_returning_json("Number", "schema"))
+    porcelain_input_query(x = "numeric"),
+    returning = porcelain_returning_json("Number", "schema"))
 
   res <- endpoint$run(-1)
 
@@ -109,7 +109,7 @@ test_that("throw error", {
                list(list(error = jsonlite::unbox("ERROR"),
                          detail = jsonlite::unbox("'x' must be positive"))))
   expect_equal(res$body, to_json_string(res$value))
-  expect_is(res$error, "pkgapi_error")
+  expect_is(res$error, "porcelain_error")
   expect_equal(res$error$status_code, 400)
 })
 
@@ -118,7 +118,7 @@ test_that("allow plain plumber endpoints to be used", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  pr <- pkgapi$new()
+  pr <- porcelain$new()
   pr$handle("GET", "/", hello)
   res <- pr$request("GET", "/")
   expect_equal(res$status, 200)
@@ -127,26 +127,26 @@ test_that("allow plain plumber endpoints to be used", {
 
 
 test_that("disallow additional arguments with a pkgapendpoint", {
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", function() jsonlite::unbox("hello"),
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
-  pr <- pkgapi$new()
+  pr <- porcelain$new()
   expect_error(
     pr$handle(endpoint, "/hello"),
-    "If first argument is a 'pkgapi_endpoint' no others allowed")
+    "If first argument is a 'porcelain_endpoint' no others allowed")
 })
 
 
 test_that("404 handler", {
-  p <- pkgapi$new()
+  p <- porcelain$new()
   res <- p$request("GET", "/somewhere")
   expect_equal(res$status, 404)
   expect_equal(res$headers[["Content-Type"]], "application/json")
 
   cmp <- list(
     status = jsonlite::unbox("failure"),
-    errors = pkgapi_error_data(
+    errors = porcelain_error_data(
       list(NOT_FOUND = list(detail = "Resource not found"))),
     data = NULL)
   expect_equal(res$body, to_json(cmp))
@@ -159,19 +159,19 @@ test_that("headers can be added to output", {
   }
   binary_with_header <- function() {
     data <- binary()
-    pkgapi_add_headers(data, list("Content-Disposition" = "new_file.txt"))
+    porcelain_add_headers(data, list("Content-Disposition" = "new_file.txt"))
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/binary", binary_with_header,
-    returning = pkgapi_returning_binary(),
+    returning = porcelain_returning_binary(),
     validate = TRUE)
 
-  expect_is(endpoint, "pkgapi_endpoint")
+  expect_is(endpoint, "porcelain_endpoint")
   expect_equal(endpoint$returning$content_type, "application/octet-stream")
   expect_identical(endpoint$target, binary_with_header)
 
   res <- endpoint$run()
-  expect_is(res, "pkgapi_response")
+  expect_is(res, "porcelain_response")
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/octet-stream")
   expect_equal(res$body, binary())
@@ -185,13 +185,13 @@ test_that("build api - headers", {
   }
   binary_with_header <- function() {
     data <- binary()
-    pkgapi_add_headers(data, list("Content-Disposition" = "new_file.txt"))
+    porcelain_add_headers(data, list("Content-Disposition" = "new_file.txt"))
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/binary", binary_with_header,
-    returning = pkgapi_returning_binary(),
+    returning = porcelain_returning_binary(),
     validate = TRUE)
-  pr <- pkgapi$new()
+  pr <- porcelain$new()
   pr$handle(endpoint)
 
   res <- pr$request("GET", "/binary")
@@ -207,13 +207,13 @@ test_that("build api - dupe headers throws error", {
   }
   binary_with_header <- function() {
     data <- binary()
-    pkgapi_add_headers(data, list("Content-Type" = "image/png"))
+    porcelain_add_headers(data, list("Content-Type" = "image/png"))
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/binary", binary_with_header,
-    returning = pkgapi_returning_binary(),
+    returning = porcelain_returning_binary(),
     validate = TRUE)
-  pr <- pkgapi$new()
+  pr <- porcelain$new()
   pr$handle(endpoint)
 
   res <- pr$request("GET", "/binary")

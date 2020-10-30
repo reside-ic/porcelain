@@ -23,8 +23,8 @@
 ##'
 ##' @return Nothing, as this function throws an error
 ##' @export
-pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
-                        status_code = 400L, ...) {
+porcelain_stop <- function(message, code = "ERROR", errors = NULL,
+                           status_code = 400L, ...) {
   if (!is.null(errors)) {
     ## Convert from key - value pairs to key - list(detail = value)
     errors <- lapply(errors, function(error) list(detail = error))
@@ -42,25 +42,25 @@ pkgapi_stop <- function(message, code = "ERROR", errors = NULL,
     }
     errors <- set_names(list(content), code)
   }
-  pkgapi_error(errors, status_code)
+  porcelain_error(errors, status_code)
 }
 
 
-pkgapi_error <- function(errors, status_code = 400L) {
-  stop(pkgapi_error_object(errors, status_code))
+porcelain_error <- function(errors, status_code = 400L) {
+  stop(porcelain_error_object(errors, status_code))
 }
 
 
-pkgapi_error_object <- function(errors, status_code) {
-  data <- pkgapi_error_data(errors)
-  message <- pkgapi_error_message(data)
+porcelain_error_object <- function(errors, status_code) {
+  data <- porcelain_error_data(errors)
+  message <- porcelain_error_message(data)
   e <- list(message = message, data = data, status_code = status_code)
-  class(e) <- c("pkgapi_error", "error", "condition")
+  class(e) <- c("porcelain_error", "error", "condition")
   e
 }
 
 
-pkgapi_error_data <- function(errors) {
+porcelain_error_data <- function(errors) {
   assert_named(errors)
   detail_valid <- vlapply(errors, function(error) {
     is.null(error$detail) || is.character(error$detail)
@@ -76,35 +76,35 @@ pkgapi_error_data <- function(errors) {
   })
 }
 
-pkgapi_error_message <- function(data) {
+porcelain_error_message <- function(data) {
   error <- vcapply(data, "[[", "error")
   detail <- vcapply(data, function(x) x$detail %||% NA_character_)
   msg <- character(length(error))
   i <- is.na(detail)
   msg[i] <- sprintf("  * %s", error[i])
   msg[!i] <- sprintf("  * %s: %s", error[!i], detail[!i])
-  paste0("pkgapi_error:\n", paste(msg, collapse = "\n"))
+  paste0("porcelain_error:\n", paste(msg, collapse = "\n"))
 }
 
 
-pkgapi_process_error <- function(error) {
-  if (inherits(error, "pkgapi_validation_error")) {
-    error_data <- pkgapi_error_data(list(VALIDATION_ERROR = list(
-      detail = error$message)))
+porcelain_process_error <- function(error) {
+  if (inherits(error, "porcelain_validation_error")) {
+    error_data <- porcelain_error_data(list(VALIDATION_ERROR = list(
+                                              detail = error$message)))
     status_code <- 500L
-  } else if (inherits(error, "pkgapi_error")) {
+  } else if (inherits(error, "porcelain_error")) {
     error_data <- error$data
     status_code <- error$status_code
   } else {
-    error_data <- pkgapi_error_data(list(SERVER_ERROR = list(
-      detail = error$message)))
+    error_data <- porcelain_error_data(list(SERVER_ERROR = list(
+                                              detail = error$message)))
     status_code <- 500L
   }
 
   value <- response_failure(error_data)
   content_type <- "application/json"
   body <- to_json_string(value)
-  pkgapi_response(status_code, content_type, body,
-                  error = error, value = value,
-                  headers = NULL)
+  porcelain_response(status_code, content_type, body,
+                     error = error, value = value,
+                     headers = NULL)
 }

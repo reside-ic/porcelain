@@ -10,18 +10,18 @@
 ##' @export
 ##'
 ##' @examples
-##' pkgapi_add_headers("output",
+##' porcelain_add_headers("output",
 ##'                    list("Content-Dispotition" = "output_file.txt"))
-pkgapi_add_headers <- function(data, headers) {
-  attributes(data) <- list("pkgapi_headers" = headers)
+porcelain_add_headers <- function(data, headers) {
+  attributes(data) <- list("porcelain_headers" = headers)
   data
 }
 
-get_pkgapi_headers <- function(data) {
-  attr(data, "pkgapi_headers", exact = TRUE)
+get_porcelain_headers <- function(data) {
+  attr(data, "porcelain_headers", exact = TRUE)
 }
 
-remove_pkgapi_headers <- function(data) {
-  attr(data, "pkgapi_headers") <- NULL
+remove_porcelain_headers <- function(data) {
+  attr(data, "porcelain_headers") <- NULL
   data
 }

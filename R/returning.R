@@ -1,6 +1,6 @@
 ##' Support for describing and controlling expected return types.  The
-##' high-level functions (\code{pkgapi_returning_json} and
-##' \code{pkgapi_returning_binary}) should be generally used.
+##' high-level functions (\code{porcelain_returning_json} and
+##' \code{porcelain_returning_binary}) should be generally used.
 ##'
 ##' @title Support for endpoint return types
 ##'
@@ -22,15 +22,15 @@
 ##'   reasonable.
 ##'
 ##' @export
-pkgapi_returning <- function(content_type, process, validate,
-                             status_code = 200L) {
+porcelain_returning <- function(content_type, process, validate,
+                                status_code = 200L) {
   ## These should be validated, but that should wait until the api
   ## stabilises.
   ret <- list(content_type = content_type,
               status_code = status_code,
               process = process,
               validate = validate)
-  class(ret) <- "pkgapi_returning"
+  class(ret) <- "porcelain_returning"
   ret
 }
 
@@ -40,22 +40,22 @@ pkgapi_returning <- function(content_type, process, validate,
 ##' @param root The root of the schema directory.
 ##'
 ##' @export
-##' @rdname pkgapi_returning
-pkgapi_returning_json <- function(schema = NULL, root = NULL,
-                                  status_code = 200L) {
+##' @rdname porcelain_returning
+porcelain_returning_json <- function(schema = NULL, root = NULL,
+                                     status_code = 200L) {
   ## TODO(RESIDE-121): root can be inferred from the target function
   content_type <- "application/json"
   process <- function(data) to_json_string(response_success(data))
-  validate <- pkgapi_validator(schema, schema_root(root), query = "data")
-  pkgapi_returning(content_type, process, validate, status_code)
+  validate <- porcelain_validator(schema, schema_root(root), query = "data")
+  porcelain_returning(content_type, process, validate, status_code)
 }
 
 
 ##' @export
-##' @rdname pkgapi_returning
-pkgapi_returning_binary <- function(status_code = 200L) {
+##' @rdname porcelain_returning
+porcelain_returning_binary <- function(status_code = 200L) {
   content_type <- "application/octet-stream"
   validate <- assert_raw
   process <- identity
-  pkgapi_returning(content_type, process, validate, status_code)
+  porcelain_returning(content_type, process, validate, status_code)
 }

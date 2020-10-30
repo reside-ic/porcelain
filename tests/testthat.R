@@ -1,4 +1,4 @@
 library(testthat)
-library(pkgapi)
+library(porcelain)
 
-test_check("pkgapi")
+test_check("porcelain")

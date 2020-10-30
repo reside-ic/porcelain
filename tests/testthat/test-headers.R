@@ -5,10 +5,10 @@ test_that("headers are set as attributes", {
     "Content-Diposition" = "test",
     "Accept-Language" = "ENG"
   )
-  out <- pkgapi_add_headers("output", headers)
+  out <- porcelain_add_headers("output", headers)
 
   expect_equivalent(out, "output")
-  expect_equal(attributes(out), list("pkgapi_headers" = headers))
+  expect_equal(attributes(out), list("porcelain_headers" = headers))
 })
 
 test_that("headers can get headers from object", {
@@ -16,9 +16,9 @@ test_that("headers can get headers from object", {
     "Content-Diposition" = "test",
     "Accept-Language" = "ENG"
   )
-  out <- pkgapi_add_headers("output", headers)
+  out <- porcelain_add_headers("output", headers)
 
-  expect_equal(get_pkgapi_headers(out), headers)
+  expect_equal(get_porcelain_headers(out), headers)
 })
 
 test_that("headers can be removed", {
@@ -26,11 +26,11 @@ test_that("headers can be removed", {
     "Content-Diposition" = "test",
     "Accept-Language" = "ENG"
   )
-  out <- pkgapi_add_headers("output", headers)
+  out <- porcelain_add_headers("output", headers)
 
   expect_equivalent(out, "output")
-  expect_equal(attributes(out), list("pkgapi_headers" = headers))
+  expect_equal(attributes(out), list("porcelain_headers" = headers))
 
-  out <- remove_pkgapi_headers(out)
+  out <- remove_porcelain_headers(out)
   expect_equal(out, "output")
 })

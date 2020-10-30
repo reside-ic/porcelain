@@ -8,28 +8,29 @@ test_that("find schema root", {
 
 
 test_that("default validation", {
-  withr::with_envvar(c("PKGAPI_VALIDATE" = NA_character_), {
-    expect_true(pkgapi_validate_default(TRUE))
-    expect_false(pkgapi_validate_default(FALSE))
-    expect_false(pkgapi_validate_default(NULL))
+  withr::with_envvar(c("PORCELAIN_VALIDATE" = NA_character_), {
+    expect_true(porcelain_validate_default(TRUE))
+    expect_false(porcelain_validate_default(FALSE))
+    expect_false(porcelain_validate_default(NULL))
   })
 
-  withr::with_envvar(c("PKGAPI_VALIDATE" = "true"), {
-    expect_true(pkgapi_validate_default(TRUE))
-    expect_false(pkgapi_validate_default(FALSE))
-    expect_true(pkgapi_validate_default(NULL))
+  withr::with_envvar(c("PORCELAIN_VALIDATE" = "true"), {
+    expect_true(porcelain_validate_default(TRUE))
+    expect_false(porcelain_validate_default(FALSE))
+    expect_true(porcelain_validate_default(NULL))
   })
 
-  withr::with_envvar(c("PKGAPI_VALIDATE" = "false"), {
-    expect_true(pkgapi_validate_default(TRUE))
-    expect_false(pkgapi_validate_default(FALSE))
-    expect_false(pkgapi_validate_default(NULL))
+  withr::with_envvar(c("PORCELAIN_VALIDATE" = "false"), {
+    expect_true(porcelain_validate_default(TRUE))
+    expect_false(porcelain_validate_default(FALSE))
+    expect_false(porcelain_validate_default(NULL))
   })
 })
 
 
 test_that("validate successful return", {
-  path <- system_file("schema/response-success.schema.json", package = "pkgapi")
+  path <- system_file("schema/response-success.schema.json",
+                      package = "porcelain")
   v <- jsonvalidate::json_validator(path, "ajv")
   expect_true(v(to_json(response_success(NULL))))
   expect_true(v(to_json(response_success(1))))
@@ -37,11 +38,12 @@ test_that("validate successful return", {
 
 
 test_that("validate errors", {
-  path <- system_file("schema/response-failure.schema.json", package = "pkgapi")
+  path <- system_file("schema/response-failure.schema.json",
+                      package = "porcelain")
   v <- jsonvalidate::json_validator(path, "ajv")
 
   f <- function(x) {
-    pkgapi_process_error(pkgapi_error_object(x, 400L))
+    porcelain_process_error(porcelain_error_object(x, 400L))
   }
 
   e1 <- f(list("ERROR" = list(detail = "reason")))
@@ -88,9 +90,9 @@ test_that("validate schema - success", {
   hello <- function() {
     jsonlite::unbox("hello")
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", hello,
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
@@ -101,17 +103,17 @@ test_that("validate schema", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", hello,
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
   res <- endpoint$run()
 
-  expect_is(res, "pkgapi_response")
+  expect_is(res, "porcelain_response")
   expect_equal(res$status_code, 500L)
   expect_equal(res$content_type, "application/json")
   expect_equal(res$body, to_json_string(res$value))
-  expect_is(res$error, "pkgapi_validation_error")
+  expect_is(res$error, "porcelain_validation_error")
 
   expect_equal(to_json_string(response_success(hello())), res$error$json)
 })
@@ -121,9 +123,9 @@ test_that("can skip validation", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", hello,
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = FALSE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
@@ -132,26 +134,27 @@ test_that("can skip validation", {
 
 test_that("validation respects default", {
   f <- function() {
-    pkgapi_endpoint$new(
-    "GET", "/", function() jsonlite::unbox(1),
-    returning = pkgapi_returning_json("String", "schema"))$run()$status_code
+    porcelain_endpoint$new(
+      "GET", "/", function() jsonlite::unbox(1),
+      returning = porcelain_returning_json(
+        "String", "schema"))$run()$status_code
   }
 
-  withr::with_envvar(c("PKGAPI_VALIDATE" = NA_character_),
+  withr::with_envvar(c("PORCELAIN_VALIDATE" = NA_character_),
                      expect_equal(f(), 200))
-  withr::with_envvar(c("PKGAPI_VALIDATE" = "false"),
+  withr::with_envvar(c("PORCELAIN_VALIDATE" = "false"),
                      expect_equal(f(), 200))
-  withr::with_envvar(c("PKGAPI_VALIDATE" = "true"),
+  withr::with_envvar(c("PORCELAIN_VALIDATE" = "true"),
                      expect_equal(f(), 500))
 })
 
 
 test_that("override validation defaults at the api level", {
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", function() jsonlite::unbox(1),
-    returning = pkgapi_returning_json("String", "schema"),
+    returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
-  api <- pkgapi$new(validate = FALSE)
+  api <- porcelain$new(validate = FALSE)
   api$handle(endpoint)
   expect_true(endpoint$validate)
 
@@ -164,9 +167,9 @@ test_that("allow missing schema", {
   hello <- function() {
     jsonlite::unbox(1)
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/", hello,
-    returning = pkgapi_returning_json(),
+    returning = porcelain_returning_json(),
     validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
@@ -180,9 +183,9 @@ test_that("validate binary output", {
   binary <- function() {
     "not binary"
   }
-  endpoint <- pkgapi_endpoint$new(
+  endpoint <- porcelain_endpoint$new(
     "GET", "/binary", binary,
-    returning = pkgapi_returning_binary(),
+    returning = porcelain_returning_binary(),
     validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 500L)

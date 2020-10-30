@@ -1,6 +1,6 @@
 ## -*-sh-*-
 PACKAGE_ROOT=$(realpath $HERE/..)
-PACKAGE_NAME=pkgapi
+PACKAGE_NAME=porcelain
 PACKAGE_ORG=reside
 
 GIT_SHA=$(git -C "$PACKAGE_ROOT" rev-parse --short=7 HEAD)
