@@ -122,7 +122,7 @@ schema (at least if validation is used).  In future we might also
 support a form input here too.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>porcelain_input_body_binary</span><span class='op'>(</span><span class='va'>name</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>porcelain_input_body_binary</span><span class='op'>(</span><span class='va'>name</span>, content_type <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
 <span class='fu'>porcelain_input_body_json</span><span class='op'>(</span><span class='va'>name</span>, <span class='va'>schema</span>, <span class='va'>root</span><span class='op'>)</span></pre>
 
@@ -132,6 +132,12 @@ support a form input here too.</p>
     <tr>
       <th>name</th>
       <td><p>Name of the parameter</p></td>
+    </tr>
+    <tr>
+      <th>content_type</th>
+      <td><p>Content type for the input. If not given, then
+<code>application/octet-stream</code> is used. Provide a vector of valid
+types to allow any of the types to be passed.</p></td>
     </tr>
     <tr>
       <th>schema</th>
