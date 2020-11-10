@@ -31,12 +31,19 @@ porcelain_input_query <- function(..., .parameters = list(...)) {
 ##'
 ##' @param name Name of the parameter
 ##'
+##' @param content_type Content type for the input. If not given, then
+##'   `application/octet-stream` is used. Provide a vector of valid
+##'   types to allow any of the types to be passed.
+##'
 ##' @export
 ##' @rdname porcelain_input_body
-porcelain_input_body_binary <- function(name) {
+porcelain_input_body_binary <- function(name, content_type = NULL) {
   assert_scalar_character(name)
+  if (is.null(content_type)) {
+    content_type <- "application/octet-stream"
+  }
   porcelain_input$new(name, "binary", "body", assert_raw,
-                   content_type = "application/octet-stream")
+                      content_type = content_type)
 }
 
 
@@ -47,7 +54,7 @@ porcelain_input_body_json <- function(name, schema, root) {
   assert_scalar_character(name)
   validator <- porcelain_validator(schema, schema_root(root), query = NULL)
   porcelain_input$new(name, "json", "body", validator,
-                   content_type = "application/json")
+                      content_type = "application/json")
 }
 
 
