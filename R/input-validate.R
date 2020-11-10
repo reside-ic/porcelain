@@ -54,9 +54,10 @@ porcelain_input_validate_mime <- function(given, expected) {
     porcelain_input_error(sprintf(
       "Content-Type was not set (expected '%s')", expected))
   }
-  if (given != expected) {
+  if (!(given %in% expected)) {
     porcelain_input_error(sprintf(
-      "Expected content type '%s' but was sent '%s'", expected, given))
+      "Expected content type %s but was sent '%s'",
+      paste(squote(expected), collapse = "|"), given))
   }
 }
 

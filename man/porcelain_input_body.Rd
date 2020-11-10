@@ -5,12 +5,16 @@
 \alias{porcelain_input_body_json}
 \title{Control for body parameters}
 \usage{
-porcelain_input_body_binary(name)
+porcelain_input_body_binary(name, content_type = NULL)
 
 porcelain_input_body_json(name, schema, root)
 }
 \arguments{
 \item{name}{Name of the parameter}
+
+\item{content_type}{Content type for the input. If not given, then
+\code{application/octet-stream} is used. Provide a vector of valid
+types to allow any of the types to be passed.}
 
 \item{schema}{The name of the json schema to use}
 

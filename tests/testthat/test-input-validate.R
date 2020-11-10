@@ -12,3 +12,11 @@ test_that("validate mime", {
           "but was sent 'application/octet-stream'"),
     fixed = TRUE, class = "porcelain_error")
 })
+
+
+test_that("validate mime can OR between allowable types", {
+  expect_error(
+    porcelain_input_validate_mime("a", c("b", "c")),
+    "Expected content type 'b'|'c' but was sent 'a'",
+    fixed = TRUE, class = "porcelain_error")
+})

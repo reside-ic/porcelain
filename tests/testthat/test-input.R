@@ -40,6 +40,46 @@ test_that("Binary input", {
 })
 
 
+test_that("Binary input can select type", {
+  f <- function(a) NULL
+  obj <- porcelain_input_body_binary("a", "application/zip")$bind(f)
+  expect_equal(obj$name, "a")
+  expect_equal(obj$type, "binary")
+  expect_equal(obj$where, "body")
+  expect_true(obj$required)
+  expect_null(obj$default)
+  expect_equal(obj$data, list(content_type = "application/zip"))
+
+  r <- as.raw(0:255)
+  body <- porcelain_body(parse_mime("application/zip"), r)
+  expect_equal(obj$validate(list(body = body)), r)
+
+  body_binary <- porcelain_body(parse_mime("application/octet-stream"), r)
+  err <- expect_error(
+    obj$validate(list(body = body_binary)),
+    class = "porcelain_error")
+})
+
+
+test_that("Binary inputs can OR between types", {
+  types <- c("application/octet-stream", "application/zip")
+  f <- function(a) NULL
+  obj <- porcelain_input_body_binary("a", types)$bind(f)
+
+  r <- as.raw(0:255)
+  body_zip <- porcelain_body(parse_mime("application/zip"), r)
+  expect_equal(obj$validate(list(body = body_zip)), r)
+
+  body_bin <- porcelain_body(parse_mime("application/octet-stream"), r)
+  expect_equal(obj$validate(list(body = body_bin)), r)
+
+  body_gzip <- porcelain_body(parse_mime("application/gzip"), r)
+  err <- expect_error(
+    obj$validate(list(body = body_gzip)),
+    class = "porcelain_error")
+})
+
+
 test_that("JSON input", {
   obj <- porcelain_input_body_json("a", "Number", "schema")$bind(
                                                              function(a) NULL)
