@@ -106,5 +106,5 @@ porcelain_process_error <- function(error) {
   body <- to_json_string(value)
   porcelain_response(status_code, content_type, body,
                      error = error, value = value,
-                     headers = NULL)
+                     headers = NULL, validated = FALSE)
 }

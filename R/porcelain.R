@@ -30,7 +30,7 @@ porcelain <- R6::R6Class(
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
       super$initialize(NULL, porcelain_filters(), new.env(parent = .GlobalEnv))
-      private$validate <- validate
+      private$validate <- porcelain_validate_default(validate)
       self$setErrorHandler(porcelain_error_handler)
       self$set404Handler(porcelain_404_handler)
     },
@@ -91,11 +91,13 @@ porcelain <- R6::R6Class(
   ))
 
 
-porcelain_response <- function(status_code, content_type, body, headers, ...) {
+porcelain_response <- function(status_code, content_type, body, headers,
+                               validated, ...) {
   ret <- list(status_code = status_code,
               content_type = content_type,
               body = body,
               headers = headers,
+              validated = validated,
               ...)
   class(ret) <- "porcelain_response"
   ret
@@ -121,6 +123,8 @@ porcelain_do_serialize_pass <- function(val, res) {
       }
     }
   }
+  res$setHeader("X-Porcelain-Validated",
+                tolower(as.character(val$validated %||% FALSE)))
   if (val$content_type == "application/json") {
     res$body <- as.character(val$body)
   } else {

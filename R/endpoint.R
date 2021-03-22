@@ -137,8 +137,11 @@ porcelain_endpoint <- R6::R6Class(
           self$returning$validate(body)
         }
         porcelain_response(self$returning$status_code,
-                           self$returning$content_type, body, data = data,
-                           headers = get_porcelain_headers(data))
+                           self$returning$content_type,
+                           body,
+                           data = data,
+                           headers = get_porcelain_headers(data),
+                           validated = self$validate)
       }, error = porcelain_process_error)
     },
 

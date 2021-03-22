@@ -16,12 +16,14 @@ test_that("wrap endpoint", {
   res <- endpoint$run()
   expect_is(res, "porcelain_response")
   expect_setequal(names(res),
-                  c("status_code", "content_type", "body", "data", "headers"))
+                  c("status_code", "content_type", "body", "data", "headers",
+                    "validated"))
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/json")
   expect_equal(res$body, to_json_string(response_success(res$data)))
   expect_equal(res$data, hello())
   expect_equal(res$headers, NULL)
+  expect_true(res$validated)
 
   expect_true(validator_response_success(res$body))
 })
