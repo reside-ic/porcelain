@@ -96,6 +96,7 @@ test_that("validate schema - success", {
     validate = TRUE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
+  expect_true(res$validated)
 })
 
 
@@ -115,6 +116,9 @@ test_that("validate schema", {
   expect_equal(res$body, to_json_string(res$value))
   expect_is(res$error, "porcelain_validation_error")
 
+  ## FALSE, because we did not validate the error schema here
+  expect_false(res$validated)
+
   expect_equal(to_json_string(response_success(hello())), res$error$json)
 })
 
@@ -129,6 +133,7 @@ test_that("can skip validation", {
     validate = FALSE)
   res <- endpoint$run()
   expect_equal(res$status_code, 200L)
+  expect_false(res$validated)
 })
 
 
@@ -149,6 +154,18 @@ test_that("validation respects default", {
 })
 
 
+test_that("return informaion about validation in header", {
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/", function() jsonlite::unbox("hello"),
+    returning = porcelain_returning_json("String", "schema"))
+  api <- porcelain$new(validate = TRUE)
+  api$handle(endpoint)
+  res <- api$request("GET", "/")
+  expect_equal(res$status, 200)
+  expect_equal(res$headers[["X-Porcelain-Validated"]], "true")
+})
+
+
 test_that("override validation defaults at the api level", {
   endpoint <- porcelain_endpoint$new(
     "GET", "/", function() jsonlite::unbox(1),
@@ -159,7 +176,10 @@ test_that("override validation defaults at the api level", {
   expect_true(endpoint$validate)
 
   expect_equal(endpoint$run()$status_code, 500)
-  expect_equal(api$request("GET", "/")$status, 200)
+
+  res <- api$request("GET", "/")
+  expect_equal(res$status, 200)
+  expect_equal(res$headers[["X-Porcelain-Validated"]], "false")
 })
 
 
