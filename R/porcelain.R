@@ -22,15 +22,14 @@ porcelain <- R6::R6Class(
     ##'   (implemented by the \code{validate_response} argument) should
     ##'   be enabled.  This should be set to \code{FALSE} in production
     ##'   environments.  By default (if \code{validate} is \code{NULL}),
-    ##'   we look at the value of the environment
-    ##'   \code{PORCELAIN_VALIDATE} - if \code{true} (case insensitive)
-    ##'   then we will validate. This is intended to support easy use
-    ##'   of validation on continuous integration systems.
+    ##'   we look at the value of the environment \code{PORCELAIN_VALIDATE} -
+    ##'   if \code{true} (case insensitive) then we will validate.
+    ##'   This is intended to support easy use of validation on
+    ##'   continuous integration systems.
     initialize = function(..., validate = FALSE) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
-      super$initialize(NULL, porcelain_filters(),
-                       new.env(parent = .GlobalEnv))
+      super$initialize(NULL, porcelain_filters(), new.env(parent = .GlobalEnv))
       private$validate <- porcelain_validate_default(validate)
       self$setErrorHandler(porcelain_error_handler)
       self$set404Handler(porcelain_404_handler)
