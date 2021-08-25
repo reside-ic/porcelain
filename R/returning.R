@@ -43,10 +43,10 @@ porcelain_returning <- function(content_type, process, validate,
 ##' @rdname porcelain_returning
 porcelain_returning_json <- function(schema = NULL, root = NULL,
                                      status_code = 200L) {
-  ## TODO(RESIDE-121): root can be inferred from the target function
+  root <- schema_root(root %||% parent.frame())
   content_type <- "application/json"
   process <- function(data) to_json_string(response_success(data))
-  validate <- porcelain_validator(schema, schema_root(root), query = "data")
+  validate <- porcelain_validator(schema, root, query = "data")
   porcelain_returning(content_type, process, validate, status_code)
 }
 

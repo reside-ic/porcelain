@@ -20,12 +20,23 @@ porcelain_validator <- function(schema, root, query) {
     return(function(...) NULL)
   }
   force(query)
-  path_schema <- file.path(root, paste0(schema, ".json"))
+  path_schema <- find_schema(schema, root)
   v <- jsonvalidate::json_validator(path_schema, "ajv")
   function(json) {
     porcelain_validate(json, v, query)
     invisible(json)
   }
+}
+
+
+## Given a schema name, we will take 'name', 'name.json' or
+## 'name.schema.json' in decreasing order of preference, falling back
+## on 'name' if none are found. The fallback behaviour allows inlining
+## schemas
+find_schema <- function(name, path) {
+  filename <- file.path(path, paste0(name, c("", ".json", ".schema.json")))
+  exists <- file.exists(filename)
+  filename[[if (any(exists)) which(exists)[[1L]] else 1L]]
 }
 
 
@@ -41,6 +52,14 @@ porcelain_validator <- function(schema, root, query) {
 ## whole porcelain object.
 ## nolint end
 schema_root <- function(root) {
+  if (is.environment(root)) {
+    package <- utils::packageName(root)
+    path_package <- system.file(package = package, mustWork = TRUE)
+    ## TODO: could allow this path to be customised by letting
+    ## packages include this in DESCRIPTION as Config/porcelain/schema
+    ## perhaps
+    root <- file.path(path_package, "schema")
+  }
   assert_is_directory(root)
   normalizePath(root, mustWork = TRUE)
 }
