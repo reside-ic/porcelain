@@ -19,6 +19,7 @@ Imports:
     jsonvalidate (>= 1.2.2),
     plumber
 Suggests:
+    remotes,
     testthat,
     withr
 Roxygen: list(markdown = TRUE)
