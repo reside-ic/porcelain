@@ -40,17 +40,6 @@ find_schema <- function(name, path) {
 }
 
 
-## nolint start
-## If we have access to the handler here we could find its schema root
-## with something like:
-##
-##   package <- utils::packageName(environment(handler))
-##   root <- system_file("schema", package = package)
-##
-## but that would need harmonising with any other schema use - and
-## that might want to come through the endpoint object or even the
-## whole porcelain object.
-## nolint end
 schema_root <- function(root) {
   if (is.environment(root)) {
     package <- utils::packageName(root)
