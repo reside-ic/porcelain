@@ -20,7 +20,7 @@ Imports:
     plumber
 Suggests:
     mockery,
-    remotes,
+    pkgload,
     testthat,
     withr
 Roxygen: list(markdown = TRUE)
