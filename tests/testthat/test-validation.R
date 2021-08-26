@@ -225,3 +225,24 @@ test_that("Find schema root", {
   expect_error(schema_root(environment(jsonlite::parse_json)),
                "File does not exist")
 })
+
+
+test_that("find schema by adding extensions", {
+  tmp <- tempfile()
+  dir.create(tmp)
+  tmp <- normalizePath(tmp)
+  expect_equal(find_schema("foo", tmp),
+               file.path(tmp, "foo"))
+
+  file.create(file.path(tmp, "foo.schema.json"))
+  expect_equal(find_schema("foo", tmp),
+               file.path(tmp, "foo.schema.json"))
+
+  file.create(file.path(tmp, "foo.json"))
+  expect_equal(find_schema("foo", tmp),
+               file.path(tmp, "foo.json"))
+
+  file.create(file.path(tmp, "foo"))
+  expect_equal(find_schema("foo", tmp),
+               file.path(tmp, "foo"))
+})
