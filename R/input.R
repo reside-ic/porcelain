@@ -52,7 +52,8 @@ porcelain_input_body_binary <- function(name, content_type = NULL) {
 ##' @rdname porcelain_input_body
 porcelain_input_body_json <- function(name, schema, root) {
   assert_scalar_character(name)
-  validator <- porcelain_validator(schema, schema_root(root), query = NULL)
+  root <- schema_root(root %||% parent.frame())
+  validator <- porcelain_validator(schema, root, query = NULL)
   porcelain_input$new(name, "json", "body", validator,
                       content_type = "application/json")
 }

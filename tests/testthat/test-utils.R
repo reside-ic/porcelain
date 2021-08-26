@@ -69,3 +69,44 @@ test_that("bind_args", {
   g <- bind_args(f, list(c = 3, b = 2))
   expect_equal(g(1), list(1, 2, 3))
 })
+
+
+test_that("detect package root under pkgload", {
+  skip_if_not_installed("pkgload")
+  skip_if_not_installed("mockery")
+  skip_on_cran()
+
+  mock_pkgload_loaded <- mockery::mock(FALSE, TRUE, TRUE, TRUE, TRUE)
+  mock_is_dev_package <- mockery::mock(FALSE,
+                                       TRUE, TRUE,
+                                       TRUE, FALSE)
+
+  mockery::stub(package_file_root, "pkgload_loaded",
+                mock_pkgload_loaded)
+  mockery::stub(package_file_root, "pkgload::is_dev_package",
+                mock_is_dev_package)
+
+  package <- "jsonlite"
+  root_real <- system.file(package = package, mustWork = TRUE)
+  root_pkgload <- file.path(root_real, "inst")
+
+  ## 1. pkgload not loaded so path must be real
+  expect_equal(package_file_root(package), root_real)
+  mockery::expect_called(mock_pkgload_loaded, 1)
+  mockery::expect_called(mock_is_dev_package, 0)
+
+  ## 2. package is not a dev package, so path must be real
+  expect_equal(package_file_root(package), root_real)
+  mockery::expect_called(mock_pkgload_loaded, 2)
+  mockery::expect_called(mock_is_dev_package, 1)
+
+  ## 3. package is a dev package, so is porcelain, so path is real
+  expect_equal(package_file_root(package), root_real)
+  mockery::expect_called(mock_pkgload_loaded, 3)
+  mockery::expect_called(mock_is_dev_package, 3)
+
+  ## 4. package is a dev package, porcelain is not is incorrect
+  expect_equal(package_file_root(package), root_pkgload)
+  mockery::expect_called(mock_pkgload_loaded, 4)
+  mockery::expect_called(mock_is_dev_package, 5)
+})

@@ -140,3 +140,30 @@ bind_args <- function(target, data) {
 
   as.function(c(keep, body), env)
 }
+
+
+## Find the root for included files (not including system files) for a
+## package. This corresponds to the "inst" directory.  This is
+## different when the package load has been simulated with
+## pkgload. This will come in useful in both tests and documentation.
+##
+## There are 4 cases here:
+##
+## porcelain real    + package real    => system.file is correct
+## porcelain pkgload + package real    => system.file is correct
+## porcelain real    + package pkgload => system.file is incorrect
+## porcelain pkgload + package pkgload => system.file is correct
+package_file_root <- function(package) {
+  path <- system.file(package = package, mustWork = TRUE)
+  if (pkgload_loaded() &&
+      pkgload::is_dev_package(package) &&
+      !pkgload::is_dev_package("porcelain")) {
+    path <- file.path(path, "inst")
+  }
+  path
+}
+
+
+pkgload_loaded <- function() {
+  "pkgload" %in% loadedNamespaces()
+}

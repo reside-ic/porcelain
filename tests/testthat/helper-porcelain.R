@@ -30,3 +30,8 @@ validator_response_failure <- jsonvalidate::json_validator(
 validator_response_success <- jsonvalidate::json_validator(
   system_file("schema/response-success.schema.json", package = "porcelain"),
   engine = "ajv")
+
+
+same_path <- function(a, b) {
+  normalizePath(a, "/", TRUE) == normalizePath(b, "/", TRUE)
+}
