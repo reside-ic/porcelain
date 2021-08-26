@@ -87,6 +87,10 @@ porcelain <- R6::R6Class(
                        content_type = NULL) {
       plumber_request(self, method, path, query, body = body,
                       content_type = content_type)
+    },
+
+    set_logger = function(logger) {
+      browser()
     }
   ))
 
