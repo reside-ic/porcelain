@@ -26,13 +26,24 @@ porcelain <- R6::R6Class(
     ##'   if \code{true} (case insensitive) then we will validate.
     ##'   This is intended to support easy use of validation on
     ##'   continuous integration systems.
-    initialize = function(..., validate = FALSE) {
+    ##'
+    ##' @param logger Optional logger, from the `lgr` package.  If
+    ##'  given, then we will log at the beginning and end of the request.
+    initialize = function(..., validate = FALSE, logger = NULL) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
       super$initialize(NULL, porcelain_filters(), new.env(parent = .GlobalEnv))
       private$validate <- porcelain_validate_default(validate)
       self$setErrorHandler(porcelain_error_handler)
       self$set404Handler(porcelain_404_handler)
+
+      if (!is.null(logger)) {
+        assert_is(logger, "Logger")
+        ## There is no way of detecting if a hook has been applied
+        ## already, or removing/replacing it.
+        self$registerHook("preroute", porcelain_log_preroute(logger))
+        self$registerHook("postserialize", porcelain_log_postserialize(logger))
+      }
     },
 
     ##' @description Handle an endpoint
@@ -87,10 +98,6 @@ porcelain <- R6::R6Class(
                        content_type = NULL) {
       plumber_request(self, method, path, query, body = body,
                       content_type = content_type)
-    },
-
-    set_logger = function(logger) {
-      browser()
     }
   ))
 

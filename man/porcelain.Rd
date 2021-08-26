@@ -61,7 +61,7 @@ plumber API are documented here.
 \subsection{Method \code{new()}}{
 Create a porcelain object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{porcelain$new(..., validate = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{porcelain$new(..., validate = FALSE, logger = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -77,6 +77,9 @@ we look at the value of the environment \code{PORCELAIN_VALIDATE} -
 if \code{true} (case insensitive) then we will validate.
 This is intended to support easy use of validation on
 continuous integration systems.}
+
+\item{\code{logger}}{Optional logger, from the \code{lgr} package.  If
+given, then we will log at the beginning and end of the request.}
 }
 \if{html}{\out{</div>}}
 }
