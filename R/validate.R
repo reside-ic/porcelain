@@ -43,8 +43,8 @@ find_schema <- function(name, path) {
 schema_root <- function(root) {
   if (is.environment(root)) {
     package <- utils::packageName(root)
-    path_package <- system.file(package = package, mustWork = TRUE)
-    ## TODO: could allow this path to be customised by letting
+    path_package <- package_file_root(package)
+    ## TODO: co0uld allow this path to be customised by letting
     ## packages include this in DESCRIPTION as Config/porcelain/schema
     ## perhaps
     root <- file.path(path_package, "schema")
