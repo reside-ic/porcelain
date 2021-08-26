@@ -216,10 +216,12 @@ test_that("validate binary output", {
 
 
 test_that("Find schema root", {
-  expect_equal(schema_root(environment(porcelain_validate)),
-               system_file("schema", package = "porcelain"))
-  expect_equal(schema_root(new.env(parent = environment(porcelain_validate))),
-               system_file("schema", package = "porcelain"))
+  expect_true(same_path(
+    schema_root(environment(porcelain_validate)),
+    system_file("schema", package = "porcelain")))
+  expect_true(same_path(
+    schema_root(new.env(parent = environment(porcelain_validate))),
+    system_file("schema", package = "porcelain")))
   expect_error(schema_root(environment(jsonlite::parse_json)),
                "File does not exist")
 })

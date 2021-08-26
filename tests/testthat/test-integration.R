@@ -3,6 +3,7 @@ context("integration")
 test_that("Can run add package", {
   skip_on_cran()
   skip_if_not_installed("remotes")
+  skip_on_os("windows") # usual issues getting packages installed on CI
   lib <- tempfile()
   dir.create(lib, FALSE, TRUE)
   on.exit(unlink(lib, recursive = TRUE))
