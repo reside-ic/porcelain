@@ -42,7 +42,6 @@ test_that("log errors in a useful way", {
   hello <- function() {
     porcelain_stop("An error has occured", "an-error")
   }
-  err <- get_error(hello())
 
   logger <- test_logger("error-single")
 
@@ -68,7 +67,6 @@ test_that("log multiple errors into a single log entry", {
     porcelain_stop("An error has occured", "an-error",
                    list(ERROR1 = "message1", ERROR2 = "message2"))
   }
-  err <- get_error(hello())
 
   logger <- test_logger("error-multiple")
   endpoint <- porcelain_endpoint$new(
@@ -85,4 +83,27 @@ test_that("log multiple errors into a single log entry", {
   expect_equal(log[[4]]$errors,
                list(list(error = "ERROR1", detail = "message1"),
                     list(error = "ERROR2", detail = "message2")))
+})
+
+
+test_that("log incoming POST body", {
+  hello <- function(body) {
+    "hello"
+  }
+
+  logger <- test_logger("incoming-post")
+
+  endpoint <- porcelain_endpoint$new(
+    "POST", "/", hello,
+    porcelain_input_body_json("body"),
+    returning = porcelain_returning_json("String", "schema"))
+
+  pr <- porcelain$new(logger = logger)
+  pr$handle(endpoint)
+  body <- '{"a": 1, "b": 2}'
+  res <- pr$request("POST", "/", body = body)
+
+  log <- test_logger_read(logger)
+  expect_length(log, 4)
+  expect_equal(log[[2]]$body, body)
 })

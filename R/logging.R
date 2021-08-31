@@ -1,4 +1,15 @@
-porcelain_log_preroute <- function(logger) {
+## Plumber has stages
+## preroute -> postroute -> preserialize -> postserialize
+##
+## We hook up the first bit of logging up against postroute as by that
+## point we have run our filters, which include getting the body read
+## and queries parsed. Without this it is not really possible to get
+## the body as we can't portably read twice from the rook input (see
+## warning in ?seek, which is used internally by rewind())
+##
+## The filter functions do minimal validation so there should be very
+## few requests where logging is dropped here.
+porcelain_log_postroute <- function(logger) {
   force(logger)
   function(data, req, res) {
     logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO)
@@ -9,13 +20,6 @@ porcelain_log_preroute <- function(logger) {
 
 porcelain_log_postserialize <- function(logger) {
   force(logger)
-
-  safe_body <- function(body) {
-    if (is.raw(body)) {
-      body <- sprintf("<binary body (%d bytes)>", length(body))
-    }
-    body
-  }
 
   is_json_error_response <- function(res) {
     res$status >= 400 &&
@@ -38,7 +42,7 @@ porcelain_log_postserialize <- function(logger) {
     }
 
     logger_detailed(logger, "trace", req, "response",
-                    body = safe_body(value$body))
+                    body = describe_body(value$body))
 
     value
   }
@@ -46,21 +50,35 @@ porcelain_log_postserialize <- function(logger) {
 
 
 logger_detailed <- function(logger, level, req, ...) {
-  ## TODO: we might want to post the incoming body here
-
-  ## TODO: getting a unique request id here would be ideal as then we
-  ## could (fairly) easily associate the request and the response,
-  ## though I think they'll always be served synchronously so that's
-  ## not that much of a drama.
-
   ## the remote address/port are unlikely to be
   ## interesting as noone should be exposing these APIs
   ## to the internet at large.
   ## remote_addr = req$REMOTE_ADDR,
   ## remote_port = req$REMOTE_PORT,
-  logger[[level]](...,
-    method = req$REQUEST_METHOD,
-    path = req$PATH_INFO,
-    query = req$QUERY_STRING,
-    headers = as.list(req$HEADERS))
+
+  ## Because lgr used named arguments (and no programatic way of
+  ## providing this) we have to duplicate the entire call below. These
+  ## two calls are the same except that if if the body
+  if ("porcelain_body" %in% names(req)) {
+    logger[[level]](...,
+      method = req$REQUEST_METHOD,
+      path = req$PATH_INFO,
+      query = req$porcelain_query,
+      headers = as.list(req$HEADERS),
+      body = describe_body(req$porcelain_body$value))
+  } else {
+    logger[[level]](...,
+      method = req$REQUEST_METHOD,
+      path = req$PATH_INFO,
+      query = req$porcelain_query,
+      headers = as.list(req$HEADERS))
+  }
+}
+
+
+describe_body <- function(body) {
+  if (is.raw(body)) {
+    body <- sprintf("<binary body (%d bytes)>", length(body))
+  }
+  body
 }

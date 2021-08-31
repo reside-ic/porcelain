@@ -39,9 +39,7 @@ porcelain <- R6::R6Class(
 
       if (!is.null(logger)) {
         assert_is(logger, "Logger")
-        ## There is no way of detecting if a hook has been applied
-        ## already, or removing/replacing it.
-        self$registerHook("preroute", porcelain_log_preroute(logger))
+        self$registerHook("postroute", porcelain_log_postroute(logger))
         self$registerHook("postserialize", porcelain_log_postserialize(logger))
       }
     },

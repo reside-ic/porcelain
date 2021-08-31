@@ -50,7 +50,7 @@ porcelain_input_body_binary <- function(name, content_type = NULL) {
 ##' @inheritParams porcelain_returning_json
 ##' @export
 ##' @rdname porcelain_input_body
-porcelain_input_body_json <- function(name, schema, root) {
+porcelain_input_body_json <- function(name, schema = NULL, root = NULL) {
   assert_scalar_character(name)
   root <- schema_root(root %||% parent.frame())
   validator <- porcelain_validator(schema, root, query = NULL)
