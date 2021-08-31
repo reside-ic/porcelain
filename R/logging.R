@@ -1,5 +1,4 @@
-## Plumber has stages
-## preroute -> postroute -> preserialize -> postserialize
+## Plumber has stages preroute -> postroute -> preserialize -> postserialize
 ##
 ## We hook up the first bit of logging up against postroute as by that
 ## point we have run our filters, which include getting the body read
