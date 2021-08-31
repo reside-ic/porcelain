@@ -54,24 +54,12 @@ logger_detailed <- function(logger, level, req, ...) {
   ## to the internet at large.
   ## remote_addr = req$REMOTE_ADDR,
   ## remote_port = req$REMOTE_PORT,
-
-  ## Because lgr used named arguments (and no programatic way of
-  ## providing this) we have to duplicate the entire call below. These
-  ## two calls are the same except that if if the body
-  if ("porcelain_body" %in% names(req)) {
-    logger[[level]](...,
-      method = req$REQUEST_METHOD,
-      path = req$PATH_INFO,
-      query = req$porcelain_query,
-      headers = as.list(req$HEADERS),
-      body = describe_body(req$porcelain_body$value))
-  } else {
-    logger[[level]](...,
-      method = req$REQUEST_METHOD,
-      path = req$PATH_INFO,
-      query = req$porcelain_query,
-      headers = as.list(req$HEADERS))
-  }
+  logger[[level]](...,
+    method = req$REQUEST_METHOD,
+    path = req$PATH_INFO,
+    query = req$porcelain_query,
+    headers = as.list(req$HEADERS),
+    body = describe_body(req$porcelain_body$value))
 }
 
 
