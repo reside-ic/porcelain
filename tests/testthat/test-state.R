@@ -1,5 +1,3 @@
-context("state")
-
 test_that("use mutable state from an endpoint", {
   ## Free function that we want to bind
   target_increment <- function(counter, by = 1) {

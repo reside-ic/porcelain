@@ -1,5 +1,3 @@
-context("request")
-
 test_that("content type guessing works", {
   expect_equal(request_content_type(as.raw(0:5), NULL),
                "application/octet-stream")

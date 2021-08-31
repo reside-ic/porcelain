@@ -1,6 +1,3 @@
-context("error")
-
-
 test_that("construct error", {
   expect_equal(
     porcelain_error_data(list(a = NULL)),

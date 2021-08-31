@@ -1,5 +1,3 @@
-context("headers")
-
 test_that("headers are set as attributes", {
   headers <- list(
     "Content-Diposition" = "test",
@@ -7,7 +5,7 @@ test_that("headers are set as attributes", {
   )
   out <- porcelain_add_headers("output", headers)
 
-  expect_equivalent(out, "output")
+  expect_equal(out, "output", ignore_attr = TRUE)
   expect_equal(attributes(out), list("porcelain_headers" = headers))
 })
 
@@ -28,7 +26,7 @@ test_that("headers can be removed", {
   )
   out <- porcelain_add_headers("output", headers)
 
-  expect_equivalent(out, "output")
+  expect_equal(out, "output", ignore_attr = TRUE)
   expect_equal(attributes(out), list("porcelain_headers" = headers))
 
   out <- remove_porcelain_headers(out)

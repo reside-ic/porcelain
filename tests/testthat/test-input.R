@@ -1,5 +1,3 @@
-context("input")
-
 test_that("Basic input", {
   obj <- porcelain_input$new("a", "numeric", "query")$bind(function(a) NULL)
   expect_equal(obj$name, "a")

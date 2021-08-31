@@ -1,5 +1,3 @@
-context("compatibility")
-
 with_plumber_1_0_0 <- function(value, code) {
   prev <- cache$plumber_1_0_0
   on.exit(cache$plumber_1_0_0 <- prev)

@@ -1,5 +1,3 @@
-context("porcelain")
-
 test_that("wrap endpoint", {
   hello <- function() {
     jsonlite::unbox("hello")
@@ -9,12 +7,12 @@ test_that("wrap endpoint", {
     returning = porcelain_returning_json("String", "schema"),
     validate = TRUE)
 
-  expect_is(endpoint, "porcelain_endpoint")
+  expect_s3_class(endpoint, "porcelain_endpoint")
   expect_equal(endpoint$returning$content_type, "application/json")
   expect_identical(endpoint$target, hello)
 
   res <- endpoint$run()
-  expect_is(res, "porcelain_response")
+  expect_s3_class(res, "porcelain_response")
   expect_setequal(names(res),
                   c("status_code", "content_type", "body", "data", "headers",
                     "validated"))
@@ -38,12 +36,12 @@ test_that("wrap raw output", {
     returning = porcelain_returning_binary(),
     validate = TRUE)
 
-  expect_is(endpoint, "porcelain_endpoint")
+  expect_s3_class(endpoint, "porcelain_endpoint")
   expect_equal(endpoint$returning$content_type, "application/octet-stream")
   expect_identical(endpoint$target, binary)
 
   res <- endpoint$run()
-  expect_is(res, "porcelain_response")
+  expect_s3_class(res, "porcelain_response")
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/octet-stream")
   expect_equal(res$body, binary())
@@ -111,7 +109,7 @@ test_that("throw error", {
                list(list(error = jsonlite::unbox("ERROR"),
                          detail = jsonlite::unbox("'x' must be positive"))))
   expect_equal(res$body, to_json_string(res$value))
-  expect_is(res$error, "porcelain_error")
+  expect_s3_class(res$error, "porcelain_error")
   expect_equal(res$error$status_code, 400)
 })
 
@@ -168,12 +166,12 @@ test_that("headers can be added to output", {
     returning = porcelain_returning_binary(),
     validate = TRUE)
 
-  expect_is(endpoint, "porcelain_endpoint")
+  expect_s3_class(endpoint, "porcelain_endpoint")
   expect_equal(endpoint$returning$content_type, "application/octet-stream")
   expect_identical(endpoint$target, binary_with_header)
 
   res <- endpoint$run()
-  expect_is(res, "porcelain_response")
+  expect_s3_class(res, "porcelain_response")
   expect_equal(res$status_code, 200L)
   expect_equal(res$content_type, "application/octet-stream")
   expect_equal(res$body, binary())
