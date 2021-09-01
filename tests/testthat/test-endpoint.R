@@ -1,5 +1,3 @@
-context("endpoint")
-
 test_that("endpoints reject unconsumed dots", {
   returning <- porcelain_returning_json("String", "schema")
   expect_error(

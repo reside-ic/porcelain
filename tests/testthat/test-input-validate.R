@@ -1,5 +1,3 @@
-context("input validation")
-
 test_that("validate mime", {
   expect_error(
     porcelain_input_validate_mime(NULL, "application/json"),

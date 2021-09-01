@@ -1,6 +1,3 @@
-context("validation")
-
-
 test_that("find schema root", {
   expect_equal(schema_root("."), normalizePath("."))
   expect_error(schema_root(tempfile()))
@@ -110,11 +107,11 @@ test_that("validate schema", {
     validate = TRUE)
   res <- endpoint$run()
 
-  expect_is(res, "porcelain_response")
+  expect_s3_class(res, "porcelain_response")
   expect_equal(res$status_code, 500L)
   expect_equal(res$content_type, "application/json")
   expect_equal(res$body, to_json_string(res$value))
-  expect_is(res$error, "porcelain_validation_error")
+  expect_s3_class(res$error, "porcelain_validation_error")
 
   ## FALSE, because we did not validate the error schema here
   expect_false(res$validated)
