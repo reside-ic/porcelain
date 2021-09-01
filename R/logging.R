@@ -11,8 +11,9 @@
 porcelain_log_postroute <- function(logger) {
   force(logger)
   function(data, req, res) {
-    logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO)
-    logger_detailed(logger, "trace", req, "request")
+    logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO,
+                caller = "postroute")
+    logger_detailed(logger, "trace", req, "postroute", "request")
   }
 }
 
@@ -33,14 +34,15 @@ porcelain_log_postserialize <- function(logger) {
     }
 
     logger$info(sprintf("response %s %s => %d (%d bytes)",
-                        req$REQUEST_METHOD, req$PATH_INFO, res$status, size))
+                        req$REQUEST_METHOD, req$PATH_INFO, res$status, size),
+                caller = "postserialize")
 
     if (is_json_error_response(res)) {
-      logger_detailed(logger, "error", req, "error",
+      logger_detailed(logger, "error", req, "postserialize", "error",
                       errors = jsonlite::parse_json(res$body)$errors)
     }
 
-    logger_detailed(logger, "trace", req, "response",
+    logger_detailed(logger, "trace", req, "postserialize", "response",
                     body = describe_body(value$body))
 
     value
@@ -48,13 +50,14 @@ porcelain_log_postserialize <- function(logger) {
 }
 
 
-logger_detailed <- function(logger, level, req, ...) {
+logger_detailed <- function(logger, level, req, caller, ...) {
   ## the remote address/port are unlikely to be
   ## interesting as noone should be exposing these APIs
   ## to the internet at large.
   ## remote_addr = req$REMOTE_ADDR,
   ## remote_port = req$REMOTE_PORT,
   logger[[level]](...,
+    caller = caller,
     method = req$REQUEST_METHOD,
     path = req$PATH_INFO,
     query = req$porcelain_query,

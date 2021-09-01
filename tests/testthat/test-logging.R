@@ -16,6 +16,23 @@ test_that("Can log", {
 
   log <- test_logger_read(logger)
   expect_length(log, 4)
+
+  expect_equal(log[[1]][c("caller", "msg")],
+               list(caller = "postroute", msg = "request GET /"))
+  expect_equal(
+    log[[2]][c("caller", "msg", "method", "path", "query", "headers")],
+    list(caller = "postroute", msg = "request", method = "GET", path = "/",
+         query = list(), headers = list()))
+
+  expect_equal(log[[3]][c("caller", "msg")],
+               list(caller = "postserialize",
+                    msg = "response GET / => 200 (49 bytes)"))
+  expect_equal(
+    log[[4]][c("caller", "msg", "method", "path", "query", "headers",
+               "body")],
+    list(caller = "postserialize", msg = "response", method = "GET", path = "/",
+         query = list(), headers = list(),
+         body = '{"status":"success","errors":null,"data":"hello"}'))
 })
 
 
@@ -59,6 +76,7 @@ test_that("log errors in a useful way", {
   expect_equal(log[[4]]$msg, "error")
   expect_equal(log[[4]]$errors,
                list(list(error = "an-error", detail = "An error has occured")))
+  expect_equal(log[[4]]$caller, "postserialize")
 })
 
 
