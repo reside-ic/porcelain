@@ -34,6 +34,9 @@ porcelain_validator <- function(schema, root, query) {
 ## on 'name' if none are found. The fallback behaviour allows inlining
 ## schemas
 find_schema <- function(name, path) {
+  if (is.null(path)) {
+    stop("Did not find schema root")
+  }
   filename <- file.path(path, paste0(name, c("", ".json", ".schema.json")))
   exists <- file.exists(filename)
   filename[[if (any(exists)) which(exists)[[1L]] else 1L]]
@@ -43,6 +46,9 @@ find_schema <- function(name, path) {
 schema_root <- function(root) {
   if (is.environment(root)) {
     package <- utils::packageName(root)
+    if (is.null(package)) {
+      return(NULL)
+    }
     path_package <- package_file_root(package)
     ## TODO: co0uld allow this path to be customised by letting
     ## packages include this in DESCRIPTION as Config/porcelain/schema

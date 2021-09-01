@@ -7,7 +7,7 @@
 \usage{
 porcelain_input_body_binary(name, content_type = NULL)
 
-porcelain_input_body_json(name, schema, root)
+porcelain_input_body_json(name, schema = NULL, root = NULL)
 }
 \arguments{
 \item{name}{Name of the parameter}

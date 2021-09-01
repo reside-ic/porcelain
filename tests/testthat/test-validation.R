@@ -246,3 +246,10 @@ test_that("find schema by adding extensions", {
   expect_equal(find_schema("foo", tmp),
                file.path(tmp, "foo"))
 })
+
+
+test_that("sensible output returned for impossible root", {
+  expect_null(schema_root(globalenv()))
+  expect_error(find_schema("foo", NULL),
+               "Did not find schema root")
+})
