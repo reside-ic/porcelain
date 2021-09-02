@@ -167,3 +167,8 @@ package_file_root <- function(package) {
 pkgload_loaded <- function() {
   "pkgload" %in% loadedNamespaces()
 }
+
+
+json_parse_extract <- function(json, name) {
+  cache$v8$call("jsonParseExtract", json, name)
+}

@@ -108,3 +108,24 @@ test_that("detect package root under pkgload", {
   mockery::expect_called(mock_pkgload_loaded, 4)
   mockery::expect_called(mock_is_dev_package, 5)
 })
+
+
+test_that("extract from body", {
+  a <- "[1, 2, 3]"
+  b <- '{"x": 1, "y": 2}'
+  json <- sprintf('{"a": %s, "b": %s}', a, b)
+
+  ## Standardise json spacing:
+  std_json <- function(x) {
+    cache$v8$eval(sprintf("JSON.stringify(JSON.parse('%s'))", x))
+  }
+
+  expect_equal(json_parse_extract(json, "a"), std_json(a))
+  expect_equal(json_parse_extract(json, "b"), std_json(b))
+  expect_error(json_parse_extract(json, "c"),
+               "Did not find key 'c' within object")
+  expect_error(json_parse_extract("", "c"),
+               "Provided json is not an object")
+  expect_error(json_parse_extract(a, "c"),
+               "Provided json is not an object")
+})

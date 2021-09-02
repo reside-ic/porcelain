@@ -7,7 +7,7 @@
 \usage{
 porcelain_input_body_binary(name, content_type = NULL)
 
-porcelain_input_body_json(name, schema = NULL, root = NULL)
+porcelain_input_body_json(name, schema = NULL, root = NULL, extract = NULL)
 }
 \arguments{
 \item{name}{Name of the parameter}
@@ -19,6 +19,14 @@ types to allow any of the types to be passed.}
 \item{schema}{The name of the json schema to use}
 
 \item{root}{The root of the schema directory.}
+
+\item{extract}{Optionally, the name of an element to extract from
+the json. If given, then the body must be a json object (not an
+array, for example) and \code{extract} must refer to a top-level key
+within it. We will extract the \emph{JSON string} corresponding to
+this key and forward that to the argument \code{name}.
+Deserialisation of the json is still the target function's
+responsibility but there will be less of it.}
 }
 \description{
 Control for body parameters.  This might change.  There are

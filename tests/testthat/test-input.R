@@ -599,3 +599,50 @@ test_that("default parameters", {
   expect_equal(res_api$headers[["Content-Type"]], "application/json")
   expect_equal(res_api$body, res$body)
 })
+
+
+test_that("destructure body", {
+  multiply <- function(a, b) {
+    jsonlite::unbox(as.numeric(a) * as.numeric(b))
+  }
+  endpoint <- porcelain_endpoint$new(
+    "POST", "/multiply", multiply,
+    porcelain_input_body_json("a", extract = "a"),
+    porcelain_input_body_json("b", extract = "b"),
+    returning = porcelain_returning_json())
+  pr <- porcelain$new(validate = TRUE)$handle(endpoint)
+  json <- '{"a": 3, "b": 2}'
+  res <- pr$request("POST", "/multiply", body = json)
+  expect_equal(res$status, 200)
+  expect_equal(res$headers,
+               list("Content-Type" = "application/json",
+                    "X-Porcelain-Validated" = "true"))
+  expect_equal(res$body, endpoint$run("3", "2")$body)
+})
+
+
+test_that("destructure body failure returns input error", {
+  multiply <- function(a, b) {
+    jsonlite::unbox(as.numeric(a) * as.numeric(b))
+  }
+  endpoint <- porcelain_endpoint$new(
+    "POST", "/multiply", multiply,
+    porcelain_input_body_json("a", extract = "a"),
+    porcelain_input_body_json("b", extract = "b"),
+    returning = porcelain_returning_json())
+  pr <- porcelain$new(validate = TRUE)$handle(endpoint)
+  res <- pr$request("POST", "/multiply", body = "{}")
+  expect_equal(res$status, 400)
+  expect_equal(res$headers,
+               list("Content-Type" = "application/json",
+                    "X-Porcelain-Validated" = "false"))
+  err <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
+  expect_equal(
+    err,
+    list(status = "failure",
+         errors = list(
+           list(error = "INVALID_INPUT",
+                detail = paste("Error parsing body (for 'a'):",
+                               "Did not find key 'a' within object"))),
+         data = NULL))
+})
