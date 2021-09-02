@@ -631,7 +631,7 @@ test_that("destructure body failure returns input error", {
     porcelain_input_body_json("b", extract = "b"),
     returning = porcelain_returning_json())
   pr <- porcelain$new(validate = TRUE)$handle(endpoint)
-  res <- pr$request("POST", "/multiply", body = '{}')
+  res <- pr$request("POST", "/multiply", body = "{}")
   expect_equal(res$status, 400)
   expect_equal(res$headers,
                list("Content-Type" = "application/json",

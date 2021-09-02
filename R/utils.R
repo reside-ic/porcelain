@@ -169,14 +169,6 @@ pkgload_loaded <- function() {
 }
 
 
-json_parse_depth1 <- function(json) {
-  assert_scalar_character(json)
-  cache$v8$call("jsonParseDepth1", json)
-}
-
-
 json_parse_extract <- function(json, name) {
-  assert_scalar_character(json)
-  assert_scalar_character(name)
   cache$v8$call("jsonParseExtract", json, name)
 }
