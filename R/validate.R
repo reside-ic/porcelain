@@ -17,7 +17,7 @@ porcelain_validate <- function(json, validator, query) {
 ## environment variable to also require it in tests.
 porcelain_validator <- function(schema, root, query) {
   if (is.null(schema)) {
-    return(function(...) NULL)
+    return(function(json) invisible(json))
   }
   force(query)
   path_schema <- find_schema(schema, root)

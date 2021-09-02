@@ -48,13 +48,24 @@ porcelain_input_body_binary <- function(name, content_type = NULL) {
 
 
 ##' @inheritParams porcelain_returning_json
+##'
+##' @param extract Optionally, the name of an element to extract from
+##'   the json. If given, then the body must be a json object (not an
+##'   array, for example) and `extract` must refer to a top-level key
+##'   within it. We will extract the *JSON string* corresponding to
+##'   this key and forward that to the argument `name`.
+##'   Deserialisation of the json is still the target function's
+##'   responsibility but there will be less of it.
+##'
 ##' @export
 ##' @rdname porcelain_input_body
-porcelain_input_body_json <- function(name, schema = NULL, root = NULL) {
+porcelain_input_body_json <- function(name, schema = NULL, root = NULL,
+                                      extract = NULL) {
   assert_scalar_character(name)
   root <- schema_root(root %||% parent.frame())
   validator <- porcelain_validator(schema, root, query = NULL)
   porcelain_input$new(name, "json", "body", validator,
+                      extract = extract,
                       content_type = "application/json")
 }
 
@@ -167,6 +178,14 @@ porcelain_input_validate_body <- function(given, self) {
     value <- body$value
   } else {
     value <- NULL
+  }
+
+  if (!is.null(self$data$extract)) {
+    value <- tryCatch(
+      json_parse_extract(value, self$data$extract),
+      error = function(e)
+        porcelain_input_error(sprintf("Error parsing body (for '%s'): %s",
+                                      self$name, e$message)))
   }
 
   if (!is.null(value)) {
