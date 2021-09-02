@@ -6,7 +6,11 @@ NULL
 cache <- new.env()
 
 .onLoad <- function(...) { # nolint
-  cache$plumber_1_0_0 <- utils::packageVersion("plumber") >= "0.9.9" # nocov
+  ## nocov start
+  cache$plumber_1_0_0 <- utils::packageVersion("plumber") >= "0.9.9"
+  cache$v8 <- V8::new_context()
+  cache$v8$source(system_file("utils.js", package = "porcelain"))
+  ## nocov end
 }
 
 

@@ -167,3 +167,9 @@ package_file_root <- function(package) {
 pkgload_loaded <- function() {
   "pkgload" %in% loadedNamespaces()
 }
+
+
+json_parse_depth1 <- function(json) {
+  assert_scalar_character(json)
+  cache$v8$call("jsonParseDepth1", json)
+}

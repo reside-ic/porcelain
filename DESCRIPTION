@@ -15,6 +15,7 @@ LazyData: true
 Language: en-GB
 Imports:
     R6,
+    V8,
     jsonlite,
     jsonvalidate (>= 1.2.2),
     plumber
