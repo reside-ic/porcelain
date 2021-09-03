@@ -65,7 +65,7 @@ We start with a very different approach to `plumber`, one that is undeniably muc
 
 To begin, we'll write an endpoint that takes two arguments as query parameters (not body parameters as in the plumber example).  We will do this in a small package:
 
-```{r, echo = FALSE, results = "asis"}
+```{r, echo = FALSE, comment = NA}
 withr::with_dir(porcelain_file("examples"), fs::dir_tree("add"))
 ```
 
