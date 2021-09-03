@@ -54,7 +54,7 @@ curl -w"\n" --data "a=4&b=3" "http://localhost:8000/sum"
 
 This simple example illustrates several issues that `porcelain` tries to solve:
 
-* The return value here is a json vector of length one even though the inputs were scalars - was that expected? How to we make this api more type-stable so that we can easily use it in upstream applications
+* The return value here is a json vector of length one even though the inputs were scalars - was that expected? How do we make this api more type-stable so that we can easily use it in upstream applications
 * Posting non-numeric inputs will produce surprising outputs (guess what posting `a=x&b=3` will produce)
 * While we have documentation on inputs, their contents are unverifiable and are prone to comment rot
 * This is hard to test - our main way of interacting with the API is to start a separate process and send requests to curl. We'd like an easier way of being able to do this

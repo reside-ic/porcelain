@@ -21,7 +21,7 @@ porcelain_file <- function(path) {
 }
 ```
 
-In contrast with the descriptive approach in the main vignette (`vignette("porcelain")`, this vignette contains little recipes for exposing and testing different endpoint types.  They are ordered roughly from simplest to most complicated, and are written as standalone examples (which makes them quite repetitive!)
+In contrast with the descriptive approach in the main vignette (`vignette("porcelain")`), this vignette contains little recipes for exposing and testing different endpoint types.  They are ordered roughly from simplest to most complicated, and are written as standalone examples (which makes them quite repetitive!)
 
 Below, we do not use the package convention of wrapping each endpoint in a function.  This is to make the examples a little shorter and to make the endpoints more directly callable.  In a package, a wrapper function is needed to make the schema path point to the correct place, and to allow binding of state into the endpoint (see later examples).
 

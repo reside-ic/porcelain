@@ -15,7 +15,7 @@ While a work-in-progress, we use this in several applications:
 
 * [`orderly.server`](https://github.com/vimc/orderly.server) which asynchronously runs [`orderly`](https://github.com/vimc/orderly) reports
 * [`hintr`](https://github.com/mrc-ide/hintr/) which runs statistical analysis of HIV prevalence under interventions (see [the project page](https://reside-ic.github.io/projects/naomi/) for more information).
-* [`mintr`](https://github.com/mrc-ide/mintr) which is a simpler application looking at interventions for malaria control.  for The application is [publicly available](https://mint.dide.ic.ac.uk/)
+* [`mintr`](https://github.com/mrc-ide/mintr) which is a simpler application looking at interventions for malaria control.  The application is [publicly available](https://mint.dide.ic.ac.uk/)
 * [`cometr`](https://github.com/mrc-ide/cometr) which runs dynamic models of COVID-19
 
 Each of these applications is used by web applications written in Kotlin/TypeScript - see [this poster](https://reside-ic.github.io/resources/RSLondonSE-hint-poster.pdf) for more on our design approach.
