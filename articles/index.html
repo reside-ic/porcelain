@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Control for query parameters — porcelain_input_query • porcelain</title>
+<title>Articles • porcelain</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,7 @@
 
 
 
-<meta property="og:title" content="Control for query parameters — porcelain_input_query" />
-<meta property="og:description" content="Control for query parameters." />
+<meta property="og:title" content="Articles" />
 
 
 
@@ -59,7 +58,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-topic">
+    <div class="container template-article-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -123,47 +122,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Control for query parameters</h1>
-    <small class="dont-index">Source: <a href='https://github.com/reside-ic/porcelain/blob/master/R/input.R'><code>R/input.R</code></a></small>
-    <div class="hidden name"><code>porcelain_input_query.Rd</code></div>
+      <h1>Articles</h1>
     </div>
 
-    <div class="ref-description">
-    <p>Control for query parameters.</p>
+    <div class="section ">
+      <h3>All vignettes</h3>
+      <p class="section-desc"></p>
+
+      <dl>
+        <dt><a href="cookbook.html">cookbook</a></dt>
+        <dd></dt>
+        <dt><a href="porcelain.html">porcelain</a></dt>
+        <dd></dt>
+      </dl>
     </div>
-
-    <pre class="usage"><span class='fu'>porcelain_input_query</span><span class='op'>(</span><span class='va'>...</span>, .parameters <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span><span class='op'>)</span></pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>...</th>
-      <td><p>Named arguments representing accepted parameters.  The
-value of each must be a type.</p></td>
-    </tr>
-    <tr>
-      <th>.parameters</th>
-      <td><p>A list of named parameters to accept, instead
-of using <code>...</code> - this interface is considerably easier to
-program against if building an API programmatically, avoiding
-the use of <code><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></code>.</p></td>
-    </tr>
-    </table>
-
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>porcelain</span><span class='fu'>::</span><span class='fu'>porcelain_input_query</span><span class='op'>(</span>number <span class='op'>=</span> <span class='st'>"integer"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; &lt;porcelain_input_collection&gt;
-#&gt;   Public:
-#&gt;     clone: function (deep = FALSE) 
-#&gt;     initialize: function (names, types, where) 
-#&gt;     inputs: list</div></pre>
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <nav id="toc" data-toggle="toc" class="sticky-top">
-      <h2 data-toc-skip>Contents</h2>
-    </nav>
   </div>
 </div>
 

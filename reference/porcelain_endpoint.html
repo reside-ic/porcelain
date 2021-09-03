@@ -88,11 +88,31 @@ endpoints, porcelain endpoints are meant to be used in testing." />
   </a>
 </li>
 <li>
+  <a href="../articles/porcelain.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/cookbook.html">cookbook</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/reside-ic/porcelain/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -107,7 +127,7 @@ endpoints, porcelain endpoints are meant to be used in testing." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Basic endpoint object</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/reside-ic/porcelain/blob/master/R/endpoint.R'><code>R/endpoint.R</code></a></small>
     <div class="hidden name"><code>porcelain_endpoint.Rd</code></div>
     </div>
 
@@ -223,7 +243,7 @@ automatically taken from the endpoint itself.</p><h4 class='hasAnchor' id='argum
 <a id="method-plumber"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>plumber()</code></h3>
 <p>Helper method for use with plumber - not designed
 for end-user use.  This is what gets called by plumber when the
-endpoint recieves a request.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+endpoint receives a request.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>porcelain_endpoint</span><span class='op'>$</span><span class='fu'>plumber</span><span class='op'>(</span><span class='va'>req</span>, <span class='va'>res</span>, <span class='va'>...</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
