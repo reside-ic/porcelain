@@ -134,7 +134,7 @@ automatically taken from the endpoint itself.
 \subsection{Method \code{plumber()}}{
 Helper method for use with plumber - not designed
 for end-user use.  This is what gets called by plumber when the
-endpoint recieves a request.
+endpoint receives a request.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{porcelain_endpoint$plumber(req, res, ...)}\if{html}{\out{</div>}}
 }

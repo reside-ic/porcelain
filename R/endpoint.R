@@ -159,7 +159,7 @@ porcelain_endpoint <- R6::R6Class(
 
     ##' @description Helper method for use with plumber - not designed
     ##' for end-user use.  This is what gets called by plumber when the
-    ##' endpoint recieves a request.
+    ##' endpoint receives a request.
     ##'
     ##' @param req,res Conventional plumber request/response objects
     ##' @param ... Additional arguments passed through to \code{run}

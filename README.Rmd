@@ -1,11 +1,29 @@
 ## porcelain
 
 <!-- badges: start -->
-[![Project Status: Concept – Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![R build status](https://github.com/reside-ic/pkgapi/workflows/R-CMD-check/badge.svg)](https://github.com/reside-ic/pkgapi/actions)
 [![codecov.io](https://codecov.io/github/reside-ic/porcelain/coverage.svg?branch=master)](https://codecov.io/github/reside-ic/porcelain?branch=master)
-
+[![CodeFactor](https://www.codefactor.io/repository/github/reside-ic/porcelain/badge)](https://www.codefactor.io/repository/github/reside-ic/porcelain)
 <!-- badges: end -->
+
+Porcelain helps convert R packages into easily-tested APIs, using [`plumber`](https://www.rplumber.io/).  The ideas come from our experience putting complex R APIs into production where it is important that the API behaves predictably even with unpredictable inputs.
+
+The focus of `plumber` is quickly putting together applications and works like magic. In `porcelain` we take a more explicit approach defining standard response types and using [schemas](https://json-schema.org/) to make clear the API contract.
+
+While a work-in-progress, we use this in several applications:
+
+* [`orderly.server`](https://github.com/vimc/orderly.server) which asynchronously runs [`orderly`](https://github.com/vimc/orderly) reports
+* [`hintr`](https://github.com/mrc-ide/hintr/) which runs statistical analysis of HIV prevalence under interventions (see [the project page](https://reside-ic.github.io/projects/naomi/) for more information).
+* [`mintr`](https://github.com/mrc-ide/mintr) which is a simpler application looking at interventions for malaria control.  The application is [publicly available](https://mint.dide.ic.ac.uk/)
+* [`cometr`](https://github.com/mrc-ide/cometr) which runs dynamic models of COVID-19
+
+Each of these applications is used by web applications written in Kotlin/TypeScript - see [this poster](https://reside-ic.github.io/resources/RSLondonSE-hint-poster.pdf) for more on our design approach.
+
+For more information, see the package vignettes:
+
+* `vignette("porcelain")` - an introduction and example package
+* `vignette("cookbook")` - a cookbook of endpoint patterns
 
 ## License
 

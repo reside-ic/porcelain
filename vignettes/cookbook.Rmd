@@ -1,0 +1,221 @@
+---
+title: "cookbook"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{cookbook}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+show_file <- function(path, lang) {
+  writeLines(c(paste0("```", lang), readLines(path), "```"))
+}
+porcelain_file <- function(path) {
+  system.file(path, package = "porcelain", mustWork = TRUE)
+}
+```
+
+In contrast with the descriptive approach in the main vignette (`vignette("porcelain")`), this vignette contains little recipes for exposing and testing different endpoint types.  They are ordered roughly from simplest to most complicated, and are written as standalone examples (which makes them quite repetitive!)
+
+Below, we do not use the package convention of wrapping each endpoint in a function.  This is to make the examples a little shorter and to make the endpoints more directly callable.  In a package, a wrapper function is needed to make the schema path point to the correct place, and to allow binding of state into the endpoint (see later examples).
+
+The one piece of shared code is that we will use a common schema root
+
+```{r}
+schema_root <- system.file("examples/schema", package = "porcelain")
+```
+
+## GET endpoint, inputs as query parameters, returning JSON
+
+This is the example from the main vignette, adding two numbers given as query parameters and returning a single number.  Note that we need to use `jsonlite::unbox()` to indicate that the single number should be returned as a number and not a vector of length 1 (compare `jsonlite::toJSON(1)` and `jsonlite::toJSON(jsonlite::unbox(1))`)
+
+```{r}
+add <- function(a, b) {
+  jsonlite::unbox(a + b)
+}
+
+endpoint_add <- porcelain::porcelain_endpoint$new(
+  "GET", "/", add,
+  porcelain::porcelain_input_query(a = "numeric", b = "numeric"),
+  returning = porcelain::porcelain_returning_json("numeric", schema_root))
+
+api <- porcelain::porcelain$new(validate = TRUE)$handle(endpoint_add)
+```
+
+Run the endpoint:
+
+```{r}
+api$request("GET", "/", query = list(a = 1, b = 2))
+```
+
+# GET endpoint, inputs as path and query parameters, returning JSON
+
+Slightly more interesting return type, this time returning a numeric vector.
+
+```{r}
+random <- function(distribution, n) {
+  switch(distribution,
+         normal = rnorm(n),
+         uniform = runif(n),
+         exponential = rexp(n))
+}
+
+endpoint_random <- porcelain::porcelain_endpoint$new(
+  "GET", "/random/<distribution>", random,
+  porcelain::porcelain_input_query(n = "numeric"),
+  returning = porcelain::porcelain_returning_json("numericVector", schema_root))
+
+api <- porcelain::porcelain$new(validate = TRUE)$handle(endpoint_random)
+```
+
+Run the endpoint:
+
+```{r}
+api$request("GET", "/random/normal", query = list(n = 4))
+api$request("GET", "/random/uniform", query = list(n = 4))
+```
+
+Note that the output here is *always a vector*, even in the corner cases of 1 and 0 elements returned:
+
+```{r}
+api$request("GET", "/random/normal", query = list(n = 1))
+api$request("GET", "/random/normal", query = list(n = 0))
+```
+
+# POST endpoint, inputs as JSON, returning JSON
+
+Here is one way that a complex statistical procedure (here, just `lm`) might be wrapped as an API endpoint.  We'll run a linear regression against vectors of data `x` and `y` and return a table of coefficients.
+
+```{r}
+x <- runif(10)
+data <- data.frame(x = x, y = x * 2 + rnorm(length(x), sd = 0.3))
+fit <- lm(y ~ x, data)
+summary(fit)
+```
+
+We're interested in getting the table of coefficients, which we can extract like this:
+
+```{r}
+summary(fit)$coefficients
+```
+
+and transform a little to turn the row names into a column of their own
+
+```{r}
+lm_coef <- as.data.frame(summary(fit)$coefficients)
+lm_coef <- cbind(name = rownames(lm_coef), lm_coef)
+rownames(lm_coef) <- NULL
+```
+
+(the `broom` package provides a nice way of doing this sort of manipulation of these slightly opaque objects).  There are many ways of serialising this sort of data; we will do it in the default way supported by `jsonlite`, representing the object as an array of objects, each of which is key/value pairs for each row:
+
+```{r}
+jsonlite::toJSON(lm_coef, pretty = TRUE)
+```
+
+So we have our target function now:
+
+```{r}
+fit_lm <- function(data) {
+  data <- jsonlite::fromJSON(data)
+  fit <- lm(y ~ x, data)
+  lm_coef <- as.data.frame(summary(fit)$coefficients)
+  lm_coef <- cbind(name = rownames(lm_coef), lm_coef)
+  rownames(lm_coef) <- NULL
+  lm_coef
+}
+```
+
+Note that the target function must deserialise the json itself. This is so that arguments can be passed to `jsonlite::fromJSON` easily to control how deserialisation happens.  We may support automatic deserialisation later as an argument to `porcelain::porcelain_input_body_json`.
+
+The endpoint is not that much more involved than before though we have interesting inputs and outputs, with schemas required for both
+
+```{r}
+endpoint_lm <- porcelain::porcelain_endpoint$new(
+  "POST", "/lm", fit_lm,
+  porcelain::porcelain_input_body_json("data", "lmInputs", schema_root),
+  returning = porcelain::porcelain_returning_json("lmCoef", schema_root))
+```
+
+The input schema, `lmInputs.json` is
+
+```{r, echo = FALSE, results = "asis"}
+show_file(file.path(schema_root, "lmInputs.json"), "json")
+```
+
+while the response schema `lmCoef.json` is
+
+```{r, echo = FALSE, results = "asis"}
+show_file(file.path(schema_root, "lmCoef.json"), "json")
+```
+
+These are both fairly strict schemas using both `required` and `additionalProperties`. You might want to be more permissive, but we find that strictness here pays off later.
+
+```{r}
+api <- porcelain::porcelain$new(validate = TRUE)$handle(endpoint_lm)
+```
+
+To exercise the API endpoint we need to pass in our input JSON (not an R object).
+
+```{r}
+json <- jsonlite::toJSON(data)
+json
+```
+
+```{r}
+api$request("POST", "/lm", body = json, content_type = "application/json")
+```
+
+# POST endpoint, inputs as binary, returning binary
+
+(This example also shows off a few other features)
+
+Handling binary inputs and outputs is supported, provided that you can deal with them in R.  In this example we'll use R's serialisation format (rds; see `?serialize` and `?saveRDS`) as an example, but this approach would equally work with excel spreadsheets, zip files or any other non-text data that you work with.
+
+In this example we'll take some serialised R data and create a png plot as output.  We'll start by writing our target function:
+
+```{r}
+binary_plot <- function(data, width = 400, height = 400) {
+  data <- unserialize(data)
+  tmp <- tempfile(fileext = ".png")
+  on.exit(unlink(tmp))
+  png(tmp, width = width, height = height)
+  tryCatch(
+    plot(data),
+    finally = dev.off())
+  readBin(tmp, raw(), n = file.size(tmp))
+}
+```
+
+Here, we use `unserialize` to convert the incoming binary data into something usable, plot to a temporary file (which we clean up later, using `on.exit`). Using `tryCatch(..., finally = dev.off())` ensures that even if the plotting fails, the device will be closed.  Finally, `readBin` reads that temporary file in a raw vector.
+
+So, for example (using `str` to limit what is printed to screen)
+
+```{r}
+bin <- serialize(data, NULL)
+str(binary_plot(bin), vec.len = 10)
+```
+
+It's hard to tell this is a png, but the first few bytes give it away (the [magic number](https://en.wikipedia.org/wiki/List_of_file_signatures) `89 50 4e 47 0d 0a 1a 0a` is used at the start of all png files).
+
+```{r}
+endpoint_plot <- porcelain::porcelain_endpoint$new(
+  "POST", "/plot", binary_plot,
+  porcelain::porcelain_input_body_binary("data"),
+  returning = porcelain::porcelain_returning_binary())
+api <- porcelain::porcelain$new(validate = TRUE)$handle(endpoint_plot)
+```
+
+Making the request (again using `str` to prevent printing thousands of hex characters)
+
+```{r}
+str(api$request("POST", "/plot", body = bin,
+                 content_type = "application/octet-stream"),
+    vec.len = 10)
+```

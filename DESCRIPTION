@@ -13,6 +13,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
+URL: https://github.com/reside-ic/porcelain
+BugReports: https://github.com/reside-ic/porcelain/issues
 Imports:
     R6,
     V8,
@@ -20,12 +22,16 @@ Imports:
     jsonvalidate (>= 1.2.2),
     plumber
 Suggests:
+    fs,
+    knitr,
     lgr,
     mockery,
     pkgload,
+    rmarkdown,
     testthat,
     withr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+VignetteBuilder: knitr
 Remotes: ropensci/jsonvalidate
 Config/testthat/edition: 3
