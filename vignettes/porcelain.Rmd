@@ -111,7 +111,7 @@ porcelain::porcelain_input_query(a = "numeric", b = "numeric")
 
 which advertises (and enforces) that the query parameters `a` and `b` expected and numeric - additional query parameters provided will raise an error.  Similarly, the argument
 
-```
+```r
 returning = porcelain::porcelain_returning_json("numeric")
 ```
 
