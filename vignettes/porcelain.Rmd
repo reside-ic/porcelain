@@ -1,0 +1,138 @@
+---
+title: "porcelain"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{porcelain}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+show_file <- function(path, lang) {
+  writeLines(c(paste0("```", lang), readLines(path), "```"))
+}
+porcelain_file <- function(path) {
+  system.file(path, package = "porcelain", mustWork = TRUE)
+}
+```
+
+`porcelain` is a package which allows creation of robust, testable HTTP API's from R. These can be used to expose any R calculation to other applications while communicating explicit expectations for inputs and outputs.  It is implemented on top of the excellent `plumber` package and uses `plumber`'s programmatic interface to build its API.  The interface, goals and tradeoffs are very different to plumber, but we think that this leads to high-quality APIs that are easy to put into production.
+
+## Motivation
+
+The `plumber` package makes it trivially easy to create APIs from R.  For example, from the [documentation](https://rplumber.io)
+
+```r
+#* Return the sum of two numbers
+#* @param a The first number to add
+#* @param b The second number to add
+#* @post /sum
+function(a, b) {
+  as.numeric(a) + as.numeric(b)
+}
+```
+
+Starting this API is easy,
+
+```r
+library(plumber)
+# 'plumber.R' is the location of the file shown above
+pr("plumber.R") %>%
+  pr_run(port=8000)
+```
+
+and we can interact with it using `curl`:
+
+```
+curl -w"\n" --data "a=4&b=3" "http://localhost:8000/sum"
+[7]
+```
+
+This simple example illustrates several issues that `porcelain` tries to solve:
+
+* The return value here is a json vector of length one even though the inputs were scalars - was that expected? How to we make this api more type-stable so that we can easily use it in upstream applications
+* Posting non-numeric inputs will produce surprising outputs (guess what posting `a=x&b=3` will produce)
+* While we have documentation on inputs, their contents are unverifiable and are prone to comment rot
+* This is hard to test - our main way of interacting with the API is to start a separate process and send requests to curl. We'd like an easier way of being able to do this
+
+## Introduction - a porcelain approach to adding-as-a-service
+
+We start with a very different approach to `plumber`, one that is undeniably much more work to get started with as everything will be implemented in a package. We'll start by creating a version of the above example (adding two arguments) which makes explicit some of the type decisions here.
+
+To begin, we'll write an endpoint that takes two arguments as query parameters (not body parameters as in the plumber example).  We will do this in a small package:
+
+```{r, echo = FALSE, results = "asis"}
+withr::with_dir(porcelain_file("examples"), fs::dir_tree("add"))
+```
+
+The `DESCRIPTION` file is minimal, importing `porcelain` and suggesting `testthat` for the package tests.
+
+```{r, echo = FALSE, results = "asis"}
+show_file(porcelain_file("examples/add/DESCRIPTION"), "")
+```
+
+The `NAMESPACE` file exports the `api` function (described below)
+
+```{r, echo = FALSE, results = "asis"}
+show_file(porcelain_file("examples/add/NAMESPACE"), "")
+```
+
+Most of the work is in `R/api.R` which implements the API (there is nothing special about this filename)
+
+```{r, echo = FALSE, results = "asis"}
+show_file(porcelain_file("examples/add/R/api.R"), "r")
+```
+
+There are three functions here:
+
+* `add`: this is the function we want the api to run
+* `endpoint_add`: this is the porcelain "endpoint" which formalises the contract between the R function and the HTTP api, we'll discuss this in detail below
+* `api`: this creates the api object (which is itself a plumber object)
+
+With this, you could bring up the api with
+
+```r
+add::api()$run()
+```
+
+At this point, the porcelain approach probably just looks like much more work than the 7 lines of plumber code above!
+
+The benefit comes from the type checking we can do in the endpoint function, and the fact that these functions are in a package so are easily testable.
+
+In the endpoint we have
+
+```r
+porcelain::porcelain_input_query(a = "numeric", b = "numeric")
+```
+
+which advertises (and enforces) that the query parameters `a` and `b` expected and numeric - additional query parameters provided will raise an error.  Similarly, the argument
+
+```
+returning = porcelain::porcelain_returning_json("numeric")
+```
+
+indicates that we will be returning json with a numeric value. This is different to the `numeric` above, as here it refers to a [json schema](https://json-schema.org/) - this is included in the package within `inst/schema` as `numeric.json`
+
+```{r, echo = FALSE, results = "asis"}
+show_file(porcelain_file("examples/add/inst/schema/numeric.json"), "json")
+```
+
+This is going to turn out to be much more useful with more complex apis.
+
+Finally, the package has tests, and with this we can make explicit some of the questions posed in the motivation section.
+
+```{r, echo = FALSE, results = "asis"}
+show_file(porcelain_file("examples/add/tests/testthat/test-api.R"), "r")
+```
+
+Effectively testing such a simple API is quite hard, as we're not really doing much in the implementation, but these should give an idea of the sorts of strategies that we have used in testing our APIs:
+
+* The target function can be tested separately from anything else; typically we'll check things like any pre-serialisation checking is ok here.  If there is significant implementation, we usually split these target functions into calculation and preserialisation and test those separately too.
+* The endpoint can be run separately from the API, and returns a list (actually an object of class `porcelain_response` which you can inspect to check status code, headers, return value of the target function and the serialised body. This is typically the workhorse of our testing.
+* The api can be used to *simulate* calling over HTTP from a separate process. This provides a fast way of running through all of porcelain and plumber's filters to see how your endpoint will respond.
+
+Typically we also include a few light end-to-end tests where we bring up the API in a separate process and use `httr` to interact with it.

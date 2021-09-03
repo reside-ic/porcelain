@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "lmInputs",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "x": {"type": "number"},
+            "y": {"type": "number"}
+        },
+        "required": ["x", "y"],
+        "additionalProperties": false
+    }
+}

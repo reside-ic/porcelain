@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "lmCoef",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "Estimate": {"type": "number"},
+            "Std. Error": {"type": "number"},
+            "t value": {"type": "number"},
+            "Pr(>|t|)": {"type": "number"}
+        },
+        "required": ["name", "Estimate", "Std. Error", "t value", "Pr(>|t|)"],
+        "additionalProperties": false
+    }
+}
