@@ -172,3 +172,69 @@ pkgload_loaded <- function() {
 json_parse_extract <- function(json, name) {
   cache$v8$call("jsonParseExtract", json, name)
 }
+
+
+is_pkgload_package <- function(name) {
+  "pkgload" %in% loadedNamespaces && pkgload::is_dev_package(name)
+}
+
+
+wait_until <- function(condition, timeout = 10, poll = timeout / 100,
+                       verbose = FALSE, title = NULL) {
+  t_start <- Sys.time()
+  t_quit <- t_start + timeout
+  now <- t_start
+  if (verbose) {
+    message(title %||% "Waiting ")
+  }
+  repeat {
+    if (condition()) {
+      break
+    }
+    if (verbose) {
+      message(".", appendLF = FALSE)
+    }
+    Sys.sleep(poll)
+    now <- Sys.time()
+    if (now > t_quit) {
+      stop("Timeout reached")
+    }
+  }
+  if (verbose) {
+    message(sprintf("...OK in %s s",
+                    round(as.numeric(now - t_start, "secs"), 1)))
+  }
+  now - t_start
+}
+
+
+wait_while <- function(condition, ...) {
+  force(condition)
+  wait_until(function() !condition(), ...)
+}
+
+
+free_port <- function(min, max, attempts = 20) {
+  r <- max - min + 1L
+  for (i in seq_len(attempts)) {
+    p <- min + sample.int(r, 1L) - 1L
+    if (check_port(p)) {
+      return(p)
+    }
+  }
+  stop(sprintf("Did not find a free port between %d..%d in %d attempts",
+               min, max, attempts),
+       call. = FALSE)
+}
+
+
+check_port <- function(port, timeout = 0.1) {
+  con <- tryCatch(suppressWarnings(socketConnection(
+    "localhost", port = port, timeout = timeout, open = "r")),
+    error = function(e) NULL)
+  if (is.null(con)) {
+    return(TRUE)
+  }
+  close(con)
+  FALSE
+}

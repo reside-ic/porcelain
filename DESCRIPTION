@@ -22,7 +22,9 @@ Imports:
     jsonvalidate (>= 1.2.2),
     plumber
 Suggests:
+    callr,
     fs,
+    httr,
     knitr,
     lgr,
     mockery,
