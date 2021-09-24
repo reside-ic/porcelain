@@ -8,16 +8,26 @@ porcelain_background <- R6::R6Class(
   cloneable = FALSE,
 
   private = list(
+    verbose = NULL,
+    timeout = NULL,
     create = NULL,
     args = NULL,
     process = NULL,
+    path_src = NULL,
 
-    server_is_up = function() {
+    server_is_responsive = function() {
       !isTRUE(tryCatch(httr::GET(self$url("/")), error = function(e) TRUE))
     },
 
     server_is_alive = function() {
       !is.null(private$process) && private$process$is_alive()
+    },
+
+    server_is_responsive_and_alive = function() {
+      if (!private$server_is_alive()) {
+        stop("server is not running (process has exited)")
+      }
+      private$server_is_responsive()
     },
 
     finalize = function() {
@@ -46,24 +56,9 @@ porcelain_background <- R6::R6Class(
     ##'   methods.
     ##'
     ##' @param log The path to a log file to use
-    initialize = function(create, args = NULL, port = NULL, log = NULL) {
-      ## The callr and httr packages are required for running this, so
-      ## make fail fast if they're not available.
-      loadNamespace("callr")
-      loadNamespace("httr")
-
-      private$create <- create
-      private$args <- args
-      self$port <- port %||% free_port(8000, 10000)
-      self$log <- log %||% tempfile()
-
-      ## make fields read-only on object creation:
-      lockBinding("port", self)
-      lockBinding("log", self)
-    },
-
-    ##' @description Start the server. It is an error to try and start
-    ##' a server that is already running.
+    ##'
+    ##' @param verbose Logical, indicating if we should print informational
+    ##'  messages to the console on start/stop etc.
     ##'
     ##' @param timeout The number of seconds to wait for the server
     ##'   to become available. This needs to cover the time taken to spawn
@@ -71,28 +66,80 @@ porcelain_background <- R6::R6Class(
     ##'   needed) up to the point where the server is responsive. In most
     ##'   cases this will take 1-2s but if you use packages that use many
     ##'   S4 methods or run this on a slow computer (e.g., a continuous
-    ##'   integration server) it may take longer than you expect.
-    ##'
-    ##' @param verbose Logical, indicating if we should print information
-    ##'   about connection attempts while testing if the server has come
-    ##'   up.
-    start = function(timeout = 60, verbose = FALSE) {
-      if (!is.null(private$process)) {
-        stop("Server already running")
+    ##'   integration server) it may take longer than you expect.  The
+    ##'   default is one minute which should be sufficient in almost all
+    ##'   cases.
+    initialize = function(create, args = NULL, port = NULL, log = NULL,
+                          verbose = FALSE, timeout = 60) {
+      ## The callr and httr packages are required for running this, so
+      ## make fail fast if they're not available.
+      loadNamespace("callr")
+      loadNamespace("httr")
+
+      ## TODO: some validation would be useful here, on all these.
+      private$create <- create
+      private$args <- args %||% list()
+      self$port <- port %||% free_port(8000, 10000)
+      self$log <- log %||% tempfile()
+      private$verbose <- verbose
+      private$timeout <- timeout
+
+      ## We might want to make this more tunable in case this
+      ## detection fails; the general solution would be a vector of
+      ## package names to check, rather than relying on
+      ## environment(create)
+      pkg <- packageName(environment(private$create))
+      if (is_pkgload_package(pkg)) {
+        if (private$verbose) {
+          message(sprintf("Using development version of '%s' via pkgload", pkg))
+        }
+        private$path_src <- find.package(pkg)
       }
 
-      private$process <- callr::r_bg(
-        function(create, args, port) {
-          api <- do.call(create$fn, create$args)
-          api$run("127.0.0.1", port)
-        },
-        args = list(create = private$create, port = self$port),
-        stdout = self$log, stderr = self$log)
+      if (private$verbose) {
+        message(sprintf("Using port %s", self$port))
+      }
 
-      wait_until(private$server_is_up,
-                 timeout = timeout, verbose = verbose,
-                 title = "Waiting for server to become responsive")
-      ## TODO: on failure, read the logs?
+      ## make fields read-only on object creation:
+      lockBinding("port", self)
+      lockBinding("log", self)
+    },
+
+    ##' @description Start the server. It is an error to try and start
+    ##'   a server that is already running.
+    start = function() {
+      ## NOTE: we ignore the 'starting' process possibility here, it
+      ## should not be possible to trigger.
+      status <- self$status()
+      if (status == "running") {
+        stop("Server already running")
+      }
+      if (status == "blocked") {
+        stop(sprintf("Port '%d' is already in use", self$port))
+      }
+
+      private$process <- r_bg_with_hook(
+        function(create, args, port) {
+          do.call(create, args)$run("127.0.0.1", port)
+        },
+        args = list(create = private$create,
+                    args = private$args,
+                    port = self$port),
+        stdout = self$log,
+        stderr = self$log,
+        user_hook = background_user_hook(private$path_src))
+
+      tryCatch(
+        wait_until(private$server_is_responsive_and_alive,
+                   timeout = private$timeout,
+                   verbose = private$verbose,
+                   title = "Waiting for server to become responsive"),
+        error = function(e) {
+          process <- private$process
+          private$process <- NULL # ensure always removed on failure
+          porcelain_background_error(e, process, self$log)
+        })
+
       invisible(self)
     },
 
@@ -102,23 +149,20 @@ porcelain_background <- R6::R6Class(
     ##' * `stopped`: The server is stopped
     ##' * `blocked`: The server is stopped, but something else is running
     ##'    on the port that we would use
+    ##' * `starting`: The server is starting up (not visible in normal usage)
     status = function() {
-      ## NOTE: There is an additional possibility - process alive but
-      ## responsive, but we do not expect to see that.
-      if (private$server_is_alive()) {
-        "running"
-      } else if (private$server_is_up()) {
-        "blocked"
-      } else {
-        "stopped"
-      }
+      is_responsive <- private$server_is_responsive()
+      is_alive <- private$server_is_alive()
+      background_status_string(is_alive, is_responsive)
     },
 
     ##' @description Stop a running server. If the server is not running,
     ##' this has no effect.
     stop = function() {
       if (private$server_is_alive()) {
-        message("Stopping server")
+        if (private$verbose) {
+          message("Stopping server")
+        }
         private$process$kill()
         private$process <- NULL
       }
@@ -127,17 +171,82 @@ porcelain_background <- R6::R6Class(
 
     ##' @description Create a url string for the server, interpolating the
     ##'   (possibly random) port number. You can use this in your tests
-    ##'   like `bg$url("/path")` or `bg$path("/path/%s/status", element)`
-    url = function(path, ...) {
-      if (...length() > 0) {
-        path <- sprintf(path, ...)
-      }
+    ##'   like `bg$url("/path")`
+    ##'
+    ##' @param path String representing the absolute path
+    url = function(path) {
       sprintf("http://localhost:%d%s", self$port, path)
     },
 
     ##' @description Run a request to the server, using `httr`. This presents
     ##'   a similar inteface to the `request` method on the porcelain object.
+    ##'
+    ##' @param method The http method as a string (e.g., `"GET"`), passed
+    ##'   to [httr::VERB] as the `verb` argument
+    ##'
+    ##' @param path String representing the absolute path, passed to `$url()`
+    ##'
+    ##' @param ... Additional arguments passed to `httr::VERB`, such as
+    ##'   `query`, or the body for a `POST` request.
     request = function(method, path, ...) {
       httr::VERB(method, self$url(path), ...)
     }
   ))
+
+
+## See callr:::default_load_hook for what looks like a part
+## implemented version of an extendable hook; if that support is
+## completed we can use that a little more easily, though there is
+## also no explicit options interface to r_bg either; in any case this
+## is straightforward enough.
+r_bg_with_hook <- function(func, args = list(), stdout = "|", stderr = "|",
+                           user_hook = NULL) {
+  options <- callr::r_process_options(
+    func = func,
+    args = args,
+    stdout = stdout,
+    stderr = stderr,
+    env = callr::rcmd_safe_env())
+  if (!is.null(user_hook)) {
+    options$load_hook <- c(
+      "{\n",
+      paste0("  ", options$load_hook),
+      paste0("  ", deparse(user_hook), "\n"),
+      "}\n")
+  }
+  callr::r_process$new(options = options)
+}
+
+
+background_user_hook <- function(path_src) {
+  if (is.null(path_src)) {
+    NULL
+  } else {
+    bquote(pkgload::load_all(
+      .(path_src), export_all = FALSE, attach_testthat = FALSE))
+  }
+}
+
+
+porcelain_background_error <- function(e, process, log) {
+  if (process$is_alive()) {
+    process$kill()
+  } else {
+    result <- tryCatch(process$get_result(), error = identity)
+    if (inherits(result, "error")) {
+      e <- result
+    }
+  }
+  e$log <- read_lines_if_exists(log)
+  class(e) <- c("porcelain_background_error", class(e))
+  stop(e)
+}
+
+
+background_status_string <- function(is_alive, is_responsive) {
+  if (is_alive) {
+    if (is_responsive) "running" else "starting"
+  } else {
+    if (is_responsive) "blocked" else "stopped"
+  }
+}
