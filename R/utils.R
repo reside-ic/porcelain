@@ -175,7 +175,9 @@ json_parse_extract <- function(json, name) {
 
 
 is_pkgload_package <- function(name) {
-  "pkgload" %in% loadedNamespaces() && pkgload::is_dev_package(name)
+  !is.null(name) &&
+     "pkgload" %in% loadedNamespaces() &&
+     pkgload::is_dev_package(name)
 }
 
 

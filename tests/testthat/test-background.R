@@ -93,9 +93,9 @@ test_that("Timeout error returns sensible information", {
 
 
 test_that("background status string values are correct", {
-  expect_equal(background_status_string( TRUE,  TRUE), "running")
-  expect_equal(background_status_string( TRUE, FALSE), "starting")
-  expect_equal(background_status_string(FALSE,  TRUE), "blocked")
+  expect_equal(background_status_string(TRUE, TRUE), "running")
+  expect_equal(background_status_string(TRUE, FALSE), "starting")
+  expect_equal(background_status_string(FALSE, TRUE), "blocked")
   expect_equal(background_status_string(FALSE, FALSE), "stopped")
 })
 
@@ -106,4 +106,27 @@ test_that("user hook empty if path_src not given", {
     background_user_hook("path"),
     quote(
       pkgload::load_all("path", export_all = FALSE, attach_testthat = FALSE)))
+})
+
+
+test_that("test with non-pkgload version", {
+  skip_on_cran()
+
+  create <- function() {
+    api <- porcelain::porcelain$new()
+    api$handle(
+      porcelain::porcelain_endpoint$new(
+        "GET", "/", function() jsonlite::unbox("porcelain"),
+        returning = porcelain::porcelain_returning_json()))
+    api
+  }
+
+  bg <- porcelain_background$new(create)
+  bg$start()
+  r <- bg$request("GET", "/")
+
+  expect_equal(r$status_code, 200)
+  expect_mapequal(
+    jsonlite::fromJSON(httr::content(r, encoding = "UTF-8", as = "text")),
+    list(status = "success", errors = NULL, data = "porcelain"))
 })

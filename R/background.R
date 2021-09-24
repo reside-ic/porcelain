@@ -88,7 +88,7 @@ porcelain_background <- R6::R6Class(
       ## We might want to make this more tunable in case this
       ## detection fails; the general solution would be a vector of
       ## package names to check, rather than relying on
-      ## environment(create)
+      ## the package name found in environment(create)
       pkg <- packageName(environment(private$create))
       if (is_pkgload_package(pkg)) {
         if (private$verbose) {
