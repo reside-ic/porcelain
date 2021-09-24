@@ -3,6 +3,7 @@
 ##' bring the entire API up and interact with it from your tests. This
 ##' class provides a helper for doing this in a way that is reasonably
 ##' tidy.
+##' @export
 porcelain_background <- R6::R6Class(
   "porcelain_background",
   cloneable = FALSE,

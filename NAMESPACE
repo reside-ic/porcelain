@@ -2,6 +2,7 @@
 
 export(porcelain)
 export(porcelain_add_headers)
+export(porcelain_background)
 export(porcelain_endpoint)
 export(porcelain_input_body_binary)
 export(porcelain_input_body_json)
