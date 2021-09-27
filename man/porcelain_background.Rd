@@ -87,9 +87,11 @@ default is one minute which should be sufficient in almost all
 cases.}
 
 \item{\code{env}}{A named character vector of environment variables (e.g.,
-\verb{c(VAIABLE  "value")}) to set in the background process before
+\code{c(VARIABLE = "value")}) to set in the background process before
 launching the server. You can use this to control the behaviour of
-the background server using variables your api recognises.}
+the background server using variables your api recognises. In
+addition, we export \code{callr::rcmd_safe_env()} and the value of
+\code{PORCELAIN_VALIDATE}.}
 }
 \if{html}{\out{</div>}}
 }

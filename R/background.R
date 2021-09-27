@@ -73,9 +73,11 @@ porcelain_background <- R6::R6Class(
     ##'   cases.
     ##'
     ##' @param env A named character vector of environment variables (e.g.,
-    ##'   `c(VAIABLE  "value")`) to set in the background process before
+    ##'   `c(VARIABLE = "value")`) to set in the background process before
     ##'   launching the server. You can use this to control the behaviour of
-    ##'   the background server using variables your api recognises.
+    ##'   the background server using variables your api recognises. In
+    ##'   addition, we export `callr::rcmd_safe_env()` and the value of
+    ##'   `PORCELAIN_VALIDATE`.
     initialize = function(create, args = NULL, port = NULL, log = NULL,
                           verbose = FALSE, timeout = 60, env = NULL) {
       ## The callr and httr packages are required for running this, so
@@ -215,14 +217,8 @@ r_bg_with_hook <- function(func, args = list(), stdout = "|", stderr = "|",
     args = args,
     stdout = stdout,
     stderr = stderr,
-    env = c(callr::rcmd_safe_env(), user_env))
-  if (!is.null(user_hook)) {
-    options$load_hook <- c(
-      "{\n",
-      paste0("  ", options$load_hook),
-      paste0("  ", deparse(user_hook), "\n"),
-      "}\n")
-  }
+    env = background_env(user_env))
+  options$load_hook <- background_load_hook(options$load_hook, user_hook)
   callr::r_process$new(options = options)
 }
 
@@ -258,4 +254,23 @@ background_status_string <- function(is_alive, is_responsive) {
   } else {
     if (is_responsive) "blocked" else "stopped"
   }
+}
+
+
+background_env <- function(user_env) {
+  c(callr::rcmd_safe_env(),
+    PORCELAIN_VALIDATE = Sys.getenv("PORCELAIN_VALIDATE"),
+    user_env)
+}
+
+
+background_load_hook <- function(load_hook, user_hook) {
+  if (!is.null(user_hook)) {
+    load_hook <- c(
+      "{\n",
+      paste0("  ", load_hook),
+      paste0("  ", deparse(user_hook), "\n"),
+      "}\n")
+  }
+  load_hook
 }

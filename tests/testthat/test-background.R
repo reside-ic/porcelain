@@ -156,3 +156,17 @@ test_that("Can pass environment variables through", {
     jsonlite::fromJSON(httr::content(r, encoding = "UTF-8", as = "text")),
     list(status = "success", errors = NULL, data = "porcelain_test_value"))
 })
+
+
+test_that("pass along environment variables", {
+  withr::with_envvar(
+    c(PORCELAIN_VALIDATE = "true"),
+    expect_equal(background_env(NULL)[["PORCELAIN_VALIDATE"]],
+                 "true"))
+  withr::with_envvar(
+    c(PORCELAIN_VALIDATE = "false"),
+    expect_equal(background_env(NULL)[["PORCELAIN_VALIDATE"]],
+                 "false"))
+  expect_equal(background_env(c("KEY" = "value"))[["KEY"]],
+               "value")
+})
