@@ -129,3 +129,16 @@ test_that("extract from body", {
   expect_error(json_parse_extract(a, "c"),
                "Provided json is not an object")
 })
+
+
+test_that("try and find a free port", {
+  skip_if_not_installed("mockery")
+  mock_check_port <- mockery::mock(FALSE, cycle = TRUE)
+
+  mockery::stub(free_port, "check_port", mock_check_port)
+  expect_error(
+    free_port(8000, 9000, attempts = 5),
+    "Did not find a free port between 8000..9000 in 5 attempts",
+    fixed = TRUE)
+  mockery::expect_called(mock_check_port, 5)
+})

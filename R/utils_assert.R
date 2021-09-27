@@ -2,6 +2,7 @@ assert_scalar <- function(x, name = deparse(substitute(x))) {
   if (length(x) != 1) {
     stop(sprintf("'%s' must be a scalar", name), call. = FALSE)
   }
+  invisible(x)
 }
 
 
@@ -9,6 +10,37 @@ assert_character <- function(x, name = deparse(substitute(x))) {
   if (!is.character(x)) {
     stop(sprintf("'%s' must be character", name), call. = FALSE)
   }
+  invisible(x)
+}
+
+
+assert_numeric <- function(x, name = deparse(substitute(x))) {
+  if (!is.numeric(x)) {
+    stop(sprintf("'%s' must be numeric", name), call. = FALSE)
+  }
+  invisible(x)
+}
+
+
+assert_logical <- function(x, name = deparse(substitute(x))) {
+  if (!is.logical(x)) {
+    stop(sprintf("'%s' must be logical", name), call. = FALSE)
+  }
+  invisible(x)
+}
+
+
+assert_scalar_logical <- function(x, name = deparse(substitute(x))) {
+  assert_scalar(x, name)
+  assert_logical(x, name)
+  assert_nonmissing(x, name)
+}
+
+
+assert_scalar_numeric <- function(x, name = deparse(substitute(x))) {
+  assert_scalar(x, name)
+  assert_numeric(x, name)
+  assert_nonmissing(x, name)
 }
 
 
@@ -23,6 +55,7 @@ assert_nonmissing <- function(x, name = deparse(substitute(x))) {
   if (any(is.na(x))) {
     stop(sprintf("'%s' must not be NA", name), call. = FALSE)
   }
+  invisible(x)
 }
 
 
@@ -34,6 +67,7 @@ assert_named <- function(x, unique = FALSE, name = deparse(substitute(x))) {
   if (unique && any(duplicated(names))) {
     stop(sprintf("'%s' must have unique names", name), call. = FALSE)
   }
+  invisible(x)
 }
 
 
@@ -42,6 +76,7 @@ assert_is <- function(x, what, name = deparse(substitute(x))) {
     stop(sprintf("'%s' must be a %s", name,
                  paste(what, collapse = " / ")), call. = FALSE)
   }
+  invisible(x)
 }
 
 
@@ -49,6 +84,7 @@ assert_file_exists <- function(x, name = "File") {
   if (!file.exists(x)) {
     stop(sprintf("%s does not exist: %s", name, x), call. = FALSE)
   }
+  invisible(x)
 }
 
 
@@ -58,6 +94,7 @@ assert_is_directory <- function(x, name = "File") {
     stop(sprintf("%s exists but is not a directory: %s", name, x),
          call. = FALSE)
   }
+  invisible(x)
 }
 
 
