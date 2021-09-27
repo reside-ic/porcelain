@@ -85,14 +85,20 @@ porcelain_background <- R6::R6Class(
       loadNamespace("callr")
       loadNamespace("httr")
 
-      ## TODO: some validation would be useful here, on all these.
-      private$create <- create
-      private$args <- args %||% list()
-      self$port <- port %||% free_port(8000, 10000)
-      self$log <- log %||% tempfile()
-      private$verbose <- verbose
-      private$timeout <- timeout
-      private$env <- env
+      ## Validation below should be sufficient to catch things like
+      ## mis-ordered args, we may need to beef this up though as we
+      ## get tripped up in practice.
+      private$create <- assert_is(create, "function")
+      private$args <- assert_is(args %||% list(), "list")
+      self$port <- assert_scalar_numeric(port %||% free_port(8000, 10000))
+      self$log <- assert_scalar_character(log %||% tempfile())
+      private$verbose <- assert_scalar_logical(verbose)
+      private$timeout <- assert_scalar_numeric(timeout)
+      if (!is.null(env)) {
+        assert_character(env)
+        assert_named(env)
+        private$env <- env
+      }
 
       ## We might want to make this more tunable in case this
       ## detection fails; the general solution would be a vector of
