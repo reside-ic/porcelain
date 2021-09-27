@@ -11,6 +11,7 @@ porcelain_background <- R6::R6Class(
   private = list(
     verbose = NULL,
     timeout = NULL,
+    env = NULL,
     create = NULL,
     args = NULL,
     process = NULL,
@@ -70,8 +71,13 @@ porcelain_background <- R6::R6Class(
     ##'   integration server) it may take longer than you expect.  The
     ##'   default is one minute which should be sufficient in almost all
     ##'   cases.
+    ##'
+    ##' @param env A named character vector of environment variables (e.g.,
+    ##'   `c(VAIABLE  "value")`) to set in the background process before
+    ##'   launching the server. You can use this to control the behaviour of
+    ##'   the background server using variables your api recognises.
     initialize = function(create, args = NULL, port = NULL, log = NULL,
-                          verbose = FALSE, timeout = 60) {
+                          verbose = FALSE, timeout = 60, env = NULL) {
       ## The callr and httr packages are required for running this, so
       ## make fail fast if they're not available.
       loadNamespace("callr")
@@ -84,6 +90,7 @@ porcelain_background <- R6::R6Class(
       self$log <- log %||% tempfile()
       private$verbose <- verbose
       private$timeout <- timeout
+      private$env <- env
 
       ## We might want to make this more tunable in case this
       ## detection fails; the general solution would be a vector of
@@ -128,7 +135,8 @@ porcelain_background <- R6::R6Class(
                     port = self$port),
         stdout = self$log,
         stderr = self$log,
-        user_hook = background_user_hook(private$path_src))
+        user_hook = background_user_hook(private$path_src),
+        user_env = private$env)
 
       tryCatch(
         wait_until(private$server_is_responsive_and_alive,
@@ -201,13 +209,13 @@ porcelain_background <- R6::R6Class(
 ## also no explicit options interface to r_bg either; in any case this
 ## is straightforward enough.
 r_bg_with_hook <- function(func, args = list(), stdout = "|", stderr = "|",
-                           user_hook = NULL) {
+                           user_hook = NULL, user_env = NULL) {
   options <- callr::r_process_options(
     func = func,
     args = args,
     stdout = stdout,
     stderr = stderr,
-    env = callr::rcmd_safe_env())
+    env = c(callr::rcmd_safe_env(), user_env))
   if (!is.null(user_hook)) {
     options$load_hook <- c(
       "{\n",

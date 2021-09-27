@@ -130,3 +130,29 @@ test_that("test with non-pkgload version", {
     jsonlite::fromJSON(httr::content(r, encoding = "UTF-8", as = "text")),
     list(status = "success", errors = NULL, data = "porcelain"))
 })
+
+
+test_that("Can pass environment variables through", {
+  skip_on_cran()
+
+  env <- c("PORCELAIN_TEST_ENV" = "porcelain_test_value")
+
+  create <- function() {
+    api <- porcelain::porcelain$new()
+    api$handle(
+      porcelain::porcelain_endpoint$new(
+        "GET", "/", function(name) jsonlite::unbox(Sys.getenv(name)),
+        porcelain::porcelain_input_query(name = "string"),
+        returning = porcelain::porcelain_returning_json()))
+    api
+  }
+
+  bg <- porcelain_background$new(create, env = env)
+  bg$start()
+  r <- bg$request("GET", "/", query = list(name = names(env)))
+
+  expect_equal(r$status_code, 200)
+  expect_mapequal(
+    jsonlite::fromJSON(httr::content(r, encoding = "UTF-8", as = "text")),
+    list(status = "success", errors = NULL, data = "porcelain_test_value"))
+})

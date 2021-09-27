@@ -52,7 +52,8 @@ Create a background server object
   port = NULL,
   log = NULL,
   verbose = FALSE,
-  timeout = 60
+  timeout = 60,
+  env = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -84,6 +85,11 @@ S4 methods or run this on a slow computer (e.g., a continuous
 integration server) it may take longer than you expect.  The
 default is one minute which should be sufficient in almost all
 cases.}
+
+\item{\code{env}}{A named character vector of environment variables (e.g.,
+\verb{c(VAIABLE  "value")}) to set in the background process before
+launching the server. You can use this to control the behaviour of
+the background server using variables your api recognises.}
 }
 \if{html}{\out{</div>}}
 }
