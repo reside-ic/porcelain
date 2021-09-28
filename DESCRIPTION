@@ -15,13 +15,13 @@ LazyData: true
 Language: en-GB
 URL: https://github.com/reside-ic/porcelain
 BugReports: https://github.com/reside-ic/porcelain/issues
+Requires: R (>= 3.6.0)
 Imports:
     R6,
     V8,
     jsonlite,
     jsonvalidate (>= 1.2.2),
-    plumber,
-    roxygen2
+    plumber
 Suggests:
     callr,
     fs,
@@ -31,6 +31,7 @@ Suggests:
     mockery,
     pkgload,
     rmarkdown,
+    roxygen2,
     testthat,
     withr
 Roxygen: list(markdown = TRUE)
