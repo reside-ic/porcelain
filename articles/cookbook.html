@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.6</span>
       </span>
     </div>
 
@@ -162,7 +162,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-1.2723,1.2773,-0.5714,0.5457]}"</span>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-0.4312,0.0903,0.9439,-1.9926]}"</span>
 <span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/uniform"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
@@ -176,7 +176,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.6196,0.133,0.2895,0.408]}"</span></code></pre></div>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.6631,0.5647,0.0025,0.8336]}"</span></code></pre></div>
 <p>Note that the output here is <em>always a vector</em>, even in the corner cases of 1 and 0 elements returned:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
@@ -192,7 +192,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-0.735]}"</span>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-0.0354]}"</span>
 <span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
@@ -223,24 +223,24 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residuals:</span>
 <span class="co">#&gt;      Min       1Q   Median       3Q      Max </span>
-<span class="co">#&gt; -0.47078 -0.05270  0.00461  0.09945  0.31972 </span>
+<span class="co">#&gt; -0.41417 -0.25122 -0.00751  0.12350  0.56253 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">#&gt; (Intercept)   0.1437     0.1177   1.221    0.257    </span>
-<span class="co">#&gt; x             1.9505     0.1818  10.732    5e-06 ***</span>
+<span class="co">#&gt; (Intercept)  -0.2060     0.2186  -0.942 0.373770    </span>
+<span class="co">#&gt; x             2.8056     0.5120   5.480 0.000587 ***</span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Residual standard error: 0.2148 on 8 degrees of freedom</span>
-<span class="co">#&gt; Multiple R-squared:  0.935,  Adjusted R-squared:  0.9269 </span>
-<span class="co">#&gt; F-statistic: 115.2 on 1 and 8 DF,  p-value: 4.998e-06</span></code></pre></div>
+<span class="co">#&gt; Residual standard error: 0.3277 on 8 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.7896, Adjusted R-squared:  0.7633 </span>
+<span class="co">#&gt; F-statistic: 30.03 on 1 and 8 DF,  p-value: 0.0005875</span></code></pre></div>
 <p>We’re interested in getting the table of coefficients, which we can extract like this:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>
-<span class="co">#&gt;             Estimate Std. Error   t value     Pr(&gt;|t|)</span>
-<span class="co">#&gt; (Intercept) 0.143744  0.1176894  1.221384 2.567101e-01</span>
-<span class="co">#&gt; x           1.950486  0.1817509 10.731645 4.998396e-06</span></code></pre></div>
+<span class="co">#&gt;               Estimate Std. Error    t value     Pr(&gt;|t|)</span>
+<span class="co">#&gt; (Intercept) -0.2059537  0.2186370 -0.9419894 0.3737696550</span>
+<span class="co">#&gt; x            2.8056107  0.5119768  5.4799567 0.0005874876</span></code></pre></div>
 <p>and transform a little to turn the row names into a column of their own</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">)</span>
@@ -252,17 +252,17 @@
 <span class="co">#&gt; [</span>
 <span class="co">#&gt;   {</span>
 <span class="co">#&gt;     "name": "(Intercept)",</span>
-<span class="co">#&gt;     "Estimate": 0.1437,</span>
-<span class="co">#&gt;     "Std. Error": 0.1177,</span>
-<span class="co">#&gt;     "t value": 1.2214,</span>
-<span class="co">#&gt;     "Pr(&gt;|t|)": 0.2567</span>
+<span class="co">#&gt;     "Estimate": -0.206,</span>
+<span class="co">#&gt;     "Std. Error": 0.2186,</span>
+<span class="co">#&gt;     "t value": -0.942,</span>
+<span class="co">#&gt;     "Pr(&gt;|t|)": 0.3738</span>
 <span class="co">#&gt;   },</span>
 <span class="co">#&gt;   {</span>
 <span class="co">#&gt;     "name": "x",</span>
-<span class="co">#&gt;     "Estimate": 1.9505,</span>
-<span class="co">#&gt;     "Std. Error": 0.1818,</span>
-<span class="co">#&gt;     "t value": 10.7316,</span>
-<span class="co">#&gt;     "Pr(&gt;|t|)": 4.9984e-06</span>
+<span class="co">#&gt;     "Estimate": 2.8056,</span>
+<span class="co">#&gt;     "Std. Error": 0.512,</span>
+<span class="co">#&gt;     "t value": 5.48,</span>
+<span class="co">#&gt;     "Pr(&gt;|t|)": 0.0006</span>
 <span class="co">#&gt;   }</span>
 <span class="co">#&gt; ]</span></code></pre></div>
 <p>So we have our target function now:</p>
@@ -322,7 +322,7 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">json</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">toJSON</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
 <span class="va">json</span>
-<span class="co">#&gt; [{"x":0.9906,"y":2.2092},{"x":0.4126,"y":1.2683},{"x":0.0037,"y":0.2619},{"x":0.9498,"y":2.0267},{"x":0.0537,"y":0.1929},{"x":0.5299,"y":1.2424},{"x":0.5215,"y":0.6902},{"x":0.9314,"y":1.9394},{"x":0.8447,"y":1.7235},{"x":0.0498,"y":0.1969}]</span></code></pre></div>
+<span class="co">#&gt; [{"x":0.7823,"y":1.9829},{"x":0.3972,"y":1.471},{"x":0.1218,"y":-0.2785},{"x":0.5076,"y":1.1722},{"x":0.3655,"y":0.4954},{"x":0.2536,"y":0.8759},{"x":0.106,"y":0.1235},{"x":0.5874,"y":1.1224},{"x":0.2117,"y":0.3788},{"x":0.4272,"y":1.1466}]</span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"POST"</span>, <span class="st">"/lm"</span>, body <span class="op">=</span> <span class="va">json</span>, content_type <span class="op">=</span> <span class="st">"application/json"</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
@@ -337,7 +337,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[{\"name\":\"(Intercept)\",\"Estimate\":0.1438,\"Std. Error\":0.1177,\"t value\":1.2216,\"Pr(&gt;|t|)\":0.2566},{\"name\":\"x\",\"Estimate\":1.9505,\"Std. Error\":0.1818,\"t value\":10.7316,\"Pr(&gt;|t|)\":4.9985e-06}]}"</span></code></pre></div>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[{\"name\":\"(Intercept)\",\"Estimate\":-0.206,\"Std. Error\":0.2187,\"t value\":-0.9419,\"Pr(&gt;|t|)\":0.3738},{\"name\":\"x\",\"Estimate\":2.8056,\"Std. Error\":0.512,\"t value\":5.4793,\"Pr(&gt;|t|)\":0.0006}]}"</span></code></pre></div>
 </div>
 <div id="post-endpoint-inputs-as-binary-returning-binary" class="section level1">
 <h1 class="hasAnchor">
@@ -361,7 +361,7 @@
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html">serialize</a></span><span class="op">(</span><span class="va">data</span>, <span class="cn">NULL</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu">binary_plot</span><span class="op">(</span><span class="va">bin</span><span class="op">)</span>, vec.len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt;  raw [1:11600] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
+<span class="co">#&gt;  raw [1:12456] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
 <p>It’s hard to tell this is a png, but the first few bytes give it away (the <a href="https://en.wikipedia.org/wiki/List_of_file_signatures">magic number</a> <code>89 50 4e 47 0d 0a 1a 0a</code> is used at the start of all png files).</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">endpoint_plot</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain_endpoint.html">porcelain_endpoint</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
@@ -379,7 +379,7 @@
 <span class="co">#&gt;  $ headers:List of 2</span>
 <span class="co">#&gt;   ..$ Content-Type         : chr "application/octet-stream"</span>
 <span class="co">#&gt;   ..$ X-Porcelain-Validated: chr "true"</span>
-<span class="co">#&gt;  $ body   : raw [1:11600] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
+<span class="co">#&gt;  $ body   : raw [1:12456] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
 </div>
   </div>
 
