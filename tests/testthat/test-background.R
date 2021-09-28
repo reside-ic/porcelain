@@ -105,7 +105,8 @@ test_that("user hook empty if path_src not given", {
   expect_equal(
     background_user_hook("path"),
     quote(
-      pkgload::load_all("path", export_all = FALSE, attach_testthat = FALSE)))
+      pkgload::load_all("path", export_all = FALSE, attach_testthat = FALSE,
+                        helpers = FALSE)))
 })
 
 

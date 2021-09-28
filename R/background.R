@@ -234,7 +234,8 @@ background_user_hook <- function(path_src) {
     NULL
   } else {
     bquote(pkgload::load_all(
-      .(path_src), export_all = FALSE, attach_testthat = FALSE))
+      .(path_src), export_all = FALSE, attach_testthat = FALSE,
+      helpers = FALSE))
   }
 }
 
