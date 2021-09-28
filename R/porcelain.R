@@ -42,6 +42,17 @@ porcelain <- R6::R6Class(
         self$registerHook("postroute", porcelain_log_postroute(logger))
         self$registerHook("postserialize", porcelain_log_postserialize(logger))
       }
+
+      ## Frames here are:
+      ## 0: $initialize()
+      ## 1: R6::new
+      ## 2: <package>
+      ## TODO: It may be useful to accept a 'package' argument to
+      ## disambiguate here, but we're most likely to make this a bit
+      ## less magic later anyway, particularly when adding in the
+      ## state binding support.
+      package <- packageName(parent.frame(2))
+      add_package_endpoints(self, package)
     },
 
     ##' @description Handle an endpoint
@@ -170,4 +181,21 @@ response_success <- function(data) {
 
 response_failure <- function(errors) {
   list(status = jsonlite::unbox("failure"), errors = errors, data = NULL)
+}
+
+
+add_package_endpoints <- function(obj, package) {
+  if (is.null(package)) {
+    return(invisible(obj))
+  }
+  fn <- getNamespace(package)[["__porcelain__"]]
+  if (!is.null(fn)) {
+    endpoints <- fn()
+    message(sprintf("Adding %d endpoints from package '%s'",
+                    length(endpoints), package))
+    for (e in endpoints) {
+      obj$handle(e)
+    }
+  }
+  invisible(obj)
 }

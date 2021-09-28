@@ -20,7 +20,8 @@ Imports:
     V8,
     jsonlite,
     jsonvalidate (>= 1.2.2),
-    plumber
+    plumber,
+    roxygen2
 Suggests:
     callr,
     fs,
