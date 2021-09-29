@@ -15,6 +15,7 @@ plumber API are documented here.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{porcelain$new()}}
+\item \href{#method-handle_package}{\code{porcelain$handle_package()}}
 \item \href{#method-handle}{\code{porcelain$handle()}}
 \item \href{#method-request}{\code{porcelain$request()}}
 \item \href{#method-clone}{\code{porcelain$clone()}}
@@ -80,6 +81,24 @@ continuous integration systems.}
 
 \item{\code{logger}}{Optional logger, from the \code{lgr} package.  If
 given, then we will log at the beginning and end of the request.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-handle_package"></a>}}
+\if{latex}{\out{\hypertarget{method-handle_package}{}}}
+\subsection{Method \code{handle_package()}}{
+Handle package endpoints
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{porcelain$handle_package(verbose = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{verbose}}{Logical, indicating if information about added
+endpoints should be added.}
 }
 \if{html}{\out{</div>}}
 }

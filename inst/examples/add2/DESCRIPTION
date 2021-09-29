@@ -10,5 +10,5 @@ Imports: porcelain
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Roxygen: list(markdown = TRUE, roclets = c("rd", "porcelain::porcelain_roclet"))
+Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "porcelain::porcelain_roclet"))
 RoxygenNote: 7.1.2

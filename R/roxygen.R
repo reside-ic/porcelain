@@ -110,7 +110,7 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
   }
 
   code <- c(
-    "`__porcelain__` <- function() {",
+    "`__porcelain__` <- function(state) {",
     "  list(",
     paste0("    ", results),
     "  )",

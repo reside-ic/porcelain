@@ -13,8 +13,8 @@ porcelain <- R6::R6Class(
     validate = NULL
   ),
 
-  ##' @description Create a porcelain object
   public = list(
+    ##' @description Create a porcelain object
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
     ##'
@@ -42,17 +42,42 @@ porcelain <- R6::R6Class(
         self$registerHook("postroute", porcelain_log_postroute(logger))
         self$registerHook("postserialize", porcelain_log_postserialize(logger))
       }
+    },
 
-      ## Frames here are:
-      ## 0: $initialize()
-      ## 1: R6::new
-      ## 2: <package>
-      ## TODO: It may be useful to accept a 'package' argument to
-      ## disambiguate here, but we're most likely to make this a bit
-      ## less magic later anyway, particularly when adding in the
-      ## state binding support.
-      package <- packageName(parent.frame(2))
-      add_package_endpoints(self, package)
+    ##' @description Handle package endpoints
+    ##'
+    ##' @param verbose Logical, indicating if information about added
+    ##'   endpoints should be added.
+    handle_package = function(verbose = FALSE) {
+      ## TODO: eventually we will handle state as an argument here and
+      ## pass it through to the package function.
+      state <- NULL
+
+      ## TODO: We might want to accept this as an argument to the
+      ## method, perhaps optionally, to make this a little less magic.
+      package <- packageName(parent.frame(1))
+
+      fn <- getNamespace(package)[["__porcelain__"]]
+      if (is.null(fn)) {
+        ## TODO: diagnose the issue here:
+        ## * DESCRIPTION does not contain roclet command
+        ## * Need to redocument
+        stop("Did not find package endpoints")
+      }
+
+      if (!is.null(state)) {
+        stop("state not yet handled")
+      }
+
+      endpoints <- fn(state)
+      if (verbose) {
+        message(sprintf("Adding %d endpoints from package '%s'",
+                        length(endpoints), package))
+      }
+      for (e in endpoints) {
+        self$handle(e)
+      }
+      invisible(self)
     },
 
     ##' @description Handle an endpoint
@@ -181,21 +206,4 @@ response_success <- function(data) {
 
 response_failure <- function(errors) {
   list(status = jsonlite::unbox("failure"), errors = errors, data = NULL)
-}
-
-
-add_package_endpoints <- function(obj, package) {
-  if (is.null(package)) {
-    return(invisible(obj))
-  }
-  fn <- getNamespace(package)[["__porcelain__"]]
-  if (!is.null(fn)) {
-    endpoints <- fn()
-    message(sprintf("Adding %d endpoints from package '%s'",
-                    length(endpoints), package))
-    for (e in endpoints) {
-      obj$handle(e)
-    }
-  }
-  invisible(obj)
 }
