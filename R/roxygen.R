@@ -114,21 +114,17 @@ roxy_error <- function(msg, x) {
 
 
 roxy_process_check_returning <- function(returning, env, x) {
-  map <- c(
-    json = "porcelain::porcelain_returning_json",
-    binary = "porcelain::porcelain_returning_binary",
-    generic = "porcelain::porcelain_returning")
-  if (returning[[1]] %in% names(map)) {
-    returning[[1]] <- map[[returning[[1]]]]
-  } else if (grepl("::", returning[[1]]) {
-    ## assume we're ok
-  } else if (is.null(exists(returning[[1]], env, mode = "function"))) {
-    stop(sprintf("Did not find returning function '%s'", returning[[1]]))
-  }
+  ## map <- c(
+  ##   json = "porcelain::porcelain_returning_json",
+  ##   binary = "porcelain::porcelain_returning_binary",
+  ##   generic = "porcelain::porcelain_returning")
+  ## if (returning[[1]] %in% names(map)) {
+  ##   returning[[1]] <- map[[returning[[1]]]]
+  ## } else if (grepl("::", returning[[1]]) {
+  ##   ## assume we're ok
+  ## } else if (is.null(exists(returning[[1]], env, mode = "function"))) {
+  ##   stop(sprintf("Did not find returning function '%s'", returning[[1]]))
+  ## }
 
-  returning_fn <- switch(
-    tag$val$returning[[1]],
-,
-    tag$val$returning[[1]])
-
+  browser()
 }

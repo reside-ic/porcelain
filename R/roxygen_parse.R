@@ -9,50 +9,62 @@
 ##   <LOCATION> <TARGET> :: <TYPE>
 ##
 ## The format is further discussed in the vignette
-roxy_parse_string <- function(text, file = NULL, line = NULL) {
-  re <- "^\\s*([A-Z]+)\\s+([^ =]+)\\s*=>\\s*(.*?)(\n|$)(.*)"
+roxy_parse_string <- function(text, file, line) {
+  re <- "^\\s*([A-Z]+)\\s+([^ =]+)\\s*=>\\s*(.+?)(\n|$)(.*)"
+  newline <- which(strsplit(text, NULL)[[1]] == "\n")
+  len <- length(newline) + 1L
+  line_end <- line + len - 1L
+
   if (!grepl(re, text)) {
-    ## TODO: here, we'd use file/line information to make this more
-    ## obvious. We could also defer errors until processing by
-    ## returning error information here or in the calling function.
-    stop("invalid porcelain tag")
+    line_range <- if (len == 1) line else sprintf("%d-%d", line, line_end)
+    stop(paste(
+      "Failed to find endpoint description in @porcelain tag",
+      "  - must match <VERB> <PATH> => <RETURNING>",
+      sprintf("  - error occured at %s:%s", file, line_range),
+      sep = "\n"),
+      call. = FALSE)
   }
-  ## TODO: Don't use sub but use regexec so that we can work out line
-  ## numbers here.
-  method <- sub(re, "\\1", text)
-  path <- sub(re, "\\2", text)
-  returning <- roxy_parse_returning(trimws(sub(re, "\\3", text)))
-  inputs <- roxy_parse_inputs(sub(re, "\\5", text))
+
+  m <- regexec(re, text)[[1L]]
+
+  m_start <- as.integer(m)[-1]
+  m_len <- attr(m, "match.length")[-1]
+  m_line <- line + rowSums(outer(m_start, newline, ">"))
+
+  method <- str_extract(text, m_start[[1]], m_len[[1]])
+  path <- str_extract(text, m_start[[2]], m_len[[2]])
+  returning <- str_extract(text, m_start[[3]], m_len[[3]])
+  inputs <- str_extract(text, m_start[[5]], m_len[[5]])
 
   list(method = method,
        path = path,
-       inputs = inputs,
-       returning = returning)
+       returning = roxy_parse_returning(returning, file, m_line[[3]]),
+       inputs = roxy_parse_inputs(inputs, file, m_line[[5]]),
+       line_end = line_end)
 }
 
 
-roxy_parse_returning <- function(text) {
-  ## TODO: we will want to autoquote the arguments to this function,
-  ## which might vary based on inputs (e.g. a status code of 200 might
-  ## want to come through as an integer, but a schema should not need
-  ## quoting).  We could respond to the actual name if need be though.
-  if (grepl("(", text, fixed = TRUE)) {
-    ret <- as.list(parse(text = text)[[1]])
-    for (i in seq_along(ret)) {
-      if (is.name(ret[[i]])) {
-        ret[[i]] <- deparse(ret[[i]])
-      }
+roxy_parse_returning <- function(text, file, line) {
+  tryCatch(
+    ## This is not fab as we end up with a <text>:2:0 or similar from
+    ## the parse error
+    ret <- as.list(parse(text = text)[[1]]),
+    error = function(e) {
+      stop(sprintf(
+        "While processing @porcelain returning argument (%s:%s)\n%s",
+        file, line, e$message),
+        call. = FALSE)
+    })
+  for (i in seq_along(ret)) {
+    if (is.name(ret[[i]])) {
+      ret[[i]] <- deparse(ret[[i]])
     }
-  } else {
-    ret <- list(text)
   }
-
-  ## Here, we could validate the name?
   ret
 }
 
 
-roxy_parse_inputs <- function(text) {
+roxy_parse_inputs <- function(text, file, line) {
   ## TODO: we lose the ability to give good errors the more processing
   ## we do here, so once this works refactor this to use a different
   ## parsing approach. The key thing to eventually get is the ability
@@ -62,23 +74,44 @@ roxy_parse_inputs <- function(text) {
   ## TODO: this sort of processing is probably not nice enough and
   ## won't allow multiline input specification (not sure we need that?)
   inputs <- trimws(strsplit(text, "\n")[[1]])
-  inputs <- inputs[nzchar(inputs)]
+  line <- line + seq_along(inputs) - 1L
+  i <- nzchar(inputs)
+
+  inputs <- inputs[i]
+  line <- line[i]
 
   if (length(inputs) == 0L) {
     return(NULL)
   }
 
-  re <- "^([^ ]+)\\s+([^ ]+)\\s+::\\s+(.*)$"
-  ## TODO: better error here, possibly better regex or parsing
-  ## approach
-  stopifnot(all(grepl(re, inputs)))
+  re <- "^([^ ]+)\\s+([^ ]+)\\s+::\\s+(.+)$"
+  err <- !grepl(re, inputs)
+  if (any(err)) {
+    line_err <- paste(line[err], collapse = ",")
+    stop(paste(
+      "Failed to match input description in @porcelain tag",
+      "  - must match <TYPE> <DEST> :: <DESCRIPTION>",
+      sprintf("  - error occured at %s:%s", file, line_err),
+      sep = "\n"),
+      call. = FALSE)
+  }
+
   loc <- sub(re, "\\1", inputs)
   name <- sub(re, "\\2", inputs)
   details <- sub(re, "\\3", inputs)
 
   ## TODO: Better errors
   valid <- c("query", "body", "state")
-  stopifnot(all(loc %in% valid))
+  err <- !loc %in% valid
+  if (any(err)) {
+    line_err <- paste(line[err], collapse = ",")
+    stop(paste(
+      "Invalid input type",
+      sprintf("  - must be one of %s", paste(valid, collapse = ", ")),
+      sprintf("  - error occured at %s:%s", file, line_err),
+      sep = "\n"),
+      call. = FALSE)
+  }
 
   ## TODO: may need some additional parsing/validation here,
   ## especially for body where we have the same json(schema) and

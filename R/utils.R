@@ -241,3 +241,8 @@ read_lines_if_exists <- function(path) {
     readLines(path)
   }
 }
+
+
+str_extract <- function(string, start, len) {
+  substr(string, start, start + len - 1L)
+}
