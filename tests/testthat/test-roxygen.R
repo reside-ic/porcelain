@@ -1,7 +1,10 @@
 test_that("Can parse basic endpoint", {
-  expect_equal(
-    roxy_parse_string("GET / => json"),
-    list(method = "GET", path = "/", inputs = NULL, returning = list("json")))
+  expect_mapequal(
+    roxy_parse_string("GET / => json", "text", 1),
+    list(method = "GET",
+         path = "/",
+         inputs = NULL,
+         returning = list("json")))
 })
 
 
@@ -20,21 +23,25 @@ test_that("Parse return type", {
 
 
 test_that("Accept inputs", {
-  expect_equal(
+  expect_mapequal(
     roxy_parse_string("GET / => json\nquery x :: int", "<text>", 1),
-    list(method = "GET", path = "/",
-         inputs = list(query = c(x = "int")),
+    list(method = "GET",
+         path = "/",
+         inputs = list(query = list(x = list("int"))),
          returning = list("json")))
-  expect_equal(
-    roxy_parse_string("GET / => json\nquery x :: int\nquery y :: double"),
-    list(method = "GET", path = "/",
-         inputs = list(query = c(x = "int", y = "double")),
+  expect_mapequal(
+    roxy_parse_string("GET / => json\nquery x :: int\nquery y :: double",
+                      "<text>", 1),
+    list(method = "GET",
+         path = "/",
+         inputs = list(query = list(x = list("int"), y = list("double"))),
          returning = list("json")))
-  expect_equal(
-    roxy_parse_string("POST /path => json\nquery x :: int\nbody arg :: json"),
+  expect_mapequal(
+    roxy_parse_string("POST /path => json\nquery x :: int\nbody arg :: json",
+                      "<text>", 1L),
     list(method = "POST", path = "/path",
-         inputs = list(query = c(x = "int"),
-                       body = c(arg = "json")),
+         inputs = list(query = list(x = list("int")),
+                       body = list(arg = list("json"))),
          returning = list("json")))
 })
 
@@ -46,7 +53,7 @@ test_that("Parse from roxygen block", {
     "f <- function() {}",
     sep = "\n")
   block <- roxygen2::parse_text(text)
-  expect_equal(
+  expect_mapequal(
     block[[1]]$tags[[1]]$val,
     list(method = "GET", path = "/", inputs = NULL,
          returning = list("json", "schema")))
