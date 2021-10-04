@@ -56,26 +56,18 @@ porcelain <- R6::R6Class(
       ## TODO: We might want to accept this as an argument to the
       ## method, perhaps optionally, to make this a little less magic.
       package <- packageName(parent.frame(1))
-
-      fn <- getNamespace(package)[["__porcelain__"]]
-      if (is.null(fn)) {
-        ## TODO: diagnose the issue here:
-        ## * DESCRIPTION does not contain roclet command
-        ## * Need to redocument
-        stop("Did not find package endpoints")
-      }
+      endpoints <- package_endpoints(package)
 
       if (!is.null(state)) {
         stop("state not yet handled")
       }
 
-      endpoints <- fn(state)
       if (verbose) {
         message(sprintf("Adding %d endpoints from package '%s'",
                         length(endpoints), package))
       }
       for (e in endpoints) {
-        self$handle(e)
+        self$handle(e(state))
       }
       invisible(self)
     },

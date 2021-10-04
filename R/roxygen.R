@@ -14,6 +14,29 @@ porcelain_roclet <- function() {
 }
 
 
+package_endpoints <- function(package) {
+  fn <- getNamespace(package)[["__porcelain__"]]
+  if (is.null(fn)) {
+    ## TODO: diagnose the issue here:
+    ## * DESCRIPTION does not contain roclet command
+    ## * Need to redocument
+    stop("Did not find package endpoints")
+  }
+  fn()
+}
+
+
+porcelain_package_endpoint <- function(package, method, path, state = NULL) {
+  endpoint <- package_endpoints(package)[[paste(method, path)]]
+  if (is.null(endpoint)) {
+    stop(sprintf(
+      "Did not find roxygen-based endpoint '%s %s' in package '%s'",
+      method, path, package))
+  }
+  endpoint(state)
+}
+
+
 ##' @rawNamespace S3method(roxygen2::roxy_tag_parse, roxy_tag_porcelain)
 roxy_tag_parse.roxy_tag_porcelain <- function(x) {
   ## See roxygen_parse.R for the bulk of the implementation.
@@ -36,7 +59,9 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
         length(tags) == 1,
         is.function(block$object$value))
       tag <- tags[[1]]
-      message(sprintf("- %s %s (%s:%d)", tag$val$method, tag$val$path,
+      method <- tag$val$method
+      path <- tag$val$path
+      message(sprintf("- %s %s (%s:%d)", method, path,
                       basename(tag$file), tag$line))
 
       ## TODO could be incorrect, check by setting this
@@ -51,7 +76,12 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
         inputs,
         list(sprintf("returning = %s", returning)))
 
-      endpoint <- list_call("porcelain::porcelain_endpoint$new", args)
+      ## Each endpoint gets wrapped in an anonymous function so that
+      ## we can call them later at will, rebinding state etc.
+      endpoint <- c(
+        sprintf('"%s %s" = function(state) {', method, path),
+        paste0("  ", list_call("porcelain::porcelain_endpoint$new", args)),
+        "}")
       results <- c(results, list(endpoint))
     }
   }
@@ -61,7 +91,7 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
   }
 
   code <- c(
-    "`__porcelain__` <- function(state) {",
+    "`__porcelain__` <- function() {",
     paste0("  ", list_call("list", results)),
     "}")
 

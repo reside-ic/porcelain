@@ -95,7 +95,7 @@ test_that("process simple package", {
   skip_if_not_installed("pkgload")
 
   dest <- tempfile()
-  on.exit(unlink(tempfile, recursive = TRUE))
+  on.exit(unlink(dest, recursive = TRUE))
   copy_directory(
     system_file("examples/add2", package = "porcelain"),
     dest)
@@ -106,9 +106,16 @@ test_that("process simple package", {
   capture.output(
     suppressMessages(roxygen2::roxygenise(dest)))
   pkg <- load_minimal(dest)
+
+  endpoint <- porcelain_package_endpoint("add", "GET", "/")
+  expect_s3_class(endpoint, "porcelain_endpoint")
+  expect_equal(endpoint$target(5, 6),
+               jsonlite::unbox(11))
+  res <- endpoint$run(a = 5, b = 6)
+  expect_equal(res$data, jsonlite::unbox(11))
+
   api <- pkg$env$api()
-  res <- api$request("GET", "/", query = list(a = 5, b = 6))
-  expect_equal(res$status, 200)
-  expect_mapequal(from_json(res$body),
-                  list(status = "success", errors = NULL, data = 11))
+  res_api <- api$request("GET", "/", query = list(a = 5, b = 6))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$body, res$body)
 })
