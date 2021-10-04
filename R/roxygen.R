@@ -24,11 +24,11 @@ roxy_tag_parse.roxy_tag_porcelain <- function(x) {
 
 ##' @rawNamespace S3method(roxygen2::roclet_process, roclet_porcelain)
 roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
-  results <- character()
+  results <- list()
+  message("Adding porcelain endpoints:")
 
   for (block in blocks) {
     tags <- roxygen2::block_get_tags(block, "porcelain")
-    browser()
     ## TODO we'd want to make sure that there is 0 or 1 here I think.
     if (length(tags) > 0L) {
       ## TODO: nice validation on these
@@ -36,36 +36,23 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
         length(tags) == 1,
         is.function(block$object$value))
       tag <- tags[[1]]
+      message(sprintf("- %s %s (%s:%d)", tag$val$method, tag$val$path,
+                      basename(tag$file), tag$line))
+
       ## TODO could be incorrect, check by setting this
       ## alternative locations include block$object$topic and block$call[[2]]
       target <- block$object$alias
 
-      ## TODO, will get some parse support here.
-      if (is.null(tag$val$inputs)) {
-        inputs <- NULL
-      } else {
-        browser()
-      }
+      inputs <- roxy_process_inputs(tag$val$inputs, env, tag)
+      returning <- roxy_process_returning(tag$val$returning, env, tag)
 
-      returning <- roxy_process_returning(tag$val$returning, env, x)
-
-
-
-      ## TODO: validate against the endpoint here so that we throw
-      ## nice error messages.
-      endpoint <- c(
-        "porcelain::porcelain_endpoint$new(",
-        sprintf('  "%s",', tag$val$method),
-        sprintf('  "%s",', tag$val$path),
-        sprintf("  %s,", target),
+      args <- c(
+        list(dquote(tag$val$method), dquote(tag$val$path), target),
         inputs,
-        sprintf("  returning = %s)", tag$val$returning))
+        list(sprintf("returning = %s", returning)))
 
-      if (length(results) > 0L) {
-        results[[length(results)]] <- paste0(results[[length(results)]], ",")
-      }
-
-      results <- c(results, endpoint)
+      endpoint <- list_call("porcelain::porcelain_endpoint$new", args)
+      results <- c(results, list(endpoint))
     }
   }
 
@@ -75,9 +62,7 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
 
   code <- c(
     "`__porcelain__` <- function(state) {",
-    "  list(",
-    paste0("    ", results),
-    "  )",
+    paste0("  ", list_call("list", results)),
     "}")
 
   code
@@ -113,18 +98,33 @@ roxy_error <- function(msg, x) {
 }
 
 
-roxy_process_check_returning <- function(returning, env, x) {
-  ## map <- c(
-  ##   json = "porcelain::porcelain_returning_json",
-  ##   binary = "porcelain::porcelain_returning_binary",
-  ##   generic = "porcelain::porcelain_returning")
-  ## if (returning[[1]] %in% names(map)) {
-  ##   returning[[1]] <- map[[returning[[1]]]]
-  ## } else if (grepl("::", returning[[1]]) {
-  ##   ## assume we're ok
-  ## } else if (is.null(exists(returning[[1]], env, mode = "function"))) {
-  ##   stop(sprintf("Did not find returning function '%s'", returning[[1]]))
-  ## }
+roxy_process_inputs <- function(inputs, env, x) {
+  stopifnot(names(inputs) == "query") # TODO: more generalisation needed
 
-  browser()
+  ## TODO: validation on query - args must be simple list
+  query_type <- unname(vcapply(inputs$query, function(x) x[[1]]))
+  query <- paste(sprintf('%s = "%s"', names(inputs$query), query_type),
+                 collapse = ", ")
+  list(sprintf("porcelain::porcelain_input_query(%s)", query))
+}
+
+
+roxy_process_returning <- function(returning, env, x) {
+  map <- c(
+    json = "porcelain::porcelain_returning_json",
+    binary = "porcelain::porcelain_returning_binary",
+    generic = "porcelain::porcelain_returning")
+  fn <- returning[[1]]
+  if (fn %in% names(map)) {
+    fn <- map[[fn]]
+  } else if (grepl("::", fn)) {
+    fn <- fn
+  } else if (!is.null(exists(fn, env, mode = "function"))) {
+    fn <- fn
+  } else {
+    stop(sprintf("Did not find returning function '%s'", fn))
+  }
+
+  args <- paste(vcapply(returning[-1], deparse), collapse = ", ")
+  sprintf("%s(%s)", fn, args)
 }

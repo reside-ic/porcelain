@@ -246,3 +246,22 @@ read_lines_if_exists <- function(path) {
 str_extract <- function(string, start, len) {
   substr(string, start, start + len - 1L)
 }
+
+
+dquote <- function(x) {
+  sprintf('"%s"', x)
+}
+
+
+list_call <- function(fn, x) {
+  n <- length(x)
+  prefix <-  "  "
+  for (i in seq_along(x)) {
+    el <- paste0(prefix, x[[i]])
+    end <- if (i == n) ")" else ","
+    el[[length(el)]] <- paste0(el[[length(el)]], end)
+    x[[i]] <- el
+  }
+
+  c(paste0(fn, "("), unlist(x))
+}

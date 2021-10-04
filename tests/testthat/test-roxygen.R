@@ -88,3 +88,27 @@ test_that("Nice error on input parse failure", {
   expect_match(err$message,
                "error occured at <text>:5", fixed = TRUE)
 })
+
+
+test_that("process simple package", {
+  skip_if_not_installed("roxygen2")
+  skip_if_not_installed("pkgload")
+
+  dest <- tempfile()
+  on.exit(unlink(tempfile, recursive = TRUE))
+  copy_directory(
+    system_file("examples/add2", package = "porcelain"),
+    dest)
+
+  ## roxygen uses cat() at some point while writing the namespace, so
+  ## we need to capture that to prevent it bubbling out through
+  ## testthat
+  capture.output(
+    suppressMessages(roxygen2::roxygenise(dest)))
+  pkg <- load_minimal(dest)
+  api <- pkg$env$api()
+  res <- api$request("GET", "/", query = list(a = 5, b = 6))
+  expect_equal(res$status, 200)
+  expect_mapequal(from_json(res$body),
+                  list(status = "success", errors = NULL, data = 11))
+})

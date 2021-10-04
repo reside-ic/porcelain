@@ -53,3 +53,21 @@ test_logger_read <- function(logger) {
   lapply(readLines(logger$appenders$json$destination), jsonlite::fromJSON,
          simplifyDataFrame = FALSE)
 }
+
+
+copy_directory <- function(src, as) {
+  files <- dir(src, all.files = TRUE, no.. = TRUE, full.names = TRUE)
+  dir.create(as, FALSE, TRUE)
+  ok <- file.copy(files, as, recursive = TRUE)
+  if (!all(ok)) {
+    stop("Error copying files")
+  }
+}
+
+
+load_minimal <- function(path) {
+  testthat::skip_if_not_installed("pkgload")
+  pkgload::load_all(path,
+                    export_all = FALSE, attach_testthat = FALSE,
+                    warn_conflicts = FALSE, quiet = TRUE)
+}
