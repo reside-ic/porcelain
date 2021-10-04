@@ -1,4 +1,7 @@
-#' @porcelain GET /add/<a:int>/<b:int> => json("numeric")
+#' @porcelain
+#'   GET / => json("numeric")
+#'   query a :: numeric
+#'   query b :: numeric
 add <- function(a, b) {
   jsonlite::unbox(a + b)
 }

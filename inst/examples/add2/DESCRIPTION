@@ -7,8 +7,5 @@ Description: Adds numbers as an HTTP API.
 License: CC0
 Encoding: UTF-8
 Imports: porcelain
-Suggests:
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "porcelain::porcelain_roclet"))
 RoxygenNote: 7.1.2
