@@ -9,6 +9,19 @@
 ## namespace (see R-exts).  Each of these is above the method used so
 ## we provide the minimum NAMESPACE support.
 
+##' A roclet for processing `@porcelain` tags within a package. This
+##' presents an automated declarative approach to defining porcelain
+##' APIs using roxygen tags. When you roxygenise your package (e.g.,
+##' with `devtools::document()` or `roxygen2::roxygenise()`) this
+##' roclet will create a file `R/porcelain.R` within your package that
+##' will be included into your package API.
+##'
+##' @title Define API using roxygen tags
+##'
+##' @return A roclet, used by `roxygen2` (not typically called by
+##'   users directly)
+##'
+##' @export
 porcelain_roclet <- function() {
   roxygen2::roclet("porcelain")
 }
