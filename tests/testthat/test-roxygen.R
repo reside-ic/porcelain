@@ -45,6 +45,15 @@ test_that("Accept inputs", {
          returning = list("json")))
 })
 
+
+test_that("Require that all inputs are of known type", {
+  err <- expect_error(
+    roxy_parse_string("GET / => json\nquery x :: int\nQUERY y :: int",
+                      "file.R", 10))
+  expect_match(err$message, "Invalid input type")
+  expect_match(err$message, "error occured at file.R:12")
+})
+
 test_that("Parse from roxygen block", {
   text <- paste(
     "#' @porcelain",
