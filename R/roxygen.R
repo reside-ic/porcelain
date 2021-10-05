@@ -72,11 +72,14 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
            paste(found, collapse = ", "))
     }
     if (length(tags) == 1L) {
-      ## TODO: nice validation on these
-      stopifnot(
-        length(tags) == 1,
-        is.function(block$object$value))
-      endpoint <- roxy_process(tags[[1]], block$object$alias, env)
+      ## There's a bit of a trick here with getting the object out; if
+      ## we are using the roxygen testing tools (rather than a
+      ## package) then we do not actually have a function name and
+      ## that function definitely does not exist in env. So we need to
+      ## do some faff here.  I am not 100% sure that this is always
+      ## desirable though - do we get this NULL type in other cases?
+      target <- roxy_get_target(block, env)
+      endpoint <- roxy_process(tags[[1]], target, env)
       results <- c(results, list(endpoint))
     }
   }
@@ -90,6 +93,22 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
     "}")
 }
 
+
+roxy_get_target <- function(block, env) {
+  if (inherits(block, "roxy_block_NULL")) {
+    ## Testing mode, I believe - this is not well documented in
+    ## roxygen, and worth checking I think.  This probably should
+    ## never end up called outside of the porcelain tests, and would
+    ## fail in all sorts of bad ways in a package for example.
+    eval(block$call, env)
+    as.character(block$call[[2]])
+  } else {
+    ## TODO: work out what our failure mode is here; are there cases
+    ## where this will be NULL, e.g. if used with an anonymous
+    ## function or a function name (not value)
+    block$object$alias
+  }
+}
 
 roxy_process <- function(tag, target, env) {
   if (!is.function(env[[target]])) {
