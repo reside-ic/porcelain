@@ -52,36 +52,18 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
 
   for (block in blocks) {
     tags <- roxygen2::block_get_tags(block, "porcelain")
-    ## TODO we'd want to make sure that there is 0 or 1 here I think.
-    if (length(tags) > 0L) {
+    if (length(tags) > 1L) {
+      found <- vcapply(tags, function(x)
+        sprintf("%s:%d", basename(x$file), x$line))
+      stop("More than one @porcelain block found for single function: ",
+           paste(found, collapse = ", "))
+    }
+    if (length(tags) == 1L) {
       ## TODO: nice validation on these
       stopifnot(
         length(tags) == 1,
         is.function(block$object$value))
-      tag <- tags[[1]]
-      method <- tag$val$method
-      path <- tag$val$path
-      message(sprintf("- %s %s (%s:%d)", method, path,
-                      basename(tag$file), tag$line))
-
-      ## TODO could be incorrect, check by setting this
-      ## alternative locations include block$object$topic and block$call[[2]]
-      target <- block$object$alias
-
-      inputs <- roxy_process_inputs(tag$val$inputs, env, tag)
-      returning <- roxy_process_returning(tag$val$returning, env, tag)
-
-      args <- c(
-        list(dquote(tag$val$method), dquote(tag$val$path), target),
-        inputs,
-        list(sprintf("returning = %s", returning)))
-
-      ## Each endpoint gets wrapped in an anonymous function so that
-      ## we can call them later at will, rebinding state etc.
-      endpoint <- c(
-        sprintf('"%s %s" = function(state) {', method, path),
-        paste0("  ", list_call("porcelain::porcelain_endpoint$new", args)),
-        "}")
+      endpoint <- roxy_process(tags[[1]], block$object$alias, env)
       results <- c(results, list(endpoint))
     }
   }
@@ -90,12 +72,41 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
     stop("Package contains no '@porcelain' tags")
   }
 
-  code <- c(
-    "`__porcelain__` <- function() {",
+  c("`__porcelain__` <- function() {",
     paste0("  ", list_call("list", results)),
     "}")
+}
 
-  code
+
+roxy_process <- function(tag, target, env) {
+  if (!is.function(env[[target]])) {
+    stop("Target is not a function")
+  }
+  method <- tag$val$method
+  path <- tag$val$path
+  message(sprintf("- %s %s (%s:%d)", method, path,
+                  basename(tag$file), tag$line))
+
+  inputs <- roxy_process_inputs(tag$val$inputs, env, tag)
+  returning <- roxy_process_returning(tag$val$returning, env, tag)
+
+  args <- c(
+    list(dquote(tag$val$method), dquote(tag$val$path), target),
+    inputs,
+    list(sprintf("returning = %s", returning)))
+
+  create <- list_call("porcelain::porcelain_endpoint$new", args)
+
+  ## Then we can test this:
+  tryCatch(
+    eval(parse(text = create), new.env(parent = env)),
+    error = function(e) browser())
+
+  ## Each endpoint gets wrapped in an anonymous function so that
+  ## we can call them later at will, rebinding state etc.
+  c(sprintf('"%s %s" = function(state) {', method, path),
+    paste0("  ", create),
+    "}")
 }
 
 
