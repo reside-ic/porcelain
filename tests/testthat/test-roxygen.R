@@ -17,8 +17,7 @@ test_that("Parse return type", {
                list("json", "schema", status_code = 200))
   expect_error(
     roxy_parse_returning("json(schema", "myfile", 100),
-    "While processing @porcelain returning argument (myfile:100)",
-    fixed = TRUE)
+    "Invalid syntax for @porcelain returning argument.*myfile:100")
 })
 
 
@@ -27,20 +26,20 @@ test_that("Accept inputs", {
     roxy_parse_string("GET / => json\nquery x :: int", "<text>", 1),
     list(method = "GET",
          path = "/",
-         inputs = list(query = list(x = list("int"))),
+         inputs = list(query = list(x = "int")),
          returning = list("json")))
   expect_mapequal(
     roxy_parse_string("GET / => json\nquery x :: int\nquery y :: double",
                       "<text>", 1),
     list(method = "GET",
          path = "/",
-         inputs = list(query = list(x = list("int"), y = list("double"))),
+         inputs = list(query = list(x = "int", y = "double")),
          returning = list("json")))
   expect_mapequal(
     roxy_parse_string("POST /path => json\nquery x :: int\nbody arg :: json",
                       "<text>", 1L),
     list(method = "POST", path = "/path",
-         inputs = list(query = list(x = list("int")),
+         inputs = list(query = list(x = "int"),
                        body = list(arg = list("json"))),
          returning = list("json")))
 })

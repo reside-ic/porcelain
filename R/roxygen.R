@@ -169,13 +169,11 @@ roclet_output.roclet_porcelain <- function(x, results, base_path, ...) {
 }
 
 
-roxy_error <- function(msg, x) {
-  if (!is.null(x)) {
-    msg <- paste(msg,
-                 sprintf("  (while processing %s:%d)", x$file, x$line),
-                 sep = "\n")
-  }
-  stop(msg)
+roxy_error <- function(msg, file, line) {
+  msg <- paste(msg,
+               sprintf("  (while processing %s:%s)", file, line),
+               sep = "\n")
+  stop(msg, call. = FALSE)
 }
 
 
@@ -191,10 +189,7 @@ roxy_process_input_query <- function(inputs) {
   if (length(inputs) == 0) {
     return(NULL)
   }
-  ## TODO: validation on query - args must be simple list with one
-  ## element and not function calls.  This is the case for state too,
-  ## so this should be done in the parse.
-  query_type <- unname(vcapply(inputs, function(x) x[[1]]))
+  query_type <- unname(vcapply(inputs, identity))
   query <- paste(sprintf('%s = "%s"', names(inputs), query_type),
                  collapse = ", ")
   sprintf("porcelain::porcelain_input_query(%s)", query)
@@ -228,8 +223,7 @@ roxy_process_input_state <- function(inputs) {
   if (length(inputs) == 0) {
     return(NULL)
   }
-  ## TODO: require that the rhs is a single arg, any type
-  state <- unname(vcapply(inputs, function(x) x[[1]]))
+  state <- unname(vcapply(inputs, identity))
   args <- paste(sprintf("%s = state$%s", names(inputs), state),
                 collapse = ", ")
   sprintf("porcelain::porcelain_state(%s)", args)
