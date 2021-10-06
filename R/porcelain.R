@@ -46,12 +46,15 @@ porcelain <- R6::R6Class(
 
     ##' @description Handle package endpoints
     ##'
-    ##' @param verbose Logical, indicating if information about added
-    ##'   endpoints should be added.
+    ##' @param state A named list of state, if your package requires
+    ##'   any state-binding endpoints. Typically these will be mutable
+    ##'   state (database connections, job queues, or similar).  You must
+    ##'   provide all states as required by the combination of all
+    ##'   endpoints.
     ##'
     ##' @param package Either a package name or environment (optional,
     ##'   usually we'll find the right thing)
-    handle_package = function(state = NULL, verbose = FALSE, package = NULL) {
+    handle_package = function(state = NULL, package = NULL) {
       env <- parent.frame()
       calls <- sys.calls()
       if (is.null(package)) {
@@ -60,10 +63,13 @@ porcelain <- R6::R6Class(
       }
       endpoints <- package_endpoints(package)
 
-      if (verbose) {
-        message(sprintf("Adding %d endpoints from package '%s'",
-                        length(endpoints), package))
+      if (!is.null(state)) {
+        ## TODO: it would be nice to check which are required here and
+        ## fail early with a nice error message but we don't return
+        ## that anywhere yet.
+        assert_named(state, unique = TRUE)
       }
+
       for (e in endpoints) {
         self$handle(e(state))
       }
