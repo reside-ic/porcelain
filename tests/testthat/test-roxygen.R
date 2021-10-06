@@ -113,8 +113,7 @@ test_that("process simple package", {
   ## roxygen uses cat() at some point while writing the namespace, so
   ## we need to capture that to prevent it bubbling out through
   ## testthat
-  capture.output(
-    suppressMessages(roxygen2::roxygenise(dest)))
+  silently(roxygen2::roxygenise(dest))
   pkg <- load_minimal(dest)
 
   endpoint <- porcelain_package_endpoint("add", "GET", "/")
@@ -161,7 +160,7 @@ test_that("Create roxygen endpoint with state", {
   expect_equal(res$status_code, 200)
 
   api <- porcelain$new()
-  api$handle_package(package = env)
+  api$handle_package(state, package = env)
   res_api <- api$request("GET", "/count")
   expect_equal(res_api$status, 200)
   expect_mapequal(from_json(res_api$body),

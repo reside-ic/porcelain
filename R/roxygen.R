@@ -191,9 +191,11 @@ roxy_process_input_query <- function(inputs) {
   if (length(inputs) == 0) {
     return(NULL)
   }
-  ## TODO: validation on query - args must be simple list
+  ## TODO: validation on query - args must be simple list with one
+  ## element and not function calls.  This is the case for state too,
+  ## so this should be done in the parse.
   query_type <- unname(vcapply(inputs, function(x) x[[1]]))
-  query <- paste(sprintf('%s = "%s"', names(inputs$query), query_type),
+  query <- paste(sprintf('%s = "%s"', names(inputs), query_type),
                  collapse = ", ")
   sprintf("porcelain::porcelain_input_query(%s)", query)
 }

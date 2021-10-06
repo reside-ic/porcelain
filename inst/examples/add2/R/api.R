@@ -11,8 +11,3 @@ api <- function(validate = FALSE) {
   api$handle_package()
   api
 }
-
-#' @porcelain
-#'   POST /path => json
-#'   body data :: binary
-f <- function(data) {}
