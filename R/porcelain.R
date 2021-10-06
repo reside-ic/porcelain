@@ -48,19 +48,14 @@ porcelain <- R6::R6Class(
     ##'
     ##' @param verbose Logical, indicating if information about added
     ##'   endpoints should be added.
-    handle_package = function(verbose = FALSE) {
-      ## TODO: eventually we will handle state as an argument here and
-      ## pass it through to the package function.
-      state <- NULL
-
-      ## TODO: We might want to accept this as an argument to the
-      ## method, perhaps optionally, to make this a little less magic.
-      package <- packageName(parent.frame(1))
-      endpoints <- package_endpoints(package)
-
-      if (!is.null(state)) {
-        stop("state not yet handled")
+    ##'
+    ##' @param package Either a package name or environment (optional,
+    ##'   usually we'll find the right thing)
+    handle_package = function(verbose = FALSE, package = NULL) {
+      if (is.null(package)) {
+        package <- parent.frame(1)
       }
+      endpoints <- package_endpoints(package)
 
       if (verbose) {
         message(sprintf("Adding %d endpoints from package '%s'",

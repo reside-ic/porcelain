@@ -28,7 +28,12 @@ porcelain_roclet <- function() {
 
 
 package_endpoints <- function(package) {
-  fn <- getNamespace(package)[["__porcelain__"]]
+  if (is.environment(package)) {
+    env <- package
+  } else {
+    env <- getNamespace(package)
+  }
+  fn <- env[["__porcelain__"]]
   if (is.null(fn)) {
     ## TODO: diagnose the issue here:
     ## * DESCRIPTION does not contain roclet command
@@ -39,6 +44,7 @@ package_endpoints <- function(package) {
 }
 
 
+## TODO: we really need a way of getting 'validate' through here
 porcelain_package_endpoint <- function(package, method, path, state = NULL) {
   endpoint <- package_endpoints(package)[[paste(method, path)]]
   if (is.null(endpoint)) {
@@ -130,8 +136,10 @@ roxy_process <- function(tag, target, env) {
   create <- list_call("porcelain::porcelain_endpoint$new", args)
 
   ## Then we can test this:
+  e <- new.env(parent = env)
+  e$state <- NULL
   tryCatch(
-    eval(parse(text = create), new.env(parent = env)),
+    eval(parse(text = create), e),
     error = function(e) browser())
 
   ## Each endpoint gets wrapped in an anonymous function so that
@@ -172,13 +180,57 @@ roxy_error <- function(msg, x) {
 
 
 roxy_process_inputs <- function(inputs, env, x) {
-  stopifnot(names(inputs) == "query") # TODO: more generalisation needed
+  c(list(),
+    roxy_process_input_query(inputs$query),
+    roxy_process_input_body(inputs$body),
+    roxy_process_input_state(inputs$state))
+}
 
+
+roxy_process_input_query <- function(inputs) {
+  if (length(inputs) == 0) {
+    return(NULL)
+  }
   ## TODO: validation on query - args must be simple list
-  query_type <- unname(vcapply(inputs$query, function(x) x[[1]]))
+  query_type <- unname(vcapply(inputs, function(x) x[[1]]))
   query <- paste(sprintf('%s = "%s"', names(inputs$query), query_type),
                  collapse = ", ")
-  list(sprintf("porcelain::porcelain_input_query(%s)", query))
+  sprintf("porcelain::porcelain_input_query(%s)", query)
+}
+
+
+roxy_process_input_body <- function(inputs) {
+  if (length(inputs) == 0) {
+    return(NULL)
+  }
+  if (length(inputs) > 1) {
+    ## This will need relaxing where we do things like destructuring bodies
+    stop("Currently only a single body parameter supported")
+  }
+  input <- inputs[[1]]
+  map <- c(binary = "porcelain::porcelain_input_body_binary",
+           json = "porcelain::porcelain_input_body_json")
+  fn <- input[[1]]
+  if (fn %in% names(map)) {
+    fn <- map[[fn]]
+  } else {
+    stop(sprintf("Unknown body type '%s'", type))
+  }
+  args <- paste(c(dquote(names(inputs)),
+                  vcapply(input[-1], deparse)), collapse = ", ")
+  sprintf("%s(%s)", fn, args)
+}
+
+
+roxy_process_input_state <- function(inputs) {
+  if (length(inputs) == 0) {
+    return(NULL)
+  }
+  ## TODO: require that the rhs is a single arg, any type
+  state <- unname(vcapply(inputs, function(x) x[[1]]))
+  args <- paste(sprintf("%s = state$%s", names(inputs), state),
+                collapse = ", ")
+  sprintf("porcelain::porcelain_state(%s)", args)
 }
 
 

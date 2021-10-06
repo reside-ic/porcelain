@@ -54,6 +54,7 @@ test_that("Require that all inputs are of known type", {
   expect_match(err$message, "error occured at file.R:12")
 })
 
+
 test_that("Parse from roxygen block", {
   text <- paste(
     "#' @porcelain",
@@ -127,4 +128,42 @@ test_that("process simple package", {
   res_api <- api$request("GET", "/", query = list(a = 5, b = 6))
   expect_equal(res_api$status, 200)
   expect_equal(res_api$body, res$body)
+})
+
+
+test_that("Create endpoint that accepts binary input", {
+  text <- c("#' @porcelain",
+            "#'   POST /path => json",
+            "#'   body data :: binary",
+            "f <- function(data) {}")
+  env <- roxygen_to_env(text)
+  ## TODO: write test that uses this endpoint, or similar
+  ## TODO: write test that uses json endpoint with schema, finding root
+})
+
+
+test_that("Create roxygen endpoint with state", {
+  text <- c("#' @porcelain",
+            "#'   GET /count => json",
+            "#'   state counter :: counter",
+            "f <- function(counter) {",
+            "  jsonlite::unbox(counter())",
+            "}")
+
+  env <- roxygen_to_env(text)
+  state <- list(counter = make_counter())
+
+  endpoint <- porcelain_package_endpoint(env, "GET", "/count", state)
+  expect_equal(endpoint$target(), jsonlite::unbox(1L))
+
+  res <- endpoint$run()
+  expect_equal(res$data, jsonlite::unbox(2L))
+  expect_equal(res$status_code, 200)
+
+  api <- porcelain$new()
+  api$handle_package(package = env)
+  res_api <- api$request("GET", "/count")
+  expect_equal(res_api$status, 200)
+  expect_mapequal(from_json(res_api$body),
+                  list(status = "success", errors = NULL, data = 3))
 })

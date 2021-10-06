@@ -71,3 +71,35 @@ load_minimal <- function(path) {
                     export_all = FALSE, attach_testthat = FALSE,
                     warn_conflicts = FALSE, quiet = TRUE)
 }
+
+
+source_text <- function(code, env) {
+  eval(parse(text = code), env)
+}
+
+
+make_counter <- function() {
+  e <- environment()
+  e$n <- 0L
+  function() {
+    e$n <- e$n + 1L
+    e$n
+  }
+}
+
+
+silently <- function(expr) {
+  capture.output(suppressMessages(res <- force(expr)))
+  res
+}
+
+
+roxygen_to_env <- function(text) {
+  env <- new.env()
+  blocks <- roxygen2::parse_text(text, env = env)
+  roc <- porcelain::porcelain_roclet()
+  code <- silently(
+    roxygen2::roclet_process(roc, blocks, env, base_path = "."))
+  source_text(code, env)
+  env
+}
