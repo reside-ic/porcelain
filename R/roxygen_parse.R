@@ -111,7 +111,7 @@ parse_identifier <- function(text, description, file, line) {
   ## for state; an arg name
   ## these rules might not be good enough then:
   if (!grepl("^[a-zA-Z0-9_.]+$", text)) {
-    roxy_error(sprintf("Expected simple identifier for %s", description),
+    roxy_error(sprintf("Expected simple expression for %s", description),
                file, line)
   }
   text

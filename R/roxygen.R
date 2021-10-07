@@ -75,8 +75,9 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
   for (block in blocks) {
     tags <- roxygen2::block_get_tags(block, "porcelain")
     if (length(tags) > 1L) {
-      found <- vcapply(tags, function(x)
-        sprintf("%s:%d", basename(x$file), x$line))
+      found <- sprintf("%s:%s", basename(tags[[1]]$file),
+              paste(vcapply(tags, function(x)
+                as.character(x$line)), collapse = ","))
       stop("More than one @porcelain block found for single function: ",
            paste(found, collapse = ", "))
     }

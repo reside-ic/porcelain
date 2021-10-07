@@ -54,6 +54,12 @@ test_that("Require that all inputs are of known type", {
 })
 
 
+test_that("Ensure that querier have simple types", {
+  expect_error(
+    roxy_parse_string("GET / => json\nquery x :: int(64)", "<text>", 1),
+    "Expected simple expression for input 'x'")
+})
+
 test_that("Parse from roxygen block", {
   text <- paste(
     "#' @porcelain",
@@ -96,6 +102,31 @@ test_that("Nice error on input parse failure", {
     roxygen2::parse_text(text))
   expect_match(err$message,
                "error occured at <text>:5", fixed = TRUE)
+})
+
+
+test_that("Prevent multiple @porcelain tags for one function", {
+  text <- paste(
+    "#' @porcelain GET / => json",
+    "#' @porcelain GET /root => json",
+    "f <- function() {}",
+    sep = "\n")
+  expect_error(
+    roxygen_to_env(text),
+    "More than one @porcelain block found for single function: <text>:1,2",
+    fixed = TRUE)
+})
+
+
+test_that("Prevent compilation with no found tags", {
+  text <- paste(
+    "#' @export",
+    "f <- function() {}",
+    sep = "\n")
+  expect_error(
+    roxygen_to_env(text),
+    "Package contains no '@porcelain' tags",
+    fixed = TRUE)
 })
 
 
