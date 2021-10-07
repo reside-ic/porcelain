@@ -71,7 +71,7 @@ porcelain <- R6::R6Class(
       }
 
       for (e in endpoints) {
-        self$handle(e(state))
+        self$handle(e(state, private$validate))
       }
       invisible(self)
     },

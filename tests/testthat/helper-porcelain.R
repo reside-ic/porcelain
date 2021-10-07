@@ -94,12 +94,16 @@ silently <- function(expr) {
 }
 
 
-roxygen_to_env <- function(text) {
+roxygen_to_env <- function(text, quiet = TRUE) {
   env <- new.env()
   blocks <- roxygen2::parse_text(text, env = env)
   roc <- porcelain::porcelain_roclet()
-  code <- silently(
-    roxygen2::roclet_process(roc, blocks, env, base_path = "."))
+  if (quiet) {
+    code <- silently(
+      roxygen2::roclet_process(roc, blocks, env, base_path = "."))
+  } else {
+    code <- roxygen2::roclet_process(roc, blocks, env, base_path = ".")
+ }
   source_text(code, env)
   env
 }

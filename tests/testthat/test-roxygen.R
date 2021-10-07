@@ -224,3 +224,37 @@ test_that("sensible error if endpoint not found in package for testing", {
     porcelain_package_endpoint(env, "GET", "/endpoint"),
     "Did not find roxygen-based endpoint 'GET /endpoint' in package")
 })
+
+
+test_that("Control validation in endpoints", {
+  root <- system_file("examples/add/inst/schema", package = "porcelain")
+  text <- c("#' @porcelain",
+            sprintf("#'   GET /echo => json('numeric', root = '%s')", root),
+            "#'   query x :: numeric",
+            "f <- function(x) {",
+            "  jsonlite::unbox(x)",
+            "}")
+  env <- roxygen_to_env(text)
+
+  e1 <- porcelain_package_endpoint(env, "GET", "/echo", validate = FALSE)
+  e2 <- porcelain_package_endpoint(env, "GET", "/echo", validate = TRUE)
+  expect_false(e1$validate)
+  expect_true(e2$validate)
+
+  res1 <- e1$run("x")
+  expect_equal(res1$status_code, 200)
+  expect_false(res1$validated)
+  expect_equal(res1$data, jsonlite::unbox("x"))
+
+  res2 <- e2$run("x")
+  expect_equal(res2$status_code, 500) # This is a known bug
+  expect_false(res2$validated)
+  expect_null(res2$data)
+  expect_equal(res2$value$errors[[1]]$error,
+               jsonlite::unbox("VALIDATION_ERROR"))
+
+  res3 <- e2$run(1)
+  expect_equal(res3$status_code, 200)
+  expect_true(res3$validated)
+  expect_equal(res3$data, jsonlite::unbox(1))
+})

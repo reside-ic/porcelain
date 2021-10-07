@@ -46,7 +46,8 @@ package_endpoints <- function(package) {
 
 
 ## TODO: we really need a way of getting 'validate' through here
-porcelain_package_endpoint <- function(package, method, path, state = NULL) {
+porcelain_package_endpoint <- function(package, method, path, state = NULL,
+                                       validate = NULL) {
   endpoint <- package_endpoints(package)[[paste(method, path)]]
   if (is.null(endpoint)) {
     pkg <- packageName(package) %||% "<anonymous>"
@@ -54,7 +55,7 @@ porcelain_package_endpoint <- function(package, method, path, state = NULL) {
       "Did not find roxygen-based endpoint '%s %s' in package '%s'",
       method, path, pkg))
   }
-  endpoint(state)
+  endpoint(state, validate)
 }
 
 
@@ -133,7 +134,8 @@ roxy_process <- function(tag, target, env) {
   args <- c(
     list(dquote(tag$val$method), dquote(tag$val$path), target),
     inputs,
-    list(sprintf("returning = %s", returning)))
+    list(sprintf("returning = %s", returning)),
+    list("validate = validate"))
 
   create <- list_call("porcelain::porcelain_endpoint$new", args)
 
@@ -143,13 +145,14 @@ roxy_process <- function(tag, target, env) {
   ## * substitution failure (e.g., required args missing)
   e <- new.env(parent = env)
   e$state <- NULL
+  e$validate <- NULL
   tryCatch(
     eval(parse(text = create), e),
     error = function(e) browser())
 
   ## Each endpoint gets wrapped in an anonymous function so that
   ## we can call them later at will, rebinding state etc.
-  c(sprintf('"%s %s" = function(state) {', method, path),
+  c(sprintf('"%s %s" = function(state, validate) {', method, path),
     paste0("  ", create),
     "}")
 }
@@ -251,6 +254,11 @@ roxy_process_returning <- function(returning, env, x) {
     stop(sprintf("Did not find returning function '%s'", fn))
   }
 
-  args <- paste(vcapply(returning[-1], deparse), collapse = ", ")
-  sprintf("%s(%s)", fn, args)
+  args <- vcapply(returning[-1], deparse)
+  i <- nzchar(names(args))
+  if (any(i)) {
+    args[i] <- sprintf("%s = %s", names(args)[i], args[i])
+  }
+
+  sprintf("%s(%s)", fn, paste(args, collapse = ", "))
 }
