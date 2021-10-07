@@ -99,33 +99,27 @@ test_that("Nice error on input parse failure", {
 })
 
 
-test_that("process simple package", {
-  skip_if_not_installed("roxygen2")
-  skip_if_not_installed("pkgload")
+test_that("Create roxygen endpoint with query parameters", {
+  text <- c("#' @porcelain",
+            "#'   GET /sqrt => json",
+            "#'   query x :: numeric",
+            "f <- function(x) {",
+            "  jsonlite::unbox(sqrt(x))",
+            "}")
+  env <- roxygen_to_env(text)
+  endpoint <- porcelain_package_endpoint(env, "GET", "/sqrt")
+  expect_equal(endpoint$target(4), jsonlite::unbox(2))
 
-  dest <- tempfile()
-  on.exit(unlink(dest, recursive = TRUE))
-  copy_directory(
-    system_file("examples/add2", package = "porcelain"),
-    dest)
+  res <- endpoint$run(4)
+  expect_equal(res$data, jsonlite::unbox(2))
+  expect_equal(res$status_code, 200)
 
-  ## roxygen uses cat() at some point while writing the namespace, so
-  ## we need to capture that to prevent it bubbling out through
-  ## testthat
-  silently(roxygen2::roxygenise(dest))
-  pkg <- load_minimal(dest)
-
-  endpoint <- porcelain_package_endpoint("add", "GET", "/")
-  expect_s3_class(endpoint, "porcelain_endpoint")
-  expect_equal(endpoint$target(5, 6),
-               jsonlite::unbox(11))
-  res <- endpoint$run(a = 5, b = 6)
-  expect_equal(res$data, jsonlite::unbox(11))
-
-  api <- pkg$env$api()
-  res_api <- api$request("GET", "/", query = list(a = 5, b = 6))
+  api <- porcelain$new()
+  api$handle_package(package = env)
+  res_api <- api$request("GET", "/sqrt", query = list(x = 4))
   expect_equal(res_api$status, 200)
-  expect_equal(res_api$body, res$body)
+  expect_mapequal(from_json(res_api$body),
+                  list(status = "success", errors = NULL, data = 2))
 })
 
 
@@ -133,10 +127,25 @@ test_that("Create endpoint that accepts binary input", {
   text <- c("#' @porcelain",
             "#'   POST /path => json",
             "#'   body data :: binary",
-            "f <- function(data) {}")
+            "f <- function(data) {",
+            "  jsonlite::unbox(length(data))",
+            "}")
   env <- roxygen_to_env(text)
-  ## TODO: write test that uses this endpoint, or similar
-  ## TODO: write test that uses json endpoint with schema, finding root
+
+  endpoint <- porcelain_package_endpoint(env, "POST", "/path")
+  data <- raw(10)
+  expect_equal(endpoint$target(data), jsonlite::unbox(10L))
+
+  res <- endpoint$run(data)
+  expect_equal(res$data, jsonlite::unbox(10L))
+  expect_equal(res$status_code, 200)
+
+  api <- porcelain$new()
+  api$handle_package(package = env)
+  res_api <- api$request("POST", "/path", body = data)
+  expect_equal(res_api$status, 200)
+  expect_mapequal(from_json(res_api$body),
+                  list(status = "success", errors = NULL, data = 10))
 })
 
 
@@ -164,4 +173,34 @@ test_that("Create roxygen endpoint with state", {
   expect_equal(res_api$status, 200)
   expect_mapequal(from_json(res_api$body),
                   list(status = "success", errors = NULL, data = 3))
+})
+
+
+test_that("process simple package", {
+  skip_if_not_installed("roxygen2")
+  skip_if_not_installed("pkgload")
+
+  dest <- tempfile()
+  on.exit(unlink(dest, recursive = TRUE))
+  copy_directory(
+    system_file("examples/add2", package = "porcelain"),
+    dest)
+
+  ## roxygen uses cat() at some point while writing the namespace, so
+  ## we need to capture that to prevent it bubbling out through
+  ## testthat
+  silently(roxygen2::roxygenise(dest))
+  pkg <- load_minimal(dest)
+
+  endpoint <- porcelain_package_endpoint("add", "GET", "/")
+  expect_s3_class(endpoint, "porcelain_endpoint")
+  expect_equal(endpoint$target(5, 6),
+               jsonlite::unbox(11))
+  res <- endpoint$run(a = 5, b = 6)
+  expect_equal(res$data, jsonlite::unbox(11))
+
+  api <- pkg$env$api()
+  res_api <- api$request("GET", "/", query = list(a = 5, b = 6))
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$body, res$body)
 })
