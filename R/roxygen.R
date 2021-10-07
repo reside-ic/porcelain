@@ -35,10 +35,11 @@ package_endpoints <- function(package) {
   }
   fn <- env[["__porcelain__"]]
   if (is.null(fn)) {
-    ## TODO: diagnose the issue here:
-    ## * DESCRIPTION does not contain roclet command
-    ## * Need to redocument
-    stop("Did not find package endpoints")
+    pkg <- packageName(env)
+    if (is.null(pkg)) {
+      stop("No endpoints found: input is not a package name or namespace")
+    }
+    stop(sprintf("No endpoints found in package '%s'", pkg))
   }
   fn()
 }
@@ -48,9 +49,10 @@ package_endpoints <- function(package) {
 porcelain_package_endpoint <- function(package, method, path, state = NULL) {
   endpoint <- package_endpoints(package)[[paste(method, path)]]
   if (is.null(endpoint)) {
+    pkg <- packageName(package) %||% "<anonymous>"
     stop(sprintf(
       "Did not find roxygen-based endpoint '%s %s' in package '%s'",
-      method, path, package))
+      method, path, pkg))
   }
   endpoint(state)
 }
@@ -136,6 +138,9 @@ roxy_process <- function(tag, target, env) {
   create <- list_call("porcelain::porcelain_endpoint$new", args)
 
   ## Then we can test this:
+  ## Possible issues:
+  ## * parse failure
+  ## * substitution failure (e.g., required args missing)
   e <- new.env(parent = env)
   e$state <- NULL
   tryCatch(

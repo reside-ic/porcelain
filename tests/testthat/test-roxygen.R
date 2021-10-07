@@ -204,3 +204,23 @@ test_that("process simple package", {
   expect_equal(res_api$status, 200)
   expect_equal(res_api$body, res$body)
 })
+
+
+test_that("sensible error if package does not contain roxygen endpoints", {
+  expect_error(
+    package_endpoints(new.env(parent = emptyenv())),
+    "No endpoints found: input is not a package name or namespace")
+  expect_error(
+    package_endpoints("plumber"),
+    "No endpoints found in package 'plumber'")
+})
+
+
+test_that("sensible error if endpoint not found in package for testing", {
+  text <- c("#' @porcelain GET / => json",
+            "f <- function() { runif(10) }")
+  env <- roxygen_to_env(text)
+  expect_error(
+    porcelain_package_endpoint(env, "GET", "/endpoint"),
+    "Did not find roxygen-based endpoint 'GET /endpoint' in package")
+})
