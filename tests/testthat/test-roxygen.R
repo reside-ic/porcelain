@@ -1,4 +1,5 @@
 test_that("Can parse basic endpoint", {
+  skip_if_no_roxygen()
   expect_mapequal(
     roxy_parse_string("GET / => json", "text", 1),
     list(method = "GET",
@@ -9,6 +10,7 @@ test_that("Can parse basic endpoint", {
 
 
 test_that("Parse return type", {
+  skip_if_no_roxygen()
   expect_equal(roxy_parse_returning("json"),
                list("json"))
   expect_equal(roxy_parse_returning("json()"),
@@ -30,6 +32,7 @@ test_that("Parse return type", {
 
 
 test_that("Accept inputs", {
+  skip_if_no_roxygen()
   expect_mapequal(
     roxy_parse_string("GET / => json\nquery x :: int", "<text>", 1),
     list(method = "GET",
@@ -54,6 +57,7 @@ test_that("Accept inputs", {
 
 
 test_that("Require that all inputs are of known type", {
+  skip_if_no_roxygen()
   err <- expect_error(
     roxy_parse_string("GET / => json\nquery x :: int\nQUERY y :: int",
                       "file.R", 10))
@@ -62,7 +66,8 @@ test_that("Require that all inputs are of known type", {
 })
 
 
-test_that("Ensure that querier have simple types", {
+test_that("Ensure that queries have simple types", {
+  skip_if_no_roxygen()
   expect_error(
     roxy_parse_string("GET / => json\nquery x :: int(64)", "<text>", 1),
     "Expected simple expression for input 'x'")
@@ -84,6 +89,7 @@ test_that("Parse from roxygen block", {
 
 
 test_that("Nice error on parse failure", {
+  skip_if_no_roxygen()
   text <- paste(
     "#' @porcelain",
     "#'   GET / ->",
@@ -98,6 +104,7 @@ test_that("Nice error on parse failure", {
 
 
 test_that("Nice error on input parse failure", {
+  skip_if_no_roxygen()
   text <- paste(
     "#' @porcelain",
     "#'   GET / =>",
@@ -114,6 +121,7 @@ test_that("Nice error on input parse failure", {
 
 
 test_that("Prevent multiple @porcelain tags for one function", {
+  skip_if_no_roxygen()
   text <- paste(
     "#' @porcelain GET / => json",
     "#' @porcelain GET /root => json",
@@ -127,6 +135,7 @@ test_that("Prevent multiple @porcelain tags for one function", {
 
 
 test_that("Prevent compilation with no found tags", {
+  skip_if_no_roxygen()
   text <- paste(
     "#' @export",
     "f <- function() {}",
@@ -139,6 +148,7 @@ test_that("Prevent compilation with no found tags", {
 
 
 test_that("Create roxygen endpoint with query parameters", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain",
             "#'   GET /sqrt => json",
             "#'   query x :: numeric",
@@ -163,6 +173,7 @@ test_that("Create roxygen endpoint with query parameters", {
 
 
 test_that("Create endpoint that accepts binary input", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain",
             "#'   POST /path => json",
             "#'   body data :: binary",
@@ -189,6 +200,7 @@ test_that("Create endpoint that accepts binary input", {
 
 
 test_that("prevent multiple body inputs", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain",
             "#'   POST /path => json",
             "#'   body data :: json",
@@ -201,6 +213,7 @@ test_that("prevent multiple body inputs", {
 
 
 test_that("Create roxygen endpoint with state", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain",
             "#'   GET /count => json",
             "#'   state counter :: counter",
@@ -228,8 +241,7 @@ test_that("Create roxygen endpoint with state", {
 
 
 test_that("process simple package", {
-  skip_if_not_installed("roxygen2")
-  skip_if_not_installed("pkgload")
+  skip_if_no_roxygen()
 
   dest <- tempfile()
   on.exit(unlink(dest, recursive = TRUE))
@@ -258,6 +270,7 @@ test_that("process simple package", {
 
 
 test_that("sensible error if package does not contain roxygen endpoints", {
+  skip_if_no_roxygen()
   expect_error(
     package_endpoints(new.env(parent = emptyenv())),
     "No endpoints found: input is not a package name or namespace")
@@ -268,6 +281,7 @@ test_that("sensible error if package does not contain roxygen endpoints", {
 
 
 test_that("sensible error if endpoint not found in package for testing", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain GET / => json",
             "f <- function() { runif(10) }")
   env <- roxygen_to_env(text)
@@ -287,6 +301,7 @@ test_that("sensible error if returning type is impossible", {
 
 
 test_that("sensible error if body type is impossible", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain POST / => json",
             "#'   body data :: other",
             "f <- function(data) { runif(10) }")
@@ -297,6 +312,7 @@ test_that("sensible error if body type is impossible", {
 
 
 test_that("Control validation in endpoints", {
+  skip_if_no_roxygen()
   root <- system_file("examples/add/inst/schema", package = "porcelain")
   text <- c("#' @porcelain",
             sprintf("#'   GET /echo => json('numeric', root = '%s')", root),
@@ -331,6 +347,7 @@ test_that("Control validation in endpoints", {
 
 
 test_that("refuse to overwrite code that we did not write", {
+  skip_if_no_roxygen()
   tmp <- tempfile()
   on.exit(unlink(tmp))
 
@@ -371,6 +388,7 @@ test_that("Identify block if can't find target function", {
 
 
 test_that("Report errors back helpfully", {
+  skip_if_no_roxygen()
   text <- c("#' @porcelain",
             "#'   GET /sqrt => json",
             "#'   query x :: numeric",
