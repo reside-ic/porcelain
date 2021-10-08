@@ -368,3 +368,18 @@ test_that("Identify block if can't find target function", {
     silently(roxygen2::roxygenise(dest)),
     "Could not determine endpoint target.*api\\.R:1")
 })
+
+
+test_that("Report errors back helpfully", {
+  text <- c("#' @porcelain",
+            "#'   GET /sqrt => json",
+            "#'   query x :: numeric",
+            "f <- function(y) {",
+            "  jsonlite::unbox(sqrt(y))",
+            "}")
+  err <- expect_error(roxygen_to_env(text))
+  expect_match(err$message, "Created invalid endpoint")
+  expect_match(err$message,
+               "Argument 'x' (used in query) missing from the target function",
+               fixed = TRUE)
+})

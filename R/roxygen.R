@@ -149,7 +149,12 @@ roxy_process <- function(tag, target, env) {
   e$validate <- NULL
   tryCatch(
     eval(parse(text = create), e),
-    error = function(e) browser())
+    error = function(e) {
+      msg <- sprintf(
+        "Created invalid endpoint:\n%s\nCreated endpoint was:\n\n%s\n",
+        e$message, paste("    ", create, collapse = "\n"))
+      roxy_error(msg, tag$file, tag$line)
+    })
 
   ## Each endpoint gets wrapped in an anonymous function so that
   ## we can call them later at will, rebinding state etc.
