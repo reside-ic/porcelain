@@ -91,14 +91,20 @@ given, then we will log at the beginning and end of the request.}
 \subsection{Method \code{handle_package()}}{
 Handle package endpoints
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{porcelain$handle_package(verbose = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{porcelain$handle_package(state = NULL, package = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{verbose}}{Logical, indicating if information about added
-endpoints should be added.}
+\item{\code{state}}{A named list of state, if your package requires
+any state-binding endpoints. Typically these will be mutable
+state (database connections, job queues, or similar).  You must
+provide all states as required by the combination of all
+endpoints.}
+
+\item{\code{package}}{Either a package name or environment (optional,
+usually we'll find the right thing)}
 }
 \if{html}{\out{</div>}}
 }
