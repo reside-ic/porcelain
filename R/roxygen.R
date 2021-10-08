@@ -45,7 +45,6 @@ package_endpoints <- function(package) {
 }
 
 
-## TODO: we really need a way of getting 'validate' through here
 porcelain_package_endpoint <- function(package, method, path, state = NULL,
                                        validate = NULL) {
   endpoint <- package_endpoints(package)[[paste(method, path)]]
@@ -88,7 +87,7 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
       ## that function definitely does not exist in env. So we need to
       ## do some faff here.  I am not 100% sure that this is always
       ## desirable though - do we get this NULL type in other cases?
-      target <- roxy_get_target(block, env)
+      target <- roxy_get_target(block, env, tags[[1]])
       endpoint <- roxy_process(tags[[1]], target, env)
       results <- c(results, list(endpoint))
     }
@@ -104,26 +103,27 @@ roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
 }
 
 
-roxy_get_target <- function(block, env) {
-  if (inherits(block, "roxy_block_NULL")) {
-    ## Testing mode, I believe - this is not well documented in
-    ## roxygen, and worth checking I think.  This probably should
-    ## never end up called outside of the porcelain tests, and would
-    ## fail in all sorts of bad ways in a package for example.
+## This function has been determined emperically, as roxygen behaves
+## quite differently here in testing mode and when loading a package
+## for real.  The main aim of this function is to ensure we try known
+## good ways of getting the target function and throw an error that
+## locates the problematic block when not.
+roxy_get_target <- function(block, env, tag) {
+  target <- NULL
+  if (!is.null(block$object$alias)) {
+    target <- block$object$alias
+  } else if (!is.null(block$call) && length(block$call) == 3) {
     eval(block$call, env)
-    as.character(block$call[[2]])
-  } else {
-    ## TODO: work out what our failure mode is here; are there cases
-    ## where this will be NULL, e.g. if used with an anonymous
-    ## function or a function name (not value)
-    block$object$alias
+    target <- as.character(block$call[[2]])
   }
+  if (is.null(target) || !is.function(env[[target]])) {
+    roxy_error("Could not determine endpoint target", tag$file, tag$line)
+  }
+  target
 }
 
+
 roxy_process <- function(tag, target, env) {
-  if (!is.function(env[[target]])) {
-    stop("Target is not a function")
-  }
   method <- tag$val$method
   path <- tag$val$path
   message(sprintf("- %s %s (%s:%d)", method, path,

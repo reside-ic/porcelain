@@ -107,3 +107,9 @@ roxygen_to_env <- function(text, quiet = TRUE) {
   source_text(code, env)
   env
 }
+
+
+skip_if_no_roxygen <- function() {
+  testthat::skip_if_not_installed("roxygen2")
+  testthat::skip_if_not_installed("pkgload")
+}

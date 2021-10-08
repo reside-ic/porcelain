@@ -347,3 +347,24 @@ test_that("refuse to overwrite code that we did not write", {
   roxy_output(letters, tmp)
   expect_equal(readLines(tmp), c(header, letters))
 })
+
+
+test_that("Identify block if can't find target function", {
+  skip_if_no_roxygen()
+
+  dest <- tempfile()
+  on.exit(unlink(dest, recursive = TRUE))
+  copy_directory(
+    system_file("examples/add2", package = "porcelain"),
+    dest)
+
+  path_r <- file.path(dest, "R", "api.R")
+  code <- readLines(path_r)
+  i <- seq_len(grep("^add <- function", code) - 1L)
+
+  writeLines(c(code[i], "NULL", "", code[-i]),
+             path_r)
+  expect_error(
+    silently(roxygen2::roxygenise(dest)),
+    "Could not determine endpoint target.*api\\.R:1")
+})
