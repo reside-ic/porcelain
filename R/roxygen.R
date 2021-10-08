@@ -209,7 +209,7 @@ roxy_process_input_body <- function(inputs, tag) {
   if (fn %in% names(map)) {
     fn <- map[[fn]]
   } else {
-    stop(sprintf("Unknown body type '%s'", type))
+    stop(sprintf("Unknown body type '%s'", fn))
   }
   args <- paste(c(dquote(names(inputs)),
                   vcapply(input[-1], deparse)), collapse = ", ")

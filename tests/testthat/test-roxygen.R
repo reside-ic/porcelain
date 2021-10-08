@@ -286,6 +286,16 @@ test_that("sensible error if returning type is impossible", {
 })
 
 
+test_that("sensible error if body type is impossible", {
+  text <- c("#' @porcelain POST / => json",
+            "#'   body data :: other",
+            "f <- function(data) { runif(10) }")
+  expect_error(
+    roxygen_to_env(text),
+    "Unknown body type 'other'")
+})
+
+
 test_that("Control validation in endpoints", {
   root <- system_file("examples/add/inst/schema", package = "porcelain")
   text <- c("#' @porcelain",
