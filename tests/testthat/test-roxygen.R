@@ -4,28 +4,28 @@ test_that("Can parse basic endpoint", {
     list(method = "GET",
          path = "/",
          inputs = NULL,
-         returning = list("porcelain::porcelain_returning_json")))
+         returning = list("json")))
 })
 
 
 test_that("Parse return type", {
-  json <- "porcelain::porcelain_returning_json"
   expect_equal(roxy_parse_returning("json"),
-               list(json))
+               list("json"))
   expect_equal(roxy_parse_returning("json()"),
-               list(json))
+               list("json"))
   expect_equal(roxy_parse_returning("json(schema)"),
-               list(json, "schema"))
+               list("json", "schema"))
   expect_equal(roxy_parse_returning("json('schema')"),
-               list(json, "schema"))
+               list("json", "schema"))
   expect_equal(roxy_parse_returning("json(schema, status_code = 200)"),
-               list(json, "schema", status_code = 200))
+               list("json", "schema", status_code = 200))
   expect_error(
     roxy_parse_returning("json(schema", "myfile", 100),
     "Invalid syntax for @porcelain returning argument.*myfile:100")
-  expect_error(
-    roxy_parse_returning("other", "myfile", 100),
-    "Invalid returning type.*myfile:100")
+  ## This would not work in practice but will throw later on during
+  ## processing
+  expect_equal(roxy_parse_returning("other", "myfile", 100),
+               list("other"))
 })
 
 
@@ -35,21 +35,21 @@ test_that("Accept inputs", {
     list(method = "GET",
          path = "/",
          inputs = list(query = list(x = "int")),
-         returning = list("porcelain::porcelain_returning_json")))
+         returning = list("json")))
   expect_mapequal(
     roxy_parse_string("GET / => json\nquery x :: int\nquery y :: double",
                       "<text>", 1),
     list(method = "GET",
          path = "/",
          inputs = list(query = list(x = "int", y = "double")),
-         returning = list("porcelain::porcelain_returning_json")))
+         returning = list("json")))
   expect_mapequal(
     roxy_parse_string("POST /path => json\nquery x :: int\nbody arg :: json",
                       "<text>", 1L),
     list(method = "POST", path = "/path",
          inputs = list(query = list(x = "int"),
                        body = list(arg = list("json"))),
-         returning = list("porcelain::porcelain_returning_json")))
+         returning = list("json")))
 })
 
 
@@ -79,7 +79,7 @@ test_that("Parse from roxygen block", {
   expect_mapequal(
     block[[1]]$tags[[1]]$val,
     list(method = "GET", path = "/", inputs = NULL,
-         returning = list("porcelain::porcelain_returning_json", "schema")))
+         returning = list("json", "schema")))
 })
 
 
@@ -274,6 +274,15 @@ test_that("sensible error if endpoint not found in package for testing", {
   expect_error(
     porcelain_package_endpoint(env, "GET", "/endpoint"),
     "Did not find roxygen-based endpoint 'GET /endpoint' in package")
+})
+
+
+test_that("sensible error if returning type is impossible", {
+  text <- c("#' @porcelain GET / => other",
+            "f <- function() { runif(10) }")
+  expect_error(
+    roxygen_to_env(text),
+    "Did not find returning function 'other'")
 })
 
 

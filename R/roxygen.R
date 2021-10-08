@@ -229,13 +229,22 @@ roxy_process_input_state <- function(inputs) {
 
 
 roxy_process_returning <- function(returning, env, tag) {
+  map <- c(
+    json = "porcelain::porcelain_returning_json",
+    binary = "porcelain::porcelain_returning_binary",
+    generic = "porcelain::porcelain_returning")
   fn <- returning[[1]]
+  if (!(fn %in% names(map))) {
+    roxy_error(sprintf("Did not find returning function '%s'", fn),
+               tag$file, tag$line)
+  }
+
   args <- vcapply(returning[-1], deparse)
   i <- nzchar(names(args))
   if (any(i)) {
     args[i] <- sprintf("%s = %s", names(args)[i], args[i])
   }
-  sprintf("%s(%s)", fn, paste(args, collapse = ", "))
+  sprintf("%s(%s)", map[[fn]], paste(args, collapse = ", "))
 }
 
 

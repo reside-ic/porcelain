@@ -45,19 +45,8 @@ roxy_parse_string <- function(text, file, line) {
 
 
 roxy_parse_returning <- function(text, file, line) {
-  ret <- parse_expr(text, FALSE, "@porcelain returning argument",
-                    file, line)
-  map <- c(
-    json = "porcelain::porcelain_returning_json",
-    binary = "porcelain::porcelain_returning_binary",
-    generic = "porcelain::porcelain_returning")
-  fn <- ret[[1]]
-  if (!(fn %in% names(map))) {
-    roxy_error(sprintf("Invalid returning type '%s'", fn),
-               file, line)
-  }
-  ret[[1]] <- map[[fn]]
-  ret
+  parse_expr(text, FALSE, "@porcelain returning argument",
+             file, line)
 }
 
 
