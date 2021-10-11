@@ -20,5 +20,9 @@ json
 png
 preserialisation
 rds
+roclet
+roclets
+roxygen
+roxygenise
 standalone
 tradeoffs

@@ -1,0 +1,205 @@
+---
+title: "roxygen"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{roxygen}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+show_file <- function(path, lang) {
+  writeLines(c(paste0("```", lang), readLines(path), "```"))
+}
+porcelain_file <- function(path) {
+  system.file(path, package = "porcelain", mustWork = TRUE)
+}
+```
+
+The approach described in `vignette("porcelain")` allows maximum flexibility, but `porcelain` also allows a less programmatic, more declarative approach via custom roxygen tags.  This approach returns to the original expressiveness of `plumber`, but with the type-checking and testability of `porcelain`.
+
+## Prerequisites
+
+You must first update your `DESCRIPTION` file to to add the line
+
+```
+Roxygen: list(roclets = c("rd", "namespace", "porcelain::porcelain_roclet"))
+```
+
+or if you are using roxygen-with-markdown
+
+```
+Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "porcelain::porcelain_roclet"))
+```
+
+The important part is the `porcelain::porcelain_roclet` entry in "roclets" which will activate the `@porcelain` tag that we will use.
+
+## Declaring a simple endpoint
+
+Consider our simple `add` function from `vignette("porcelain")`, which takes numeric query arguments and returns a number.  We can write
+
+```r
+#' @porcelain
+#'   GET / => json("numeric")
+#'   query a :: numeric
+#'   query b :: numeric
+add <- function(a, b) {
+  jsonlite::unbox(a + b)
+}
+
+api <- function(validate = FALSE) {
+  api <- porcelain::porcelain$new(validate = validate)
+  api$handle_package()
+  api
+}
+```
+
+Then running `devtools::document()` (or similar) will generate the file `R/porcelain.R` with a hook function that contains code that will be included when running the `handle_package` method.
+
+## The basic syntax
+
+The basic tag parts required are
+
+```r
+#' @porcelain <METHOD> <path> => <returning>
+```
+
+This string can be split across many lines and additional whitespace is ignored, so for the simple example above, we could equivalently write
+
+```
+#' @porcelain
+#'   GET /add/<a:int>/<b:int> =>
+#'     json("numeric")
+```
+
+The arguments are all passed to `porcelain::porcelain_endpoint`; the method and path are passed directly as `method` and `path`. The `=>` symbol exists to read "returning" and help mark the end of the path.
+
+The "returning" argument is transformed before being passed through. In the example above `json("numeric")` became `porcelain::porcelain_returning_json("numeric")`
+
+We translate with the rule:
+
+* `json`: `porcelain::porcelain_returning_json`
+* `binary`: `porcelain::porcelain_returning_binary`
+* `generic` `porcelain::porcelain_returning`
+
+If if no arguments are provided we perform a call with no arguments (e.g., `GET /path => json` would use `porcelain::porcelain_returning_json()`). If arguments are given, then we will attempt to auto-quote these.
+
+## Adding inputs
+
+The above function used query parameters to provide inputs to the target function; you can specify query, body and bound state this way (path parameters remain in the path, as before).
+
+All input parameters have the format
+
+```
+#' <location> <name> :: <description>
+```
+
+where
+
+* `<location>` is one of `query`, `body` or `state`
+* `<name>` is the name of the argument in the target function that you will send the input to
+* `<description>` is one or more arguments that describes the input further
+
+ The interface here is a little different to the underlying porcelain functions (`porcelain::porcelain_input_query`, `porcelain::porcelain_input_body` and `porcelain::porcelain_state`) in that every input parameter is given individually even if you might treat these together in the functions.  For example, for two input queries we used two lines.
+
+**For query inputs**, the description will be one of the valid types for `porcelain::porcelain_input_query`; `logical`, `integer`, `numeric` or `string`, for example an endpoint accepting two query inputs:
+
+```r
+#' @porcelain
+#'   POST /path => json(OutputSchema)
+#'   query a :: numeric
+#'   query b :: integer
+f <- function(a, b) {
+  # implementation
+}
+```
+
+**For a json body** it is likely that you will want to add a schema
+
+```r
+#' @porcelain
+#'   POST /path => json(OutputSchema)
+#'   query a :: numeric
+#'   query b :: integer
+#'   body data :: json(InputSchema)
+f <- function(a, b, data) {
+  ...
+}
+```
+
+**For a binary body** you can optionally specify the incoming mime type, for example
+
+```
+#'   body data :: binary(application/zip)
+```
+
+would refer to a zip input.
+
+## Binding state
+
+Finally consider binding state into the API
+
+## Testing
+
+Because the code is generated into the porcelain.R file you need to use `porcelain::porcelain_package_endpoint` in order to extract the raw endpoint object to take advantage of porcelain's test helper.
+
+```r
+endpoint <- porcelain::porcelain_package_endpoint("mypkg", "GET", "/path")
+endpoint$run()
+```
+
+## An example
+
+We include a very small complete example
+
+```{r, include = FALSE}
+tmp <- tempfile()
+dir.create(tmp, FALSE, TRUE)
+file.copy(porcelain_file("examples/add2"), tmp, recursive = TRUE)
+path <- file.path(tmp, "add2")
+```
+
+
+```{r, echo = FALSE, comment = NA}
+withr::with_dir(dirname(path), fs::dir_tree("add2"))
+```
+
+As for the simple example in `vignette("porcelain")` we have written the api into a single file `R/api.R` but this could be split over as many files as you prefer
+
+```{r, echo = FALSE, results = "asis"}
+show_file(file.path(path, "R/api.R"), "r")
+```
+
+Our `DESCRIPTION` file includes the roxygen2 setup
+
+```{r, echo = FALSE, results = "asis"}
+show_file(file.path(path, "DESCRIPTION"), "")
+```
+
+We include a small json schema `inst/schema/numeric.json`:
+
+```{r, echo = FALSE, results = "asis"}
+show_file(file.path(path, "inst/schema/numeric.json"), "json")
+```
+
+Running `roxygen2::roxygenize(path)` on the file will build the interface
+
+```{r}
+roxygen2::roxygenize(path)
+```
+
+The contents now include `R/porcelain.R` (and `man`, created by roxygen2 but empty)
+
+```{r, echo = FALSE, comment = NA}
+withr::with_dir(dirname(path), fs::dir_tree("add2"))
+```
+
+The `R/porcelain.R` file contains automatically-generated endpoint definitions
+
+```{r, echo = FALSE, results = "asis"}
+show_file(file.path(path, "R/porcelain.R"), "r")
+```
