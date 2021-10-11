@@ -59,7 +59,7 @@ porcelain_package_endpoint <- function(package, method, path, state = NULL,
 
 
 ##' @rawNamespace S3method(roxygen2::roxy_tag_parse, roxy_tag_porcelain)
-roxy_tag_parse.roxy_tag_porcelain <- function(x) {
+roxy_tag_parse.roxy_tag_porcelain <- function(x) { # nolint
   ## See roxygen_parse.R for the bulk of the implementation.
   x$val <- roxy_parse_string(x$raw, x$file, x$line)
   x
@@ -67,7 +67,7 @@ roxy_tag_parse.roxy_tag_porcelain <- function(x) {
 
 
 ##' @rawNamespace S3method(roxygen2::roclet_process, roclet_porcelain)
-roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) {
+roclet_process.roclet_porcelain <- function(x, blocks, env, base_path) { #nolint
   results <- list()
   message("Adding porcelain endpoints:")
 
@@ -165,7 +165,7 @@ roxy_process <- function(tag, target, env) {
 
 
 ##' @rawNamespace S3method(roxygen2::roclet_output, roclet_porcelain)
-roclet_output.roclet_porcelain <- function(x, results, base_path, ...) {
+roclet_output.roclet_porcelain <- function(x, results, base_path, ...) {#nolint
   roxy_output(results, file.path(base_path, "R", "porcelain.R"))
   invisible(NULL)
 }

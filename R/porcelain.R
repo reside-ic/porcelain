@@ -64,9 +64,6 @@ porcelain <- R6::R6Class(
       endpoints <- package_endpoints(package)
 
       if (!is.null(state)) {
-        ## TODO: it would be nice to check which are required here and
-        ## fail early with a nice error message but we don't return
-        ## that anywhere yet.
         assert_named(state, unique = TRUE)
       }
 

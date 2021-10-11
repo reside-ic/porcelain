@@ -12,18 +12,12 @@
 roxy_parse_string <- function(text, file, line) {
   re <- "^\\s*([A-Z]+)\\s+([^ =]+)\\s*=>\\s*(.+?)(\n|$)(.*)"
   newline <- which(strsplit(text, NULL)[[1]] == "\n")
-  len <- length(newline) + 1L
-  line_end <- line + len - 1L
 
   if (!grepl(re, text)) {
-    ## TODO: use roxy_error
-    line_range <- if (len == 1) line else sprintf("%d-%d", line, line_end)
-    stop(paste(
-      "Failed to find endpoint description in @porcelain tag",
-      "  - must match <VERB> <PATH> => <RETURNING>",
-      sprintf("  - error occured at %s:%s", file, line_range),
-      sep = "\n"),
-      call. = FALSE)
+    roxy_error(paste(
+      "Failed to find endpoint description in @porcelain tag; must match",
+      "    <VERB> <PATH> => <RETURNING>",
+      sep = "\n"), file, line)
   }
 
   m <- regexec(re, text)[[1L]]
@@ -51,7 +45,8 @@ roxy_parse_returning <- function(text, file, line) {
 
 
 roxy_parse_inputs <- function(text, file, line) {
-  ## TODO: Can't allow multiline inputs here without some work
+  ## NOTE: Can't allow multiline inputs here without some work, but
+  ## let's see how annoying that is.
   inputs <- trimws(strsplit(text, "\n")[[1]])
   line <- line + seq_along(inputs) - 1L
   i <- nzchar(inputs)
