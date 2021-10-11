@@ -98,8 +98,9 @@ test_that("Nice error on parse failure", {
     sep = "\n")
   err <- expect_error(
     roxygen2::parse_text(text))
-  expect_match(err$message,
-               "error occured at <text>:1-3", fixed = TRUE)
+  expect_match(
+    err$message,
+    "Failed to find endpoint description in @porcelain tag.*<text>:1")
 })
 
 
