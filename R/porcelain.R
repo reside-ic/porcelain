@@ -44,7 +44,7 @@ porcelain <- R6::R6Class(
       }
     },
 
-    ##' @description Handle package endpoints
+    ##' @description Include package endpoints
     ##'
     ##' @param state A named list of state, if your package requires
     ##'   any state-binding endpoints. Typically these will be mutable
@@ -54,7 +54,7 @@ porcelain <- R6::R6Class(
     ##'
     ##' @param package Either a package name or environment (optional,
     ##'   usually we'll find the right thing)
-    handle_package = function(state = NULL, package = NULL) {
+    include_package_endpoints = function(state = NULL, package = NULL) {
       env <- parent.frame()
       calls <- sys.calls()
       if (is.null(package)) {

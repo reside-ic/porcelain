@@ -165,7 +165,7 @@ test_that("Create roxygen endpoint with query parameters", {
   expect_equal(res$status_code, 200)
 
   api <- porcelain$new()
-  api$handle_package(package = env)
+  api$include_package_endpoints(package = env)
   res_api <- api$request("GET", "/sqrt", query = list(x = 4))
   expect_equal(res_api$status, 200)
   expect_mapequal(from_json(res_api$body),
@@ -192,7 +192,7 @@ test_that("Create endpoint that accepts binary input", {
   expect_equal(res$status_code, 200)
 
   api <- porcelain$new()
-  api$handle_package(package = env)
+  api$include_package_endpoints(package = env)
   res_api <- api$request("POST", "/path", body = data)
   expect_equal(res_api$status, 200)
   expect_mapequal(from_json(res_api$body),
@@ -233,7 +233,7 @@ test_that("Create roxygen endpoint with state", {
   expect_equal(res$status_code, 200)
 
   api <- porcelain$new()
-  api$handle_package(state, package = env)
+  api$include_package_endpoints(state, package = env)
   res_api <- api$request("GET", "/count")
   expect_equal(res_api$status, 200)
   expect_mapequal(from_json(res_api$body),

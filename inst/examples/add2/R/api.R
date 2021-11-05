@@ -8,6 +8,6 @@ add <- function(a, b) {
 
 api <- function(validate = FALSE) {
   api <- porcelain::porcelain$new(validate = validate)
-  api$handle_package()
+  api$include_package_endpoints()
   api
 }

@@ -53,12 +53,12 @@ add <- function(a, b) {
 
 api <- function(validate = FALSE) {
   api <- porcelain::porcelain$new(validate = validate)
-  api$handle_package()
+  api$include_package_endpoints()
   api
 }
         ```
 
-Then running `devtools::document()` (or similar) will generate the file `R/porcelain.R` with a hook function that contains code that will be included when running the `handle_package` method.
+Then running `devtools::document()` (or similar) will generate the file `R/porcelain.R` with a hook function that contains code that will be included when running the `include_package_endpoints` method.
 
 ## The basic syntax
 
@@ -210,12 +210,12 @@ we set this up.  We need to pass the state through when creating the API:
 api <- function(validate = FALSE) {
   state <- list(counter = counter$new())
   api <- porcelain::porcelain$new(validate = validate)
-  api$handle_package(state)
+  api$include_package_endpoints(state)
   api
 }
 ```
 
-Here our api creation function creates a new zeroed counter (you could accept one as an argument of course), puts that into a list with name `counter`, corresponding to the rhs of the roxygen comment, and passes that through to `handle_package`.
+Here our api creation function creates a new zeroed counter (you could accept one as an argument of course), puts that into a list with name `counter`, corresponding to the rhs of the roxygen comment, and passes that through to `include_package_endpoints`.
 
 ## Testing
 

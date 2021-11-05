@@ -15,7 +15,7 @@ plumber API are documented here.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{porcelain$new()}}
-\item \href{#method-handle_package}{\code{porcelain$handle_package()}}
+\item \href{#method-include_package_endpoints}{\code{porcelain$include_package_endpoints()}}
 \item \href{#method-handle}{\code{porcelain$handle()}}
 \item \href{#method-request}{\code{porcelain$request()}}
 \item \href{#method-clone}{\code{porcelain$clone()}}
@@ -86,12 +86,12 @@ given, then we will log at the beginning and end of the request.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-handle_package"></a>}}
-\if{latex}{\out{\hypertarget{method-handle_package}{}}}
-\subsection{Method \code{handle_package()}}{
-Handle package endpoints
+\if{html}{\out{<a id="method-include_package_endpoints"></a>}}
+\if{latex}{\out{\hypertarget{method-include_package_endpoints}{}}}
+\subsection{Method \code{include_package_endpoints()}}{
+Include package endpoints
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{porcelain$handle_package(state = NULL, package = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{porcelain$include_package_endpoints(state = NULL, package = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
