@@ -56,7 +56,7 @@ api <- function(validate = FALSE) {
   api$handle_package()
   api
 }
-```
+        ```
 
 Then running `devtools::document()` (or similar) will generate the file `R/porcelain.R` with a hook function that contains code that will be included when running the `handle_package` method.
 
@@ -139,9 +139,83 @@ f <- function(a, b, data) {
 
 would refer to a zip input.
 
+No special markup is required for path parameters, include these using plumber's syntax
+
+```r
+#' @porcelain
+#'   POST /path/<a>/<b:int> => json(OutputSchema)
+f <- function(a, b) {
+  ...
+}
+```
+
 ## Binding state
 
-Finally consider binding state into the API
+Finally consider binding state into the API.  We need to do this where we have some mutable state in the API that endpoints (typically `POST` or `DELETE`) will modify.  Examples include database connections or queues.
+
+Suppose that you have an endpoint that will count the number of times that it has been accessed, returning that number. We might use a counter like this:
+
+```{r}
+counter <- R6::R6Class(
+  "counter",
+  private = list(n = 0),
+  public = list(
+    value = function() {
+      private$n
+    },
+    increase = function() {
+      private$n <- private$n + 1
+      private$n
+    }))
+```
+
+Outside of porcelain we can use this like so:
+
+```{r}
+obj <- counter$new()
+obj$increase()
+obj$increase()
+obj$value()
+```
+
+We can write a set of endpoints that that share a `counter` object like this, and add roxygen comments to configure it:
+
+```r
+#' @porcelain
+#'   GET /counter/value => json(number)
+#'   state obj :: counter
+increase <- function(obj) {
+  jsonlite::unbox(obj$value())
+}
+
+#' @porcelain
+#'   POST /counter/increase => json(number)
+#'   state obj :: counter
+value <- function(obj) {
+  jsonlite::unbox(obj$increase())
+}
+```
+
+Here we have a pair of endpoints; the first `GET /counter/value` will return the value of the counter and `POST /counter/increase` will increase its value by one and return that. We could have other methods like `POST /counter/reset` to reset the counter, but the key thing is that all endpoints must *share the same counter* and to do that we must pass it to the api when we create it.
+
+Here we say that doing `POST /counter` will return a number. The endpoint takes a `counter` object as above, but that won't come from the HTTP request - it will be bound into the API, so it might be shared.  By adding the roxygen comment
+
+```
+#'   state obj :: counter
+```
+
+we set this up.  We need to pass the state through when creating the API:
+
+```
+api <- function(validate = FALSE) {
+  state <- list(counter = counter$new())
+  api <- porcelain::porcelain$new(validate = validate)
+  api$handle_package(state)
+  api
+}
+```
+
+Here our api creation function creates a new zeroed counter (you could accept one as an argument of course), puts that into a list with name `counter`, corresponding to the rhs of the roxygen comment, and passes that through to `handle_package`.
 
 ## Testing
 

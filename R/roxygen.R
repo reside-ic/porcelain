@@ -3,7 +3,7 @@
 ## (roxy_tag_parse, roclet_process and roclet_output) then register
 ## the S3 methods with '@export' as normal.  However, this requires
 ## that we have roxygen2 available at runtime which is pretty weird
-## given we only need it when running the package. From R 3.6.0 we can
+## given we only need it when documenting the package. From R 3.6.0 we can
 ## use the syntax below to register the methods when roxygen2 is
 ## loaded, which requires that we inject some raw content into the
 ## namespace (see R-exts).  Each of these is above the method used so
