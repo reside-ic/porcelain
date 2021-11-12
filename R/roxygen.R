@@ -27,6 +27,42 @@ porcelain_roclet <- function() {
 }
 
 
+##' Find an endpoint defined implicitly through roxygen comments
+##' (rather than explicitly via writing
+##' [porcelain::porcelain_endpoint].
+##'
+##' @title Find roxygen-defined endpoint
+##'
+##' @param package The name of the package to look in, provided as a
+##'   string or as a namespace
+##'
+##' @param method The HTTP method (i.e., verb), such as `GET` or
+##'   `POST`, as a string
+##'
+##' @param path The path of the method (e.g., `/my/path`)
+##'
+##' @param state A list of state to bind into the method, if your
+##'   endpoint requires any
+##'
+##' @param validate Logical, indicating if the method should be
+##'   created with schema validation enabled.
+##'
+##' @return The endpoint, a [porcelain::porcelain_endpoint] object
+##'
+##' @export
+porcelain_package_endpoint <- function(package, method, path, state = NULL,
+                                       validate = NULL) {
+  endpoint <- package_endpoints(package)[[paste(method, path)]]
+  if (is.null(endpoint)) {
+    pkg <- packageName(package) %||% "<anonymous>"
+    stop(sprintf(
+      "Did not find roxygen-based endpoint '%s %s' in package '%s'",
+      method, path, pkg))
+  }
+  endpoint(state, validate)
+}
+
+
 package_endpoints <- function(package) {
   if (is.environment(package)) {
     env <- package
@@ -42,19 +78,6 @@ package_endpoints <- function(package) {
     stop(sprintf("No endpoints found in package '%s'", pkg))
   }
   fn()
-}
-
-
-porcelain_package_endpoint <- function(package, method, path, state = NULL,
-                                       validate = NULL) {
-  endpoint <- package_endpoints(package)[[paste(method, path)]]
-  if (is.null(endpoint)) {
-    pkg <- packageName(package) %||% "<anonymous>"
-    stop(sprintf(
-      "Did not find roxygen-based endpoint '%s %s' in package '%s'",
-      method, path, pkg))
-  }
-  endpoint(state, validate)
 }
 
 

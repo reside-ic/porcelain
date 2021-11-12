@@ -56,7 +56,7 @@ api <- function(validate = FALSE) {
   api$include_package_endpoints()
   api
 }
-        ```
+```
 
 Then running `devtools::document()` (or similar) will generate the file `R/porcelain.R` with a hook function that contains code that will be included when running the `include_package_endpoints` method.
 
