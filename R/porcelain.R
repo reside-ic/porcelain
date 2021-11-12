@@ -59,7 +59,7 @@ porcelain <- R6::R6Class(
       calls <- sys.calls()
       if (is.null(package)) {
         env <- parent.frame()
-        package <- packageName(env)
+        package <- package_name(env)
       }
       endpoints <- package_endpoints(package)
 

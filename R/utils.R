@@ -265,3 +265,8 @@ list_call <- function(fn, x) {
 
   c(paste0(fn, "("), unlist(x))
 }
+
+
+package_name <- function(env) {
+  utils::packageName(env)
+}

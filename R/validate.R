@@ -45,7 +45,7 @@ find_schema <- function(name, path) {
 
 schema_root <- function(root) {
   if (is.environment(root)) {
-    package <- utils::packageName(root)
+    package <- package_name(root)
     if (is.null(package)) {
       return(NULL)
     }

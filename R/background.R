@@ -104,7 +104,7 @@ porcelain_background <- R6::R6Class(
       ## detection fails; the general solution would be a vector of
       ## package names to check, rather than relying on
       ## the package name found in environment(create)
-      pkg <- packageName(environment(private$create))
+      pkg <- package_name(environment(private$create))
       if (is_pkgload_package(pkg)) {
         if (private$verbose) {
           message(sprintf("Using development version of '%s' via pkgload", pkg))

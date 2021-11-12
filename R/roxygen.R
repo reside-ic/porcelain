@@ -54,7 +54,7 @@ porcelain_package_endpoint <- function(package, method, path, state = NULL,
                                        validate = NULL) {
   endpoint <- package_endpoints(package)[[paste(method, path)]]
   if (is.null(endpoint)) {
-    pkg <- packageName(package) %||% "<anonymous>"
+    pkg <- package_name(package) %||% "<anonymous>"
     stop(sprintf(
       "Did not find roxygen-based endpoint '%s %s' in package '%s'",
       method, path, pkg))
@@ -71,7 +71,7 @@ package_endpoints <- function(package) {
   }
   fn <- env[["__porcelain__"]]
   if (is.null(fn)) {
-    pkg <- packageName(env)
+    pkg <- package_name(env)
     if (is.null(pkg)) {
       stop("No endpoints found: input is not a package name or namespace")
     }
