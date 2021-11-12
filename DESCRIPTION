@@ -15,7 +15,7 @@ LazyData: true
 Language: en-GB
 URL: https://github.com/reside-ic/porcelain
 BugReports: https://github.com/reside-ic/porcelain/issues
-Requires: R (>= 3.6.0)
+Depends: R (>= 3.6.0)
 Imports:
     R6,
     V8,
