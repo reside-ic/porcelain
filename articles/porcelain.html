@@ -59,6 +59,9 @@
 <li>
       <a href="../articles/cookbook.html">cookbook</a>
     </li>
+    <li>
+      <a href="../articles/roxygen.html">roxygen</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -109,7 +112,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.rplumber.io">plumber</a></span><span class="op">)</span>
 <span class="co"># 'plumber.R' is the location of the file shown above</span>
-<span class="fu"><a href="https://www.rplumber.io/reference/pr.html">pr</a></span><span class="op">(</span><span class="st">"plumber.R"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="fu"><a href="https://www.rplumber.io/reference/pr.html">pr</a></span><span class="op">(</span><span class="st">"plumber.R"</span><span class="op">)</span> <span class="op"><a href="https://www.rplumber.io/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://www.rplumber.io/reference/pr_run.html">pr_run</a></span><span class="op">(</span>port<span class="op">=</span><span class="fl">8000</span><span class="op">)</span></code></pre></div>
 <p>and we can interact with it using <code>curl</code>:</p>
 <pre><code>curl -w"\n" --data "a=4&amp;b=3" "http://localhost:8000/sum"

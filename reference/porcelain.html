@@ -102,6 +102,9 @@ plumber API are documented here." />
     <li>
       <a href="../articles/cookbook.html">cookbook</a>
     </li>
+    <li>
+      <a href="../articles/roxygen.html">roxygen</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -148,6 +151,7 @@ plumber API are documented here.</p>
 
 <ul>
 <li><p><a href='#method-new'><code>porcelain$new()</code></a></p></li>
+<li><p><a href='#method-include_package_endpoints'><code>porcelain$include_package_endpoints()</code></a></p></li>
 <li><p><a href='#method-handle'><code>porcelain$handle()</code></a></p></li>
 <li><p><a href='#method-request'><code>porcelain$request()</code></a></p></li>
 <li><p><a href='#method-clone'><code>porcelain$clone()</code></a></p></li>
@@ -206,6 +210,23 @@ continuous integration systems.</p></dd>
 
 <dt><code>logger</code></dt><dd><p>Optional logger, from the <code>lgr</code> package.  If
 given, then we will log at the beginning and end of the request.</p></dd>
+
+</dl><p></div></p>
+<p><hr>
+<a id="method-include_package_endpoints"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>include_package_endpoints()</code></h3>
+<p>Include package endpoints</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p><div class="r"></p><pre><span class='va'>porcelain</span><span class='op'>$</span><span class='fu'>include_package_endpoints</span><span class='op'>(</span>state <span class='op'>=</span> <span class='cn'>NULL</span>, package <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre><p></div></p>
+
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
+<dt><code>state</code></dt><dd><p>A named list of state, if your package requires
+any state-binding endpoints. Typically these will be mutable
+state (database connections, job queues, or similar).  You must
+provide all states as required by the combination of all
+endpoints.</p></dd>
+
+<dt><code>package</code></dt><dd><p>Either a package name or environment (optional,
+usually we'll find the right thing)</p></dd>
 
 </dl><p></div></p>
 <p><hr>
