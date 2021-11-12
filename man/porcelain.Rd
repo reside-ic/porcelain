@@ -15,6 +15,7 @@ plumber API are documented here.
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{porcelain$new()}}
+\item \href{#method-include_package_endpoints}{\code{porcelain$include_package_endpoints()}}
 \item \href{#method-handle}{\code{porcelain$handle()}}
 \item \href{#method-request}{\code{porcelain$request()}}
 \item \href{#method-clone}{\code{porcelain$clone()}}
@@ -80,6 +81,30 @@ continuous integration systems.}
 
 \item{\code{logger}}{Optional logger, from the \code{lgr} package.  If
 given, then we will log at the beginning and end of the request.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-include_package_endpoints"></a>}}
+\if{latex}{\out{\hypertarget{method-include_package_endpoints}{}}}
+\subsection{Method \code{include_package_endpoints()}}{
+Include package endpoints
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{porcelain$include_package_endpoints(state = NULL, package = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{state}}{A named list of state, if your package requires
+any state-binding endpoints. Typically these will be mutable
+state (database connections, job queues, or similar).  You must
+provide all states as required by the combination of all
+endpoints.}
+
+\item{\code{package}}{Either a package name or environment (optional,
+usually we'll find the right thing)}
 }
 \if{html}{\out{</div>}}
 }

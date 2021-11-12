@@ -13,8 +13,8 @@ porcelain <- R6::R6Class(
     validate = NULL
   ),
 
-  ##' @description Create a porcelain object
   public = list(
+    ##' @description Create a porcelain object
     ##'
     ##' @param ... Parameters passed to \code{\link{plumber}}
     ##'
@@ -42,6 +42,35 @@ porcelain <- R6::R6Class(
         self$registerHook("postroute", porcelain_log_postroute(logger))
         self$registerHook("postserialize", porcelain_log_postserialize(logger))
       }
+    },
+
+    ##' @description Include package endpoints
+    ##'
+    ##' @param state A named list of state, if your package requires
+    ##'   any state-binding endpoints. Typically these will be mutable
+    ##'   state (database connections, job queues, or similar).  You must
+    ##'   provide all states as required by the combination of all
+    ##'   endpoints.
+    ##'
+    ##' @param package Either a package name or environment (optional,
+    ##'   usually we'll find the right thing)
+    include_package_endpoints = function(state = NULL, package = NULL) {
+      env <- parent.frame()
+      calls <- sys.calls()
+      if (is.null(package)) {
+        env <- parent.frame()
+        package <- package_name(env)
+      }
+      endpoints <- package_endpoints(package)
+
+      if (!is.null(state)) {
+        assert_named(state, unique = TRUE)
+      }
+
+      for (e in endpoints) {
+        self$handle(e(state, private$validate))
+      }
+      invisible(self)
     },
 
     ##' @description Handle an endpoint

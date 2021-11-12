@@ -53,3 +53,63 @@ test_logger_read <- function(logger) {
   lapply(readLines(logger$appenders$json$destination), jsonlite::fromJSON,
          simplifyDataFrame = FALSE)
 }
+
+
+copy_directory <- function(src, as) {
+  files <- dir(src, all.files = TRUE, no.. = TRUE, full.names = TRUE)
+  dir.create(as, FALSE, TRUE)
+  ok <- file.copy(files, as, recursive = TRUE)
+  if (!all(ok)) {
+    stop("Error copying files")
+  }
+}
+
+
+load_minimal <- function(path) {
+  testthat::skip_if_not_installed("pkgload")
+  pkgload::load_all(path,
+                    export_all = FALSE, attach_testthat = FALSE,
+                    warn_conflicts = FALSE, quiet = TRUE)
+}
+
+
+source_text <- function(code, env) {
+  eval(parse(text = code), env)
+}
+
+
+make_counter <- function() {
+  e <- environment()
+  e$n <- 0L
+  function() {
+    e$n <- e$n + 1L
+    e$n
+  }
+}
+
+
+silently <- function(expr) {
+  capture.output(suppressMessages(res <- force(expr)))
+  res
+}
+
+
+roxygen_to_env <- function(text, quiet = TRUE) {
+  env <- new.env()
+  blocks <- roxygen2::parse_text(text, env = env)
+  roc <- porcelain::porcelain_roclet()
+  if (quiet) {
+    code <- silently(
+      roxygen2::roclet_process(roc, blocks, env, base_path = "."))
+  } else {
+    code <- roxygen2::roclet_process(roc, blocks, env, base_path = ".")
+ }
+  source_text(code, env)
+  env
+}
+
+
+skip_if_no_roxygen <- function() {
+  testthat::skip_if_not_installed("roxygen2")
+  testthat::skip_if_not_installed("pkgload")
+}
