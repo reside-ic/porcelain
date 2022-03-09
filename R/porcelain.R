@@ -27,8 +27,9 @@ porcelain <- R6::R6Class(
     ##'   This is intended to support easy use of validation on
     ##'   continuous integration systems.
     ##'
-    ##' @param logger Optional logger, from the `lgr` package.  If
-    ##'  given, then we will log at the beginning and end of the request.
+    ##' @param logger Optional logger, from the `lgr` package, perhaps
+    ##'   created with [porcelain::porcelain_logger].  If given, then we
+    ##'   will log at the beginning and end of the request.
     initialize = function(..., validate = FALSE, logger = NULL) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.

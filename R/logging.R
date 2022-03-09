@@ -1,3 +1,42 @@
+##' Create a json-emitting logger, using the 'lgr' package.
+##'
+##' @title Create logger
+##'
+##' @param log_level The level of detail to log to. See
+##'   [lgr::get_log_levels()] for possible values; this could be a
+##'   string ("off", "info", "all", etc) or an integer level.
+##'
+##' @param name The name of the logger.  By default we use one derived
+##'   from the package name, though this may not always be accurate.
+##'
+##' @param path Optionally, the path to log into.  If not given then
+##'   we log to the console.
+##'
+##' @return A "Logger" object (see [lgr::Logger])
+##' @export
+##' @examples
+##' logger <- porcelain::porcelain_logger(name = "example")
+##' logger$log("info", "hello")
+##' logger$log("trace", "silent")
+porcelain_logger <- function(log_level = "info", name = NULL, path = NULL) {
+  if (is.null(name)) {
+    env <- parent.frame()
+    name <- package_name(env)
+  }
+
+  logger <- lgr::get_logger(name, reset = TRUE)
+  logger$set_propagate(FALSE)
+  logger$set_threshold(log_level)
+  if (is.null(path)) {
+    appender <- lgr::AppenderConsole$new(layout = lgr::LayoutJson$new())
+  } else {
+    appender <- lgr::AppenderJson$new(path)
+  }
+  logger$add_appender(appender, name = "json")
+  logger
+}
+
+
 ## Plumber has stages preroute -> postroute -> preserialize -> postserialize
 ##
 ## We hook up the first bit of logging up against postroute as by that
