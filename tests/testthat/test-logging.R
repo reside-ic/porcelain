@@ -145,7 +145,7 @@ test_that("Can construct logger that logs to file", {
   expect_true(file.exists(tmp))
   logs <- jsonlite::stream_in(file(tmp), verbose = FALSE)
   expect_equal(logs$msg, "hello")
-  expect_equal(logs$logger, "example")
+  expect_equal(logs$logger, "porcelain/tests/file")
 })
 
 
