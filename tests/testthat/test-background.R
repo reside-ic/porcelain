@@ -1,5 +1,6 @@
 test_that("can run background server on pkgload package", {
   skip_on_cran()
+  skip_on_os("windows")
 
   path_add <- system_file("examples/add", package = "porcelain")
   pkg <- pkgload::load_all(path_add,
@@ -78,6 +79,7 @@ test_that("Failure to start returns sensible information", {
 
 test_that("Timeout error returns sensible information", {
   skip_on_cran()
+  skip_on_os("windows")
 
   path_add <- system_file("examples/add", package = "porcelain")
   pkg <- pkgload::load_all(path_add,
