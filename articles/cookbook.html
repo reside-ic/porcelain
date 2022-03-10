@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/porcelain.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -67,7 +63,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/reside-ic/porcelain/">
+  <a href="https://github.com/reside-ic/porcelain/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,7 +84,7 @@
       <h1 data-toc-skip>cookbook</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/reside-ic/porcelain/blob/master/vignettes/cookbook.Rmd"><code>vignettes/cookbook.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/reside-ic/porcelain/blob/HEAD/vignettes/cookbook.Rmd" class="external-link"><code>vignettes/cookbook.Rmd</code></a></small>
       <div class="hidden name"><code>cookbook.Rmd</code></div>
 
     </div>
@@ -99,14 +95,14 @@
 <p>Below, we do not use the package convention of wrapping each endpoint in a function. This is to make the examples a little shorter and to make the endpoints more directly callable. In a package, a wrapper function is needed to make the schema path point to the correct place, and to allow binding of state into the endpoint (see later examples).</p>
 <p>The one piece of shared code is that we will use a common schema root</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">schema_root</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"examples/schema"</span>, package <span class="op">=</span> <span class="st">"porcelain"</span><span class="op">)</span></code></pre></div>
-<div id="get-endpoint-inputs-as-query-parameters-returning-json" class="section level2">
-<h2 class="hasAnchor">
-<a href="#get-endpoint-inputs-as-query-parameters-returning-json" class="anchor"></a>GET endpoint, inputs as query parameters, returning JSON</h2>
-<p>This is the example from the main vignette, adding two numbers given as query parameters and returning a single number. Note that we need to use <code><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html">jsonlite::unbox()</a></code> to indicate that the single number should be returned as a number and not a vector of length 1 (compare <code>jsonlite::toJSON(1)</code> and <code>jsonlite::toJSON(jsonlite::unbox(1))</code>)</p>
+<code class="sourceCode R"><span class="va">schema_root</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples/schema"</span>, package <span class="op">=</span> <span class="st">"porcelain"</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="get-endpoint-inputs-as-query-parameters-returning-json">GET endpoint, inputs as query parameters, returning JSON<a class="anchor" aria-label="anchor" href="#get-endpoint-inputs-as-query-parameters-returning-json"></a>
+</h3>
+<p>This is the example from the main vignette, adding two numbers given as query parameters and returning a single number. Note that we need to use <code><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">jsonlite::unbox()</a></code> to indicate that the single number should be returned as a number and not a vector of length 1 (compare <code>jsonlite::toJSON(1)</code> and <code>jsonlite::toJSON(jsonlite::unbox(1))</code>)</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">add</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html">unbox</a></span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span>
+  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">unbox</a></span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="va">endpoint_add</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain_endpoint.html">porcelain_endpoint</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
@@ -117,7 +113,7 @@
 <span class="va">api</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>validate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="fu">handle</span><span class="op">(</span><span class="va">endpoint_add</span><span class="op">)</span></code></pre></div>
 <p>Run the endpoint:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
 <span class="co">#&gt; </span>
@@ -132,16 +128,16 @@
 <span class="co">#&gt; $body</span>
 <span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":3}"</span></code></pre></div>
 </div>
-<div id="get-endpoint-inputs-as-path-and-query-parameters-returning-json" class="section level1">
-<h1 class="hasAnchor">
-<a href="#get-endpoint-inputs-as-path-and-query-parameters-returning-json" class="anchor"></a>GET endpoint, inputs as path and query parameters, returning JSON</h1>
+<div class="section level2">
+<h2 id="get-endpoint-inputs-as-path-and-query-parameters-returning-json">GET endpoint, inputs as path and query parameters, returning JSON<a class="anchor" aria-label="anchor" href="#get-endpoint-inputs-as-path-and-query-parameters-returning-json"></a>
+</h2>
 <p>Slightly more interesting return type, this time returning a numeric vector.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">random</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">distribution</span>, <span class="va">n</span><span class="op">)</span> <span class="op">{</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/switch.html">switch</a></span><span class="op">(</span><span class="va">distribution</span>,
-         normal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,
-         uniform <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,
-         exponential <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">rexp</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">distribution</span>,
+         normal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,
+         uniform <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,
+         exponential <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="va">endpoint_random</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain_endpoint.html">porcelain_endpoint</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
@@ -152,7 +148,7 @@
 <span class="va">api</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>validate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="fu">handle</span><span class="op">(</span><span class="va">endpoint_random</span><span class="op">)</span></code></pre></div>
 <p>Run the endpoint:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
 <span class="co">#&gt; </span>
@@ -165,8 +161,8 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-0.5893,0.115,0.5156,-0.9051]}"</span>
-<span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/uniform"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[1.4857,-1.2317,0.3743,-0.6534]}"</span>
+<span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/uniform"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
 <span class="co">#&gt; </span>
@@ -179,10 +175,10 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.2095,0.8512,0.9963,0.9709]}"</span></code></pre></div>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.1375,0.2671,0.766,0.3058]}"</span></code></pre></div>
 <p>Note that the output here is <em>always a vector</em>, even in the corner cases of 1 and 0 elements returned:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
 <span class="co">#&gt; </span>
@@ -195,8 +191,8 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-1.2812]}"</span>
-<span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-2.1877]}"</span>
+<span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
 <span class="co">#&gt; [1] 200</span>
 <span class="co">#&gt; </span>
@@ -211,79 +207,79 @@
 <span class="co">#&gt; $body</span>
 <span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[]}"</span></code></pre></div>
 </div>
-<div id="post-endpoint-inputs-as-json-returning-json" class="section level1">
-<h1 class="hasAnchor">
-<a href="#post-endpoint-inputs-as-json-returning-json" class="anchor"></a>POST endpoint, inputs as JSON, returning JSON</h1>
+<div class="section level2">
+<h2 id="post-endpoint-inputs-as-json-returning-json">POST endpoint, inputs as JSON, returning JSON<a class="anchor" aria-label="anchor" href="#post-endpoint-inputs-as-json-returning-json"></a>
+</h2>
 <p>Here is one way that a complex statistical procedure (here, just <code>lm</code>) might be wrapped as an API endpoint. We’ll run a linear regression against vectors of data <code>x</code> and <code>y</code> and return a table of coefficients.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>
-<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span>
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="va">data</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span>
+<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="va">data</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:</span>
 <span class="co">#&gt; lm(formula = y ~ x, data = data)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residuals:</span>
 <span class="co">#&gt;      Min       1Q   Median       3Q      Max </span>
-<span class="co">#&gt; -0.83546 -0.25551  0.03973  0.10615  0.92472 </span>
+<span class="co">#&gt; -0.46618 -0.24480  0.01017  0.25748  0.38607 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)   </span>
-<span class="co">#&gt; (Intercept)  0.03181    0.24926   0.128   0.9016   </span>
-<span class="co">#&gt; x            2.06564    0.46981   4.397   0.0023 **</span>
+<span class="co">#&gt; (Intercept) -0.06761    0.22247  -0.304  0.76894   </span>
+<span class="co">#&gt; x            1.80280    0.41455   4.349  0.00245 **</span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Residual standard error: 0.5028 on 8 degrees of freedom</span>
-<span class="co">#&gt; Multiple R-squared:  0.7073, Adjusted R-squared:  0.6707 </span>
-<span class="co">#&gt; F-statistic: 19.33 on 1 and 8 DF,  p-value: 0.002297</span></code></pre></div>
+<span class="co">#&gt; Residual standard error: 0.3111 on 8 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.7027, Adjusted R-squared:  0.6656 </span>
+<span class="co">#&gt; F-statistic: 18.91 on 1 and 8 DF,  p-value: 0.002449</span></code></pre></div>
 <p>We’re interested in getting the table of coefficients, which we can extract like this:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>
-<span class="co">#&gt;               Estimate Std. Error   t value   Pr(&gt;|t|)</span>
-<span class="co">#&gt; (Intercept) 0.03180556  0.2492642 0.1275978 0.90161639</span>
-<span class="co">#&gt; x           2.06564145  0.4698112 4.3967478 0.00229672</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span>
+<span class="co">#&gt;                Estimate Std. Error    t value    Pr(&gt;|t|)</span>
+<span class="co">#&gt; (Intercept) -0.06761367  0.2224658 -0.3039283 0.768937377</span>
+<span class="co">#&gt; x            1.80280079  0.4145469  4.3488461 0.002449073</span></code></pre></div>
 <p>and transform a little to turn the row names into a column of their own</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">)</span>
-<span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span>, <span class="va">lm_coef</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></code></pre></div>
+<code class="sourceCode R"><span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">)</span>
+<span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span>, <span class="va">lm_coef</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></code></pre></div>
 <p>(the <code>broom</code> package provides a nice way of doing this sort of manipulation of these slightly opaque objects). There are many ways of serialising this sort of data; we will do it in the default way supported by <code>jsonlite</code>, representing the object as an array of objects, each of which is key/value pairs for each row:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">toJSON</a></span><span class="op">(</span><span class="va">lm_coef</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">lm_coef</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; [</span>
 <span class="co">#&gt;   {</span>
 <span class="co">#&gt;     "name": "(Intercept)",</span>
-<span class="co">#&gt;     "Estimate": 0.0318,</span>
-<span class="co">#&gt;     "Std. Error": 0.2493,</span>
-<span class="co">#&gt;     "t value": 0.1276,</span>
-<span class="co">#&gt;     "Pr(&gt;|t|)": 0.9016</span>
+<span class="co">#&gt;     "Estimate": -0.0676,</span>
+<span class="co">#&gt;     "Std. Error": 0.2225,</span>
+<span class="co">#&gt;     "t value": -0.3039,</span>
+<span class="co">#&gt;     "Pr(&gt;|t|)": 0.7689</span>
 <span class="co">#&gt;   },</span>
 <span class="co">#&gt;   {</span>
 <span class="co">#&gt;     "name": "x",</span>
-<span class="co">#&gt;     "Estimate": 2.0656,</span>
-<span class="co">#&gt;     "Std. Error": 0.4698,</span>
-<span class="co">#&gt;     "t value": 4.3967,</span>
-<span class="co">#&gt;     "Pr(&gt;|t|)": 0.0023</span>
+<span class="co">#&gt;     "Estimate": 1.8028,</span>
+<span class="co">#&gt;     "Std. Error": 0.4145,</span>
+<span class="co">#&gt;     "t value": 4.3488,</span>
+<span class="co">#&gt;     "Pr(&gt;|t|)": 0.0024</span>
 <span class="co">#&gt;   }</span>
 <span class="co">#&gt; ]</span></code></pre></div>
 <p>So we have our target function now:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit_lm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">fromJSON</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
-  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="va">data</span><span class="op">)</span>
-  <span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">)</span>
-  <span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span>, <span class="va">lm_coef</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
+  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
+  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="va">data</span><span class="op">)</span>
+  <span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">)</span>
+  <span class="va">lm_coef</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span>, <span class="va">lm_coef</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">lm_coef</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
   <span class="va">lm_coef</span>
 <span class="op">}</span></code></pre></div>
-<p>Note that the target function must deserialise the json itself. This is so that arguments can be passed to <code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">jsonlite::fromJSON</a></code> easily to control how deserialisation happens. We may support automatic deserialisation later as an argument to <code><a href="../reference/porcelain_input_body_binary.html">porcelain::porcelain_input_body_json</a></code>.</p>
+<p>Note that the target function must deserialise the json itself. This is so that arguments can be passed to <code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::fromJSON</a></code> easily to control how deserialisation happens. We may support automatic deserialisation later as an argument to <code><a href="../reference/porcelain_input_body.html">porcelain::porcelain_input_body_json</a></code>.</p>
 <p>The endpoint is not that much more involved than before though we have interesting inputs and outputs, with schemas required for both</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">endpoint_lm</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain_endpoint.html">porcelain_endpoint</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
   <span class="st">"POST"</span>, <span class="st">"/lm"</span>, <span class="va">fit_lm</span>,
-  <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_input_body_binary.html">porcelain_input_body_json</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"lmInputs"</span>, <span class="va">schema_root</span><span class="op">)</span>,
+  <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_input_body.html">porcelain_input_body_json</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"lmInputs"</span>, <span class="va">schema_root</span><span class="op">)</span>,
   returning <span class="op">=</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_returning.html">porcelain_returning_json</a></span><span class="op">(</span><span class="st">"lmCoef"</span>, <span class="va">schema_root</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>The input schema, <code>lmInputs.json</code> is</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">{</span></span>
@@ -323,9 +319,9 @@
 <code class="sourceCode R"><span class="va">api</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>validate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="fu">handle</span><span class="op">(</span><span class="va">endpoint_lm</span><span class="op">)</span></code></pre></div>
 <p>To exercise the API endpoint we need to pass in our input JSON (not an R object).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">json</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">toJSON</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">json</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
 <span class="va">json</span>
-<span class="co">#&gt; [{"x":0.1325,"y":0.7363},{"x":0.1874,"y":0.5017},{"x":0.7687,"y":1.6614},{"x":0.979,"y":2.0919},{"x":0.4762,"y":1.9402},{"x":0.0922,"y":0.3363},{"x":0.1431,"y":-0.508},{"x":0.9124,"y":1.5216},{"x":0.3503,"y":0.445},{"x":0.0445,"y":0.0326}]</span></code></pre></div>
+<span class="co">#&gt; [{"x":0.6003,"y":1.3143},{"x":0.7243,"y":0.9597},{"x":0.5151,"y":1.1331},{"x":0.0341,"y":-0.0597},{"x":0.3946,"y":0.7178},{"x":0.2442,"y":-0.0936},{"x":0.4612,"y":0.9773},{"x":0.9381,"y":1.3204},{"x":0.366,"y":0.4482},{"x":0.5353,"y":1.2835}]</span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"POST"</span>, <span class="st">"/lm"</span>, body <span class="op">=</span> <span class="va">json</span>, content_type <span class="op">=</span> <span class="st">"application/json"</span><span class="op">)</span>
 <span class="co">#&gt; $status</span>
@@ -340,41 +336,41 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $body</span>
-<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[{\"name\":\"(Intercept)\",\"Estimate\":0.0319,\"Std. Error\":0.2493,\"t value\":0.1278,\"Pr(&gt;|t|)\":0.9015},{\"name\":\"x\",\"Estimate\":2.0656,\"Std. Error\":0.4698,\"t value\":4.3964,\"Pr(&gt;|t|)\":0.0023}]}"</span></code></pre></div>
+<span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[{\"name\":\"(Intercept)\",\"Estimate\":-0.0676,\"Std. Error\":0.2225,\"t value\":-0.3037,\"Pr(&gt;|t|)\":0.7691},{\"name\":\"x\",\"Estimate\":1.8027,\"Std. Error\":0.4145,\"t value\":4.3489,\"Pr(&gt;|t|)\":0.0024}]}"</span></code></pre></div>
 </div>
-<div id="post-endpoint-inputs-as-binary-returning-binary" class="section level1">
-<h1 class="hasAnchor">
-<a href="#post-endpoint-inputs-as-binary-returning-binary" class="anchor"></a>POST endpoint, inputs as binary, returning binary</h1>
+<div class="section level2">
+<h2 id="post-endpoint-inputs-as-binary-returning-binary">POST endpoint, inputs as binary, returning binary<a class="anchor" aria-label="anchor" href="#post-endpoint-inputs-as-binary-returning-binary"></a>
+</h2>
 <p>(This example also shows off a few other features)</p>
-<p>Handling binary inputs and outputs is supported, provided that you can deal with them in R. In this example we’ll use R’s serialisation format (rds; see <code><a href="https://rdrr.io/r/base/serialize.html">?serialize</a></code> and <code><a href="https://rdrr.io/r/base/readRDS.html">?saveRDS</a></code>) as an example, but this approach would equally work with excel spreadsheets, zip files or any other non-text data that you work with.</p>
+<p>Handling binary inputs and outputs is supported, provided that you can deal with them in R. In this example we’ll use R’s serialisation format (rds; see <code><a href="https://rdrr.io/r/base/serialize.html" class="external-link">?serialize</a></code> and <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">?saveRDS</a></code>) as an example, but this approach would equally work with excel spreadsheets, zip files or any other non-text data that you work with.</p>
 <p>In this example we’ll take some serialised R data and create a png plot as output. We’ll start by writing our target function:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">binary_plot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">width</span> <span class="op">=</span> <span class="fl">400</span>, <span class="va">height</span> <span class="op">=</span> <span class="fl">400</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html">unserialize</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
-  <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".png"</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/on.exit.html">on.exit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="va">tmp</span>, width <span class="op">=</span> <span class="va">width</span>, height <span class="op">=</span> <span class="va">height</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/conditions.html">tryCatch</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,
-    finally <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/readBin.html">readBin</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="fu"><a href="https://rdrr.io/r/base/raw.html">raw</a></span><span class="op">(</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.info.html">file.size</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">unserialize</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
+  <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".png"</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></span><span class="op">(</span><span class="va">tmp</span>, width <span class="op">=</span> <span class="va">width</span>, height <span class="op">=</span> <span class="va">height</span><span class="op">)</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,
+    finally <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="fu"><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw</a></span><span class="op">(</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>Here, we use <code>unserialize</code> to convert the incoming binary data into something usable, plot to a temporary file (which we clean up later, using <code>on.exit</code>). Using <code>tryCatch(..., finally = dev.off())</code> ensures that even if the plotting fails, the device will be closed. Finally, <code>readBin</code> reads that temporary file in a raw vector.</p>
 <p>So, for example (using <code>str</code> to limit what is printed to screen)</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html">serialize</a></span><span class="op">(</span><span class="va">data</span>, <span class="cn">NULL</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu">binary_plot</span><span class="op">(</span><span class="va">bin</span><span class="op">)</span>, vec.len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt;  raw [1:12354] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
-<p>It’s hard to tell this is a png, but the first few bytes give it away (the <a href="https://en.wikipedia.org/wiki/List_of_file_signatures">magic number</a> <code>89 50 4e 47 0d 0a 1a 0a</code> is used at the start of all png files).</p>
+<code class="sourceCode R"><span class="va">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="va">data</span>, <span class="cn">NULL</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">binary_plot</span><span class="op">(</span><span class="va">bin</span><span class="op">)</span>, vec.len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
+<span class="co">#&gt;  raw [1:12876] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
+<p>It’s hard to tell this is a png, but the first few bytes give it away (the <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" class="external-link">magic number</a> <code>89 50 4e 47 0d 0a 1a 0a</code> is used at the start of all png files).</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">endpoint_plot</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain_endpoint.html">porcelain_endpoint</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
   <span class="st">"POST"</span>, <span class="st">"/plot"</span>, <span class="va">binary_plot</span>,
-  <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_input_body_binary.html">porcelain_input_body_binary</a></span><span class="op">(</span><span class="st">"data"</span><span class="op">)</span>,
+  <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_input_body.html">porcelain_input_body_binary</a></span><span class="op">(</span><span class="st">"data"</span><span class="op">)</span>,
   returning <span class="op">=</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_returning.html">porcelain_returning_binary</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="va">api</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>validate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="fu">handle</span><span class="op">(</span><span class="va">endpoint_plot</span><span class="op">)</span></code></pre></div>
 <p>Making the request (again using <code>str</code> to prevent printing thousands of hex characters)</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"POST"</span>, <span class="st">"/plot"</span>, body <span class="op">=</span> <span class="va">bin</span>,
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"POST"</span>, <span class="st">"/plot"</span>, body <span class="op">=</span> <span class="va">bin</span>,
                  content_type <span class="op">=</span> <span class="st">"application/octet-stream"</span><span class="op">)</span>,
     vec.len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
 <span class="co">#&gt; List of 3</span>
@@ -382,7 +378,7 @@
 <span class="co">#&gt;  $ headers:List of 2</span>
 <span class="co">#&gt;   ..$ Content-Type         : chr "application/octet-stream"</span>
 <span class="co">#&gt;   ..$ X-Porcelain-Validated: chr "true"</span>
-<span class="co">#&gt;  $ body   : raw [1:12354] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
+<span class="co">#&gt;  $ body   : raw [1:12876] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></code></pre></div>
 </div>
   </div>
 
@@ -397,11 +393,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Rich FitzJohn.</p>
+  <p></p>
+<p>Developed by Rich FitzJohn.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -409,6 +407,8 @@
 
   
 
+
+  
 
   </body>
 </html>

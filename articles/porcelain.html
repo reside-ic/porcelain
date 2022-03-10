@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/porcelain.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -67,7 +63,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/reside-ic/porcelain/">
+  <a href="https://github.com/reside-ic/porcelain/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -88,7 +84,7 @@
       <h1 data-toc-skip>porcelain</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/reside-ic/porcelain/blob/master/vignettes/porcelain.Rmd"><code>vignettes/porcelain.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/reside-ic/porcelain/blob/HEAD/vignettes/porcelain.Rmd" class="external-link"><code>vignettes/porcelain.Rmd</code></a></small>
       <div class="hidden name"><code>porcelain.Rmd</code></div>
 
     </div>
@@ -96,24 +92,24 @@
     
     
 <p><code>porcelain</code> is a package which allows creation of robust, testable HTTP API’s from R. These can be used to expose any R calculation to other applications while communicating explicit expectations for inputs and outputs. It is implemented on top of the excellent <code>plumber</code> package and uses <code>plumber</code>’s programmatic interface to build its API. The interface, goals and tradeoffs are very different to plumber, but we think that this leads to high-quality APIs that are easy to put into production.</p>
-<div id="motivation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#motivation" class="anchor"></a>Motivation</h2>
-<p>The <code>plumber</code> package makes it trivially easy to create APIs from R. For example, from the <a href="https://rplumber.io">documentation</a></p>
+<div class="section level2">
+<h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
+</h2>
+<p>The <code>plumber</code> package makes it trivially easy to create APIs from R. For example, from the <a href="https://rplumber.io" class="external-link">documentation</a></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#* Return the sum of two numbers</span>
 <span class="co">#* @param a The first number to add</span>
 <span class="co">#* @param b The second number to add</span>
 <span class="co">#* @post /sum</span>
 <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>Starting this API is easy,</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.rplumber.io">plumber</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.rplumber.io" class="external-link">plumber</a></span><span class="op">)</span>
 <span class="co"># 'plumber.R' is the location of the file shown above</span>
-<span class="fu"><a href="https://www.rplumber.io/reference/pr.html">pr</a></span><span class="op">(</span><span class="st">"plumber.R"</span><span class="op">)</span> <span class="op"><a href="https://www.rplumber.io/reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://www.rplumber.io/reference/pr_run.html">pr_run</a></span><span class="op">(</span>port<span class="op">=</span><span class="fl">8000</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://www.rplumber.io/reference/pr.html" class="external-link">pr</a></span><span class="op">(</span><span class="st">"plumber.R"</span><span class="op">)</span> <span class="op"><a href="https://www.rplumber.io/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://www.rplumber.io/reference/pr_run.html" class="external-link">pr_run</a></span><span class="op">(</span>port<span class="op">=</span><span class="fl">8000</span><span class="op">)</span></code></pre></div>
 <p>and we can interact with it using <code>curl</code>:</p>
 <pre><code>curl -w"\n" --data "a=4&amp;b=3" "http://localhost:8000/sum"
 [7]</code></pre>
@@ -125,23 +121,23 @@
 <li>This is hard to test - our main way of interacting with the API is to start a separate process and send requests to curl. We’d like an easier way of being able to do this</li>
 </ul>
 </div>
-<div id="introduction---a-porcelain-approach-to-adding-as-a-service" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction---a-porcelain-approach-to-adding-as-a-service" class="anchor"></a>Introduction - a porcelain approach to adding-as-a-service</h2>
+<div class="section level2">
+<h2 id="introduction---a-porcelain-approach-to-adding-as-a-service">Introduction - a porcelain approach to adding-as-a-service<a class="anchor" aria-label="anchor" href="#introduction---a-porcelain-approach-to-adding-as-a-service"></a>
+</h2>
 <p>We start with a very different approach to <code>plumber</code>, one that is undeniably much more work to get started with as everything will be implemented in a package. We’ll start by creating a version of the above example (adding two arguments) which makes explicit some of the type decisions here.</p>
 <p>To begin, we’ll write an endpoint that takes two arguments as query parameters (not body parameters as in the plumber example). We will do this in a small package:</p>
-<pre><code>add
+<pre><code> [01;34madd [0m
 ├── DESCRIPTION
 ├── NAMESPACE
-├── R
-│   └── api.R
-├── inst
-│   └── schema
+├──  [01;34mR [0m
+│   └──  [32mapi.R [0m
+├──  [01;34minst [0m
+│   └──  [01;34mschema [0m
 │       └── numeric.json
-└── tests
-    ├── testthat
-    │   └── test-api.R
-    └── testthat.R</code></pre>
+└──  [01;34mtests [0m
+    ├──  [01;34mtestthat [0m
+    │   └──  [32mtest-api.R [0m
+    └──  [32mtestthat.R [0m</code></pre>
 <p>The <code>DESCRIPTION</code> file is minimal, importing <code>porcelain</code> and suggesting <code>testthat</code> for the package tests.</p>
 <pre><code>Package: add
 Title: Adds Numbers
@@ -156,11 +152,11 @@ Suggests:
     testthat (&gt;= 3.0.0)
 Config/testthat/edition: 3</code></pre>
 <p>The <code>NAMESPACE</code> file exports the <code>api</code> function (described below)</p>
-<pre><code>export(api)</code></pre>
+<pre><code><span class="fu">export</span><span class="op">(</span><span class="va">api</span><span class="op">)</span></code></pre>
 <p>Most of the work is in <code>R/api.R</code> which implements the API (there is nothing special about this filename)</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">add</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html">unbox</a></span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span>
+  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">unbox</a></span><span class="op">(</span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="va">endpoint_add</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
@@ -195,7 +191,7 @@ Config/testthat/edition: 3</code></pre>
 <p>which advertises (and enforces) that the query parameters <code>a</code> and <code>b</code> expected and numeric - additional query parameters provided will raise an error. Similarly, the argument</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">returning</span> <span class="op">=</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_returning.html">porcelain_returning_json</a></span><span class="op">(</span><span class="st">"numeric"</span><span class="op">)</span></code></pre></div>
-<p>indicates that we will be returning json with a numeric value. This is different to the <code>numeric</code> above, as here it refers to a <a href="https://json-schema.org/">json schema</a> - this is included in the package within <code>inst/schema</code> as <code>numeric.json</code></p>
+<p>indicates that we will be returning json with a numeric value. This is different to the <code>numeric</code> above, as here it refers to a <a href="https://json-schema.org/" class="external-link">json schema</a> - this is included in the package within <code>inst/schema</code> as <code>numeric.json</code></p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">{</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a>    <span class="dt">"$schema"</span><span class="fu">:</span> <span class="st">"http://json-schema.org/draft-04/schema#"</span><span class="fu">,</span></span>
 <span id="cb11-3"><a href="#cb11-3"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"numeric"</span><span class="fu">,</span></span>
@@ -205,8 +201,8 @@ Config/testthat/edition: 3</code></pre>
 <p>Finally, the package has tests, and with this we can make explicit some of the questions posed in the motivation section.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">"can add two numbers"</span>, <span class="op">{</span>
-  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html">unbox</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">add</span><span class="op">(</span><span class="fl">3.14</span>, <span class="fl">1.23</span><span class="op">)</span>, <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html">unbox</a></span><span class="op">(</span><span class="fl">4.37</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">add</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">unbox</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">add</span><span class="op">(</span><span class="fl">3.14</span>, <span class="fl">1.23</span><span class="op">)</span>, <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">unbox</a></span><span class="op">(</span><span class="fl">4.37</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 
 <span class="fu">test_that</span><span class="op">(</span><span class="st">"add endpoint"</span>, <span class="op">{</span>
@@ -217,16 +213,16 @@ Config/testthat/edition: 3</code></pre>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">content_type</span>, <span class="st">"application/json"</span><span class="op">)</span>
 
   <span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">api</span><span class="op">(</span>validate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-  <span class="va">res_api</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">res_api</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">res_api</span><span class="op">$</span><span class="va">body</span>, <span class="va">res</span><span class="op">$</span><span class="va">body</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">res_api</span><span class="op">$</span><span class="va">headers</span><span class="op">[[</span><span class="st">"X-Porcelain-Validated"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"true"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 
 <span class="fu">test_that</span><span class="op">(</span><span class="st">"api fails gracefully when given non-numeric input"</span>, <span class="op">{</span>
   <span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">api</span><span class="op">(</span>validate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-  <span class="va">res</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span><span class="op">)</span>
+  <span class="va">res</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">status</span>, <span class="fl">400</span><span class="op">)</span>
-  <span class="va">body</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">fromJSON</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">body</span>, simplifyDataFrame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="va">body</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">body</span>, simplifyDataFrame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">body</span><span class="op">$</span><span class="va">status</span>, <span class="st">"failure"</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">body</span><span class="op">$</span><span class="va">errors</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">error</span>, <span class="st">"INVALID_INPUT"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
@@ -251,11 +247,13 @@ Config/testthat/edition: 3</code></pre>
 
 
       <footer><div class="copyright">
-  <p>Developed by Rich FitzJohn.</p>
+  <p></p>
+<p>Developed by Rich FitzJohn.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -263,6 +261,8 @@ Config/testthat/edition: 3</code></pre>
 
   
 
+
+  
 
   </body>
 </html>
