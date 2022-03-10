@@ -1,6 +1,6 @@
 Package: porcelain
 Title: Turn a Package into an HTTP API
-Version: 0.1.7
+Version: 0.1.8
 Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
                     email = "rich.fitzjohn@gmail.com"),
              person("Imperial College of Science, Technology and Medicine",
@@ -11,7 +11,6 @@ Description: Wrapper around the plumber package to turn a package into
     against a json schema.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Language: en-GB
 URL: https://github.com/reside-ic/porcelain
 BugReports: https://github.com/reside-ic/porcelain/issues

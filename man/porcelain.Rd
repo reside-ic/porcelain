@@ -79,8 +79,9 @@ if \code{true} (case insensitive) then we will validate.
 This is intended to support easy use of validation on
 continuous integration systems.}
 
-\item{\code{logger}}{Optional logger, from the \code{lgr} package.  If
-given, then we will log at the beginning and end of the request.}
+\item{\code{logger}}{Optional logger, from the \code{lgr} package, perhaps
+created with \link{porcelain_logger}.  If given, then we
+will log at the beginning and end of the request.}
 }
 \if{html}{\out{</div>}}
 }

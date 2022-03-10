@@ -40,10 +40,7 @@ same_path <- function(a, b) {
 test_logger <- function(name) {
   testthat::skip_if_not_installed("lgr")
   tmp <- tempfile()
-  logger <- lgr::get_logger(paste0("porcelain/tests/", name), reset = TRUE)
-  logger$set_propagate(FALSE)
-  logger$add_appender(lgr::AppenderJson$new(tmp), name = "json")
-  logger$set_threshold("all")
+  logger <- porcelain_logger("all", paste0("porcelain/tests/", name), tmp)
   reg.finalizer(logger, function(e) unlink(tmp))
   logger
 }

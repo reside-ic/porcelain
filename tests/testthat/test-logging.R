@@ -125,3 +125,32 @@ test_that("log incoming POST body", {
   expect_length(log, 4)
   expect_equal(log[[2]]$body, body)
 })
+
+
+test_that("Can construct logger with automatic name", {
+  skip_if_not_installed("mockery")
+  mock_package_name <- mockery::mock("foo")
+  mockery::stub(porcelain_logger, "package_name", mock_package_name)
+  logger <- porcelain_logger()
+  mockery::expect_called(mock_package_name, 1)
+  expect_equal(logger$name, "foo")
+})
+
+
+test_that("Can construct logger that logs to file", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  logger <- porcelain_logger(name = "porcelain/tests/file", path = tmp)
+  logger$log("info", "hello")
+  expect_true(file.exists(tmp))
+  logs <- jsonlite::stream_in(file(tmp), verbose = FALSE)
+  expect_equal(logs$msg, "hello")
+  expect_equal(logs$logger, "porcelain/tests/file")
+})
+
+
+test_that("Can construct logger that logs to console", {
+  logger <- porcelain_logger(name = "porcelain/tests/console")
+  msg <- capture.output(logger$log("info", "hello"))
+  expect_equal(jsonlite::parse_json(msg)$msg, "hello")
+})
