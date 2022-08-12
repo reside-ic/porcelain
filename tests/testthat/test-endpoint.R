@@ -38,3 +38,12 @@ test_that("Can serve endpoint directly", {
   res$headers[["Date"]] <- cmp$headers[["Date"]]
   expect_equal(cmp, res)
 })
+
+
+test_that("target must be a function", {
+  expect_error(porcelain::porcelain_endpoint$new(
+    "GET", "/",
+    porcelain::porcelain_input_query(a = "numeric", b = "numeric"),
+    returning = porcelain::porcelain_returning_binary()),
+    "'target' must be a function")
+})
