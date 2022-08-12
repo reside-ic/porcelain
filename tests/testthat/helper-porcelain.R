@@ -110,3 +110,8 @@ skip_if_no_roxygen <- function() {
   testthat::skip_if_not_installed("roxygen2")
   testthat::skip_if_not_installed("pkgload")
 }
+
+
+plumber_response <- function() {
+  plumber:::PlumberResponse$new()
+}

@@ -14,23 +14,7 @@ plumber_request <- function(plumber, method, path, query = NULL,
     req[["HTTP_CONTENT_TYPE"]] <- request_content_type(body, content_type)
   }
 
-  res <- plumber_response()
-  plumber$serve(req, res)
-}
-
-
-## TODO: we might not really need the whole thing here, but this is
-## a problem potentially.  The input interface (res) folllows the Rook format
-##
-## https://www.rplumber.io/docs/routing-and-input.html#input-handling
-## but the response format is undocumented
-##
-## https://www.rplumber.io/docs/rendering-and-output.html#response-object
-##
-## The format is described and conforms to the Rook interface but this
-## class is not exported.
-plumber_response <- function() {
-  plumber:::PlumberResponse$new()
+  plumber$call(req)
 }
 
 
