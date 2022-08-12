@@ -71,7 +71,7 @@ test_that("Failure to start returns sensible information", {
   err <- expect_error(bg$start())
 
   expect_s3_class(err, "porcelain_background_error")
-  expect_match(err$message, "unused argument")
+  expect_match(format(err), "unused argument", all = FALSE)
   expect_match(err$log, "Loading add", all = FALSE)
   expect_match(err$log, "unused argument", all = FALSE)
 })
