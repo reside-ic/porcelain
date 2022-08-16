@@ -13,7 +13,7 @@ test_that("special characters in query strings are handled properly", {
 })
 
 
-test_that("null an empty strings return empty list", {
+test_that("null and empty strings return empty list", {
   expect_equal(parse_query(NULL), list())
   expect_equal(parse_query(""), list())
   expect_equal(parse_query("?"), list())
