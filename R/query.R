@@ -31,7 +31,7 @@ parse_query <- function(query) {
   if (length(args) == 0) {
     return(list())
   }
-  
+
   keys <- trimws(vcapply(args, "[[", 1L))
   err <- lengths(args) != 2
   if (any(err)) {
@@ -41,7 +41,7 @@ parse_query <- function(query) {
   }
   args <- lapply(args, function(x) trimws(utils::URLdecode(x)))
 
-  vals <- lapply(args, "[[", 2L)  
+  vals <- lapply(args, "[[", 2L)
 
   if (anyDuplicated(keys)) {
     ## TODO: This should be a 400 error, as it's bad input. As is,
