@@ -23,13 +23,13 @@
 ## rather than silently dropping the 'b' part of the query.
 parse_query <- function(query) {
   if (length(query) == 0L || query == "") {
-    return(NULL)
+    return(list())
   }
 
   query <- chartr("+", " ", sub("^\\?", "", query))
   args <- strsplit(strsplit(query, "&", fixed = TRUE)[[1]], "=", fixed = TRUE)
   if (length(args) == 0) {
-    return(NULL)
+    return(list())
   }
   
   keys <- trimws(vcapply(args, "[[", 1L))
