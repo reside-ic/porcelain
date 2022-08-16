@@ -113,5 +113,6 @@ skip_if_no_roxygen <- function() {
 
 
 plumber_response <- function() {
+  testthat::skip_on_cran() # using plumber internals, subject to change
   plumber:::PlumberResponse$new()
 }
