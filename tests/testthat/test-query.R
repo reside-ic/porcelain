@@ -22,7 +22,8 @@ test_that("null and empty strings return empty list", {
 
 test_that("incomplete query strings are errors", {
   expect_error(parse_query("a="), "Incomplete query for 'a'")
-  expect_error(parse_query("a=1&b=&c&d=1"), "Incomplete query for 'b', 'c'")
+  expect_error(parse_query("a=1&b=&c=&d=1"), "Incomplete query for 'b', 'c'")
+  expect_error(parse_query("a=1&b&c&d=1"), "Incomplete query for 'b', 'c'")
 })
 
 
