@@ -67,6 +67,7 @@ porcelain_endpoint <- R6::R6Class(
       self$method <- method
       self$path <- path
       self$target <- target
+      assert_is(target, "function")
       assert_is(returning, "porcelain_returning")
       self$returning <- returning
 
