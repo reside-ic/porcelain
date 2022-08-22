@@ -14,6 +14,11 @@ plumber_request <- function(plumber, method, path, query = NULL,
     req[["HTTP_CONTENT_TYPE"]] <- request_content_type(body, content_type)
   }
 
+  ## We need this in order to correctly serialise output, as
+  ## plumber$call behaves differently when running as part of a full
+  ## api or not on an error at this point.
+  req[["PORCELAIN_REQUEST"]] <- TRUE
+
   plumber$call(req)
 }
 

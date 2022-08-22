@@ -152,6 +152,7 @@ test_that("Catch error from the api", {
 ## this is not actually super likely but seems worth checking for as
 ## we do move pass our error handler along.
 test_that("Error during serialisation", {
+  ## TODO: this is the odd one....
   hello <- function() {
     jsonlite::unbox("hello")
   }
@@ -167,7 +168,8 @@ test_that("Error during serialisation", {
   expect_equal(cmp$value$errors[[1]]$detail, jsonlite::unbox(err$message))
 
   ## Then, get this from the endpoint,
-  req <- NULL
+  req <- new.env()
+  req[["PORCELAIN_REQUEST"]] <- TRUE
   res <- plumber_response()
   ans <- porcelain_serialize_pass(val, req, res, porcelain_error_handler)
 
@@ -178,6 +180,10 @@ test_that("Error during serialisation", {
   ## All the way from the api:
   pr <- porcelain$new()
   pr$handle(endpoint)
+
+  ## This bit is not handled the same as the request above, there's
+  ## clearly something incorrect in how the error handling is being
+  ## done here...
   res_api <- pr$request("GET", "/")
   expect_equal(res_api$status, 500L)
   expect_equal(res_api$headers[["Content-Type"]], "application/json")

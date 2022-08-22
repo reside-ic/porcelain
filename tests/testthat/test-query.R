@@ -33,3 +33,27 @@ test_that("query strings with duplicates are errors", {
   expect_error(parse_query("a=1&b=2&b=3&c=4&c=5"),
                "Unexpected duplicate keys 'b', 'c'")
 })
+
+
+test_that("query parse errors are 400 errors", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/square", square,
+    returning = porcelain_returning_json("Number", "schema"),
+    porcelain_input_query(n = "numeric"),
+    validate = TRUE)
+
+  dat <- list(status = "failure",
+              errors = list(
+                list(error = "ERROR",
+                     detail =  "Unexpected duplicate keys 'n'")),
+              data = NULL)
+  cmp <- jsonlite::toJSON(dat, auto_unbox = TRUE, null = "null")
+
+  res <- endpoint$request(list(n = 3, n = 3))
+  expect_equal(res$status, 400)
+  expect_equal(res$body, cmp)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+})
