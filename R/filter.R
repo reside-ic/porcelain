@@ -5,7 +5,7 @@ porcelain_filters <- function(req, res) {
 
 
 porcelain_filter_query_string <- function(req, res) {
-  req$porcelain_query <- plumber:::parseQS(req$QUERY_STRING)
+  req$porcelain_query <- parse_query(req$QUERY_STRING)
   plumber::forward()
 }
 
