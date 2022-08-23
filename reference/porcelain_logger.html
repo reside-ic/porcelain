@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">porcelain_logger</span><span class="op">(</span>log_level <span class="op">=</span> <span class="st">"info"</span>, name <span class="op">=</span> <span class="cn">NULL</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">porcelain_logger</span><span class="op">(</span>log_level <span class="op">=</span> <span class="st">"info"</span>, name <span class="op">=</span> <span class="cn">NULL</span>, path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -75,24 +75,31 @@
 <dd><p>The level of detail to log to. See
 <code><a href="https://s-fleck.github.io/lgr/reference/get_log_levels.html" class="external-link">lgr::get_log_levels()</a></code> for possible values; this could be a
 string ("off", "info", "all", etc) or an integer level.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>The name of the logger.  By default we use one derived
 from the package name, though this may not always be accurate.</p></dd>
+
+
 <dt>path</dt>
 <dd><p>Optionally, the path to log into.  If not given then
 we log to the console.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A "Logger" object (see <a href="https://s-fleck.github.io/lgr/reference/Logger.html" class="external-link">lgr::Logger</a>)</p>
+    
+
+<p>A "Logger" object (see <a href="https://s-fleck.github.io/lgr/reference/Logger.html" class="external-link">lgr::Logger</a>)</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">logger</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="fu">porcelain_logger</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"example"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">logger</span><span class="op">$</span><span class="fu">log</span><span class="op">(</span><span class="st">"info"</span>, <span class="st">"hello"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {"level":400,"timestamp":"2022-03-10 10:04:28","logger":"example","caller":"eval","msg":"hello"}</span>
-<span class="r-in"><span class="va">logger</span><span class="op">$</span><span class="fu">log</span><span class="op">(</span><span class="st">"trace"</span>, <span class="st">"silent"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">logger</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="fu">porcelain_logger</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"example"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">logger</span><span class="op">$</span><span class="fu">log</span><span class="op">(</span><span class="st">"info"</span>, <span class="st">"hello"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {"level":400,"timestamp":"2022-08-23 11:31:18","logger":"example","caller":"eval","msg":"hello"}</span>
+<span class="r-in"><span><span class="va">logger</span><span class="op">$</span><span class="fu">log</span><span class="op">(</span><span class="st">"trace"</span>, <span class="st">"silent"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -107,7 +114,7 @@ we log to the console.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

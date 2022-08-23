@@ -66,7 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">porcelain_input_query</span><span class="op">(</span><span class="va">...</span>, .parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">porcelain_input_query</span><span class="op">(</span><span class="va">...</span>, .parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -74,16 +74,19 @@
     <dl><dt>...</dt>
 <dd><p>Named arguments representing accepted parameters.  The
 value of each must be a type.</p></dd>
+
+
 <dt>.parameters</dt>
 <dd><p>A list of named parameters to accept, instead
 of using <code>...</code> - this interface is considerably easier to
 program against if building an API programmatically, avoiding
 the use of <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></code>.</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">porcelain</span><span class="fu">::</span><span class="fu">porcelain_input_query</span><span class="op">(</span>number <span class="op">=</span> <span class="st">"integer"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">porcelain</span><span class="fu">::</span><span class="fu">porcelain_input_query</span><span class="op">(</span>number <span class="op">=</span> <span class="st">"integer"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;porcelain_input_collection&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     clone: function (deep = FALSE) </span>
@@ -103,7 +106,7 @@ the use of <code><a href="https://rdrr.io/r/base/do.call.html" class="external-l
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

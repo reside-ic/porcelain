@@ -70,11 +70,11 @@ high-level functions (<code>porcelain_returning_json</code> and
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">porcelain_returning</span><span class="op">(</span><span class="va">content_type</span>, <span class="va">process</span>, <span class="va">validate</span>, status_code <span class="op">=</span> <span class="fl">200L</span><span class="op">)</span>
-
-<span class="fu">porcelain_returning_json</span><span class="op">(</span>schema <span class="op">=</span> <span class="cn">NULL</span>, root <span class="op">=</span> <span class="cn">NULL</span>, status_code <span class="op">=</span> <span class="fl">200L</span><span class="op">)</span>
-
-<span class="fu">porcelain_returning_binary</span><span class="op">(</span>status_code <span class="op">=</span> <span class="fl">200L</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">porcelain_returning</span><span class="op">(</span><span class="va">content_type</span>, <span class="va">process</span>, <span class="va">validate</span>, status_code <span class="op">=</span> <span class="fl">200L</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">porcelain_returning_json</span><span class="op">(</span>schema <span class="op">=</span> <span class="cn">NULL</span>, root <span class="op">=</span> <span class="cn">NULL</span>, status_code <span class="op">=</span> <span class="fl">200L</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">porcelain_returning_binary</span><span class="op">(</span>status_code <span class="op">=</span> <span class="fl">200L</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,24 +82,35 @@ high-level functions (<code>porcelain_returning_json</code> and
     <dl><dt>content_type</dt>
 <dd><p>The MIME content type for the endpoint,
 e.g. <code>text/plain</code>, <code>application/json</code>.</p></dd>
+
+
 <dt>process</dt>
 <dd><p>A processing function that will convert the output
 of the handler function into something of the type
 <code>content_type</code>.  This should be independent of arguments
 passed to the endpoint, so practically this is the final stage
 of serialisation.</p></dd>
+
+
 <dt>validate</dt>
 <dd><p>A function that validates the return value and
 throws an error if the output is not expected.  This will only
 be used if the endpoint is created with <code>validate = TRUE</code>.</p></dd>
+
+
 <dt>status_code</dt>
 <dd><p>The HTTP status code that the endpoint will use
 on a successful return.  The default of 200 should be
 reasonable.</p></dd>
+
+
 <dt>schema</dt>
 <dd><p>The name of the json schema to use</p></dd>
+
+
 <dt>root</dt>
 <dd><p>The root of the schema directory.</p></dd>
+
 </dl></div>
 
   </div>
@@ -114,7 +125,7 @@ reasonable.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

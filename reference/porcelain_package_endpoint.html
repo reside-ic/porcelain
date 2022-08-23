@@ -70,13 +70,13 @@ porcelain_endpoint."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">porcelain_package_endpoint</span><span class="op">(</span>
-  <span class="va">package</span>,
-  <span class="va">method</span>,
-  <span class="va">path</span>,
-  state <span class="op">=</span> <span class="cn">NULL</span>,
-  validate <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">porcelain_package_endpoint</span><span class="op">(</span></span>
+<span>  <span class="va">package</span>,</span>
+<span>  <span class="va">method</span>,</span>
+<span>  <span class="va">path</span>,</span>
+<span>  state <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  validate <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -84,21 +84,32 @@ porcelain_endpoint."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
     <dl><dt>package</dt>
 <dd><p>The name of the package to look in, provided as a
 string or as a namespace</p></dd>
+
+
 <dt>method</dt>
 <dd><p>The HTTP method (i.e., verb), such as <code>GET</code> or
 <code>POST</code>, as a string</p></dd>
+
+
 <dt>path</dt>
 <dd><p>The path of the method (e.g., <code>/my/path</code>)</p></dd>
+
+
 <dt>state</dt>
 <dd><p>A list of state to bind into the method, if your
 endpoint requires any</p></dd>
+
+
 <dt>validate</dt>
 <dd><p>Logical, indicating if the method should be
 created with schema validation enabled.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The endpoint, a <a href="porcelain_endpoint.html">porcelain_endpoint</a> object</p>
+    
+
+<p>The endpoint, a <a href="porcelain_endpoint.html">porcelain_endpoint</a> object</p>
     </div>
 
   </div>
@@ -113,7 +124,7 @@ created with schema validation enabled.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

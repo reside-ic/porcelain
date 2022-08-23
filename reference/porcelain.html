@@ -118,7 +118,7 @@ plumber API are documented here.</p>
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a porcelain object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">...</span>, validate <span class="op">=</span> <span class="cn">FALSE</span>, logger <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">...</span>, validate <span class="op">=</span> <span class="cn">FALSE</span>, logger <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -151,7 +151,7 @@ will log at the beginning and end of the request.</p></dd>
 <h3 id="method-include-package-endpoints-">Method <code>include_package_endpoints()</code><a class="anchor" aria-label="anchor" href="#method-include-package-endpoints-"></a></h3>
 <p>Include package endpoints</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain</span><span class="op">$</span><span class="fu">include_package_endpoints</span><span class="op">(</span>state <span class="op">=</span> <span class="cn">NULL</span>, package <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain</span><span class="op">$</span><span class="fu">include_package_endpoints</span><span class="op">(</span>state <span class="op">=</span> <span class="cn">NULL</span>, package <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -176,7 +176,7 @@ usually we'll find the right thing)</p></dd>
 <h3 id="method-handle-">Method <code>handle()</code><a class="anchor" aria-label="anchor" href="#method-handle-"></a></h3>
 <p>Handle an endpoint</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain</span><span class="op">$</span><span class="fu">handle</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain</span><span class="op">$</span><span class="fu">handle</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -197,7 +197,7 @@ arguments to pass through to <code>plumber</code>.</p></dd>
 tested without running the whole API. The interface here will
 probably change, and may end up using the interface of <code>httr</code>.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="va">method</span>, <span class="va">path</span>, query <span class="op">=</span> <span class="cn">NULL</span>, body <span class="op">=</span> <span class="cn">NULL</span>, content_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="va">method</span>, <span class="va">path</span>, query <span class="op">=</span> <span class="cn">NULL</span>, body <span class="op">=</span> <span class="cn">NULL</span>, content_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -234,7 +234,7 @@ provided alongside <code>body</code>.  If not provided it is set to
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -262,7 +262,7 @@ provided alongside <code>body</code>.  If not provided it is set to
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

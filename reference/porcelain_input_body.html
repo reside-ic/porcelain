@@ -76,23 +76,31 @@ support a form input here too.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">porcelain_input_body_binary</span><span class="op">(</span><span class="va">name</span>, content_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">porcelain_input_body_json</span><span class="op">(</span><span class="va">name</span>, schema <span class="op">=</span> <span class="cn">NULL</span>, root <span class="op">=</span> <span class="cn">NULL</span>, extract <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">porcelain_input_body_binary</span><span class="op">(</span><span class="va">name</span>, content_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">porcelain_input_body_json</span><span class="op">(</span><span class="va">name</span>, schema <span class="op">=</span> <span class="cn">NULL</span>, root <span class="op">=</span> <span class="cn">NULL</span>, extract <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>name</dt>
 <dd><p>Name of the parameter</p></dd>
+
+
 <dt>content_type</dt>
 <dd><p>Content type for the input. If not given, then
 <code>application/octet-stream</code> is used. Provide a vector of valid
 types to allow any of the types to be passed.</p></dd>
+
+
 <dt>schema</dt>
 <dd><p>The name of the json schema to use</p></dd>
+
+
 <dt>root</dt>
 <dd><p>The root of the schema directory.</p></dd>
+
+
 <dt>extract</dt>
 <dd><p>Optionally, the name of an element to extract from
 the json. If given, then the body must be a json object (not an
@@ -101,6 +109,7 @@ within it. We will extract the <em>JSON string</em> corresponding to
 this key and forward that to the argument <code>name</code>.
 Deserialisation of the json is still the target function's
 responsibility but there will be less of it.</p></dd>
+
 </dl></div>
 
   </div>
@@ -115,7 +124,7 @@ responsibility but there will be less of it.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

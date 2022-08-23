@@ -124,15 +124,15 @@ tidy.</p>
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a background server object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/porcelain_background.html">porcelain_background</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
-  <span class="va">create</span>,
-  args <span class="op">=</span> <span class="cn">NULL</span>,
-  port <span class="op">=</span> <span class="cn">NULL</span>,
-  log <span class="op">=</span> <span class="cn">NULL</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  timeout <span class="op">=</span> <span class="fl">60</span>,
-  env <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/porcelain_background.html">porcelain_background</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="va">create</span>,</span>
+<span>  args <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  port <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  timeout <span class="op">=</span> <span class="fl">60</span>,</span>
+<span>  env <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -192,7 +192,7 @@ addition, we export <code><a href="https://callr.r-lib.org/reference/rcmd_safe_e
 <p>Start the server. It is an error to try and start
 a server that is already running.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">start</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">start</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -205,7 +205,7 @@ on the port that we would use</p></li>
 <li><p><code>starting</code>: The server is starting up (not visible in normal usage)</p></li>
 </ul><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">status</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">status</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -214,7 +214,7 @@ on the port that we would use</p></li>
 <p>Stop a running server. If the server is not running,
 this has no effect.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain_background</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain_background</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -224,7 +224,7 @@ this has no effect.</p><div class="section">
 (possibly random) port number. You can use this in your tests
 like <code>bg$url("/path")</code></p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -241,7 +241,7 @@ like <code>bg$url("/path")</code></p><div class="section">
 <p>Run a request to the server, using <code>httr</code>. This presents
 a similar inteface to the <code>request</code> method on the porcelain object.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="va">method</span>, <span class="va">path</span>, <span class="va">...</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain_background</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="va">method</span>, <span class="va">path</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -279,7 +279,7 @@ to <a href="https://httr.r-lib.org/reference/VERB.html" class="external-link">ht
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

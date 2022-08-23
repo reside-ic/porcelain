@@ -68,7 +68,7 @@ allow target functions to throw nice errors back through the API.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">porcelain_stop</span><span class="op">(</span><span class="va">message</span>, code <span class="op">=</span> <span class="st">"ERROR"</span>, errors <span class="op">=</span> <span class="cn">NULL</span>, status_code <span class="op">=</span> <span class="fl">400L</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">porcelain_stop</span><span class="op">(</span><span class="va">message</span>, code <span class="op">=</span> <span class="st">"ERROR"</span>, errors <span class="op">=</span> <span class="cn">NULL</span>, status_code <span class="op">=</span> <span class="fl">400L</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,25 +76,36 @@ allow target functions to throw nice errors back through the API.</p>
     <dl><dt>message</dt>
 <dd><p>The human-readable message of the error.  Ignored
 if <code>errors</code> is given.</p></dd>
+
+
 <dt>code</dt>
 <dd><p>Optional code for the error - if not given, then
 <code>ERROR</code> is used.  Ignored if <code>errors</code> is given.</p></dd>
+
+
 <dt>errors</dt>
 <dd><p>A named list of errors - use this to signal multiple
 error conditions as key/value pairs.</p></dd>
+
+
 <dt>status_code</dt>
 <dd><p>The HTTP status code to use.  The default (400)
 means "bad request" which should be a reasonable catch-all for
 bad user data.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional named args to be included as fields in the
 error response JSON. The values must be in format ready for
 serialization to JSON using <code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::toJSON()</a></code> i.e. any unboxing
 using <code><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">jsonlite::unbox()</a></code> needs to already have been done.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Nothing, as this function throws an error</p>
+    
+
+<p>Nothing, as this function throws an error</p>
     </div>
 
   </div>
@@ -109,7 +120,7 @@ using <code><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="externa
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
