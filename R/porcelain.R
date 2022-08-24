@@ -177,15 +177,6 @@ porcelain_do_serialize_pass <- function(val, res) {
 }
 
 
-## ## original
-## porcelain_error_handler <- function(req, res, e) {
-##   val <- porcelain_process_error(e)
-##   ans <- porcelain_serialize_pass(val, req, res, function(...) NULL)
-##   ans
-## }
-
-
-## This now works for everything *except* errors via request()
 porcelain_error_handler <- function(req, res, e) {
   val <- porcelain_process_error(e)
 
