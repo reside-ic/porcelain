@@ -663,7 +663,7 @@ test_that("Can provide empty queries", {
   expect_equal(res$data, jsonlite::unbox(NA_real_))
   expect_true(res$validated)
 
-  res_api <- endpoint$request(alist(n =))
+  res_api <- endpoint$request(alist(n =)) # nolint
   expect_equal(res_api$status, 200)
   expect_equal(res_api$body, res$body)
 })
