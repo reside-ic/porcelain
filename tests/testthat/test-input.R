@@ -646,3 +646,24 @@ test_that("destructure body failure returns input error", {
                                "Did not find key 'a' within object"))),
          data = NULL))
 })
+
+
+test_that("Can provide empty queries", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/square", square,
+    returning = porcelain_returning_json("Number", "schema"),
+    porcelain_input_query(n = "numeric"),
+    validate = TRUE)
+  res <- endpoint$run(NA_real_)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "application/json")
+  expect_equal(res$data, jsonlite::unbox(NA_real_))
+  expect_true(res$validated)
+
+  res_api <- endpoint$request(alist(n =)) # nolint
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$body, res$body)
+})

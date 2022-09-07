@@ -2,7 +2,7 @@
 porcelain_input_validate_logical <- function(x) {
   assert_scalar(x)
   res <- as.logical(x)
-  if (is.na(res)) {
+  if (is.na(res) && !is.na(x)) {
     stop(sprintf("Could not convert '%s' into a logical", x))
   }
   res
@@ -12,10 +12,10 @@ porcelain_input_validate_logical <- function(x) {
 porcelain_input_validate_integer <- function(x) {
   assert_scalar(x)
   res <- suppressWarnings(as.integer(x))
-  if (is.na(res)) {
+  if (is.na(res) && !is.na(x)) {
     stop(sprintf("Could not convert '%s' into an integer", x))
   }
-  if (abs(as.numeric(x) - res) > 1e-8) {
+  if (!is.na(res) && abs(as.numeric(x) - res) > 1e-8) {
     stop(sprintf("Could not convert '%s' into an integer (loses precision)",
                  x))
   }
@@ -26,7 +26,7 @@ porcelain_input_validate_integer <- function(x) {
 porcelain_input_validate_numeric <- function(x) {
   assert_scalar(x)
   res <- suppressWarnings(as.numeric(x))
-  if (is.na(res)) {
+  if (is.na(res) && !is.na(x)) {
     stop(sprintf("Could not convert '%s' into a numeric", x))
   }
   res
