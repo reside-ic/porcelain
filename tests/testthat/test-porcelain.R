@@ -245,6 +245,6 @@ test_that("build api - text endpoint", {
 
   res_api <- endpoint$request()
   expect_equal(res_api$status, 200)
-  expect_equal(res$headers[["Content-Type"]], "text/plain")
-  expect_equal(res$body, "some text")
+  expect_equal(res_api$headers[["Content-Type"]], "text/plain")
+  expect_equal(res_api$body, "some text")
 })
