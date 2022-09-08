@@ -4,6 +4,7 @@
 \alias{porcelain_returning}
 \alias{porcelain_returning_json}
 \alias{porcelain_returning_binary}
+\alias{porcelain_returning_text}
 \title{Support for endpoint return types}
 \usage{
 porcelain_returning(content_type, process, validate, status_code = 200L)
@@ -11,6 +12,8 @@ porcelain_returning(content_type, process, validate, status_code = 200L)
 porcelain_returning_json(schema = NULL, root = NULL, status_code = 200L)
 
 porcelain_returning_binary(status_code = 200L)
+
+porcelain_returning_text(status_code = 200L)
 }
 \arguments{
 \item{content_type}{The MIME content type for the endpoint,

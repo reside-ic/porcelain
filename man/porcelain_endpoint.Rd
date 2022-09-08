@@ -33,17 +33,17 @@ serialisation and validation information).}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{porcelain_endpoint$new()}}
-\item \href{#method-run}{\code{porcelain_endpoint$run()}}
-\item \href{#method-request}{\code{porcelain_endpoint$request()}}
-\item \href{#method-plumber}{\code{porcelain_endpoint$plumber()}}
-\item \href{#method-create}{\code{porcelain_endpoint$create()}}
-\item \href{#method-clone}{\code{porcelain_endpoint$clone()}}
+\item \href{#method-porcelain_endpoint-new}{\code{porcelain_endpoint$new()}}
+\item \href{#method-porcelain_endpoint-run}{\code{porcelain_endpoint$run()}}
+\item \href{#method-porcelain_endpoint-request}{\code{porcelain_endpoint$request()}}
+\item \href{#method-porcelain_endpoint-plumber}{\code{porcelain_endpoint$plumber()}}
+\item \href{#method-porcelain_endpoint-create}{\code{porcelain_endpoint$create()}}
+\item \href{#method-porcelain_endpoint-clone}{\code{porcelain_endpoint$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-porcelain_endpoint-new"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_endpoint-new}{}}}
 \subsection{Method \code{new()}}{
 Create an endpoint
 \subsection{Usage}{
@@ -86,8 +86,8 @@ of the processed body is "invalid".}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-run"></a>}}
-\if{latex}{\out{\hypertarget{method-run}{}}}
+\if{html}{\out{<a id="method-porcelain_endpoint-run"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_endpoint-run}{}}}
 \subsection{Method \code{run()}}{
 Run the endpoint.  This will produce a
 standardised response object that contains \code{status_code},
@@ -107,8 +107,8 @@ through the \code{process} method and returned by plumber) and
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-request"></a>}}
-\if{latex}{\out{\hypertarget{method-request}{}}}
+\if{html}{\out{<a id="method-porcelain_endpoint-request"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_endpoint-request}{}}}
 \subsection{Method \code{request()}}{
 Test the endpoint.  This creates a full plumber
 object and serves one request to the endpoint.  Argument are as
@@ -129,8 +129,8 @@ automatically taken from the endpoint itself.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-plumber"></a>}}
-\if{latex}{\out{\hypertarget{method-plumber}{}}}
+\if{html}{\out{<a id="method-porcelain_endpoint-plumber"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_endpoint-plumber}{}}}
 \subsection{Method \code{plumber()}}{
 Helper method for use with plumber - not designed
 for end-user use.  This is what gets called by plumber when the
@@ -150,8 +150,8 @@ endpoint receives a request.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-create"></a>}}
-\if{latex}{\out{\hypertarget{method-create}{}}}
+\if{html}{\out{<a id="method-porcelain_endpoint-create"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_endpoint-create}{}}}
 \subsection{Method \code{create()}}{
 Create a plumber endpoint
 \subsection{Usage}{
@@ -171,8 +171,8 @@ endpoint.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-porcelain_endpoint-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_endpoint-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
