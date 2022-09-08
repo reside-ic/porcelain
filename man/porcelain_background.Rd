@@ -32,17 +32,17 @@ tidy.
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{porcelain_background$new()}}
-\item \href{#method-start}{\code{porcelain_background$start()}}
-\item \href{#method-status}{\code{porcelain_background$status()}}
-\item \href{#method-stop}{\code{porcelain_background$stop()}}
-\item \href{#method-url}{\code{porcelain_background$url()}}
-\item \href{#method-request}{\code{porcelain_background$request()}}
+\item \href{#method-porcelain_background-new}{\code{porcelain_background$new()}}
+\item \href{#method-porcelain_background-start}{\code{porcelain_background$start()}}
+\item \href{#method-porcelain_background-status}{\code{porcelain_background$status()}}
+\item \href{#method-porcelain_background-stop}{\code{porcelain_background$stop()}}
+\item \href{#method-porcelain_background-url}{\code{porcelain_background$url()}}
+\item \href{#method-porcelain_background-request}{\code{porcelain_background$request()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-porcelain_background-new"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_background-new}{}}}
 \subsection{Method \code{new()}}{
 Create a background server object
 \subsection{Usage}{
@@ -97,8 +97,8 @@ addition, we export \code{callr::rcmd_safe_env()} and the value of
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-start"></a>}}
-\if{latex}{\out{\hypertarget{method-start}{}}}
+\if{html}{\out{<a id="method-porcelain_background-start"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_background-start}{}}}
 \subsection{Method \code{start()}}{
 Start the server. It is an error to try and start
 a server that is already running.
@@ -108,8 +108,8 @@ a server that is already running.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-status"></a>}}
-\if{latex}{\out{\hypertarget{method-status}{}}}
+\if{html}{\out{<a id="method-porcelain_background-status"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_background-status}{}}}
 \subsection{Method \code{status()}}{
 Return the background server status. This will be one of:
 \itemize{
@@ -125,8 +125,8 @@ on the port that we would use
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-stop"></a>}}
-\if{latex}{\out{\hypertarget{method-stop}{}}}
+\if{html}{\out{<a id="method-porcelain_background-stop"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_background-stop}{}}}
 \subsection{Method \code{stop()}}{
 Stop a running server. If the server is not running,
 this has no effect.
@@ -136,8 +136,8 @@ this has no effect.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-url"></a>}}
-\if{latex}{\out{\hypertarget{method-url}{}}}
+\if{html}{\out{<a id="method-porcelain_background-url"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_background-url}{}}}
 \subsection{Method \code{url()}}{
 Create a url string for the server, interpolating the
 (possibly random) port number. You can use this in your tests
@@ -155,8 +155,8 @@ like \code{bg$url("/path")}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-request"></a>}}
-\if{latex}{\out{\hypertarget{method-request}{}}}
+\if{html}{\out{<a id="method-porcelain_background-request"></a>}}
+\if{latex}{\out{\hypertarget{method-porcelain_background-request}{}}}
 \subsection{Method \code{request()}}{
 Run a request to the server, using \code{httr}. This presents
 a similar inteface to the \code{request} method on the porcelain object.
