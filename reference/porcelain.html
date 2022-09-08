@@ -19,7 +19,7 @@ plumber API are documented here."><!-- mathjax --><script src="https://cdnjs.clo
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.10</span>
       </span>
     </div>
 
@@ -80,41 +80,41 @@ plumber API are documented here.</p>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>porcelain$new()</code></a></p></li>
-<li><p><a href="#method-include_package_endpoints"><code>porcelain$include_package_endpoints()</code></a></p></li>
-<li><p><a href="#method-handle"><code>porcelain$handle()</code></a></p></li>
-<li><p><a href="#method-request"><code>porcelain$request()</code></a></p></li>
-<li><p><a href="#method-clone"><code>porcelain$clone()</code></a></p></li>
-</ul></div><p><details><summary>Inherited methods</summary><ul><li><p><span class="pkg-link" data-pkg="plumber" data-topic="Hookable" data-id="registerHooks"><a href="https://www.rplumber.io/reference/Hookable.html#method-registerHooks"><code>plumber::Hookable$registerHooks()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addAssets"><a href="https://www.rplumber.io/reference/Plumber.html#method-addAssets"><code>plumber::Plumber$addAssets()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addEndpoint"><a href="https://www.rplumber.io/reference/Plumber.html#method-addEndpoint"><code>plumber::Plumber$addEndpoint()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addFilter"><a href="https://www.rplumber.io/reference/Plumber.html#method-addFilter"><code>plumber::Plumber$addFilter()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addGlobalProcessor"><a href="https://www.rplumber.io/reference/Plumber.html#method-addGlobalProcessor"><code>plumber::Plumber$addGlobalProcessor()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="call"><a href="https://www.rplumber.io/reference/Plumber.html#method-call"><code>plumber::Plumber$call()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="filter"><a href="https://www.rplumber.io/reference/Plumber.html#method-filter"><code>plumber::Plumber$filter()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="getApiSpec"><a href="https://www.rplumber.io/reference/Plumber.html#method-getApiSpec"><code>plumber::Plumber$getApiSpec()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="getDebug"><a href="https://www.rplumber.io/reference/Plumber.html#method-getDebug"><code>plumber::Plumber$getDebug()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="mount"><a href="https://www.rplumber.io/reference/Plumber.html#method-mount"><code>plumber::Plumber$mount()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="onHeaders"><a href="https://www.rplumber.io/reference/Plumber.html#method-onHeaders"><code>plumber::Plumber$onHeaders()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="onWSOpen"><a href="https://www.rplumber.io/reference/Plumber.html#method-onWSOpen"><code>plumber::Plumber$onWSOpen()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="openAPIFile"><a href="https://www.rplumber.io/reference/Plumber.html#method-openAPIFile"><code>plumber::Plumber$openAPIFile()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="print"><a href="https://www.rplumber.io/reference/Plumber.html#method-print"><code>plumber::Plumber$print()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="registerHook"><a href="https://www.rplumber.io/reference/Plumber.html#method-registerHook"><code>plumber::Plumber$registerHook()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="removeHandle"><a href="https://www.rplumber.io/reference/Plumber.html#method-removeHandle"><code>plumber::Plumber$removeHandle()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="route"><a href="https://www.rplumber.io/reference/Plumber.html#method-route"><code>plumber::Plumber$route()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="run"><a href="https://www.rplumber.io/reference/Plumber.html#method-run"><code>plumber::Plumber$run()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="serve"><a href="https://www.rplumber.io/reference/Plumber.html#method-serve"><code>plumber::Plumber$serve()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="set404Handler"><a href="https://www.rplumber.io/reference/Plumber.html#method-set404Handler"><code>plumber::Plumber$set404Handler()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setApiSpec"><a href="https://www.rplumber.io/reference/Plumber.html#method-setApiSpec"><code>plumber::Plumber$setApiSpec()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setDebug"><a href="https://www.rplumber.io/reference/Plumber.html#method-setDebug"><code>plumber::Plumber$setDebug()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setDocs"><a href="https://www.rplumber.io/reference/Plumber.html#method-setDocs"><code>plumber::Plumber$setDocs()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setDocsCallback"><a href="https://www.rplumber.io/reference/Plumber.html#method-setDocsCallback"><code>plumber::Plumber$setDocsCallback()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setErrorHandler"><a href="https://www.rplumber.io/reference/Plumber.html#method-setErrorHandler"><code>plumber::Plumber$setErrorHandler()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setParsers"><a href="https://www.rplumber.io/reference/Plumber.html#method-setParsers"><code>plumber::Plumber$setParsers()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setSerializer"><a href="https://www.rplumber.io/reference/Plumber.html#method-setSerializer"><code>plumber::Plumber$setSerializer()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="swaggerFile"><a href="https://www.rplumber.io/reference/Plumber.html#method-swaggerFile"><code>plumber::Plumber$swaggerFile()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="unmount"><a href="https://www.rplumber.io/reference/Plumber.html#method-unmount"><code>plumber::Plumber$unmount()</code></a></span></p></li>
-</ul></details></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-porcelain-new"><code>porcelain$new()</code></a></p></li>
+<li><p><a href="#method-porcelain-include_package_endpoints"><code>porcelain$include_package_endpoints()</code></a></p></li>
+<li><p><a href="#method-porcelain-handle"><code>porcelain$handle()</code></a></p></li>
+<li><p><a href="#method-porcelain-request"><code>porcelain$request()</code></a></p></li>
+<li><p><a href="#method-porcelain-clone"><code>porcelain$clone()</code></a></p></li>
+</ul></div><p><details><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="plumber" data-topic="Hookable" data-id="registerHooks"><a href="https://www.rplumber.io/reference/Hookable.html#method-registerHooks"><code>plumber::Hookable$registerHooks()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addAssets"><a href="https://www.rplumber.io/reference/Plumber.html#method-addAssets"><code>plumber::Plumber$addAssets()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addEndpoint"><a href="https://www.rplumber.io/reference/Plumber.html#method-addEndpoint"><code>plumber::Plumber$addEndpoint()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addFilter"><a href="https://www.rplumber.io/reference/Plumber.html#method-addFilter"><code>plumber::Plumber$addFilter()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="addGlobalProcessor"><a href="https://www.rplumber.io/reference/Plumber.html#method-addGlobalProcessor"><code>plumber::Plumber$addGlobalProcessor()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="call"><a href="https://www.rplumber.io/reference/Plumber.html#method-call"><code>plumber::Plumber$call()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="filter"><a href="https://www.rplumber.io/reference/Plumber.html#method-filter"><code>plumber::Plumber$filter()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="getApiSpec"><a href="https://www.rplumber.io/reference/Plumber.html#method-getApiSpec"><code>plumber::Plumber$getApiSpec()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="getDebug"><a href="https://www.rplumber.io/reference/Plumber.html#method-getDebug"><code>plumber::Plumber$getDebug()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="mount"><a href="https://www.rplumber.io/reference/Plumber.html#method-mount"><code>plumber::Plumber$mount()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="onHeaders"><a href="https://www.rplumber.io/reference/Plumber.html#method-onHeaders"><code>plumber::Plumber$onHeaders()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="onWSOpen"><a href="https://www.rplumber.io/reference/Plumber.html#method-onWSOpen"><code>plumber::Plumber$onWSOpen()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="openAPIFile"><a href="https://www.rplumber.io/reference/Plumber.html#method-openAPIFile"><code>plumber::Plumber$openAPIFile()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="print"><a href="https://www.rplumber.io/reference/Plumber.html#method-print"><code>plumber::Plumber$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="registerHook"><a href="https://www.rplumber.io/reference/Plumber.html#method-registerHook"><code>plumber::Plumber$registerHook()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="removeHandle"><a href="https://www.rplumber.io/reference/Plumber.html#method-removeHandle"><code>plumber::Plumber$removeHandle()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="route"><a href="https://www.rplumber.io/reference/Plumber.html#method-route"><code>plumber::Plumber$route()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="run"><a href="https://www.rplumber.io/reference/Plumber.html#method-run"><code>plumber::Plumber$run()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="serve"><a href="https://www.rplumber.io/reference/Plumber.html#method-serve"><code>plumber::Plumber$serve()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="set404Handler"><a href="https://www.rplumber.io/reference/Plumber.html#method-set404Handler"><code>plumber::Plumber$set404Handler()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setApiSpec"><a href="https://www.rplumber.io/reference/Plumber.html#method-setApiSpec"><code>plumber::Plumber$setApiSpec()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setDebug"><a href="https://www.rplumber.io/reference/Plumber.html#method-setDebug"><code>plumber::Plumber$setDebug()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setDocs"><a href="https://www.rplumber.io/reference/Plumber.html#method-setDocs"><code>plumber::Plumber$setDocs()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setDocsCallback"><a href="https://www.rplumber.io/reference/Plumber.html#method-setDocsCallback"><code>plumber::Plumber$setDocsCallback()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setErrorHandler"><a href="https://www.rplumber.io/reference/Plumber.html#method-setErrorHandler"><code>plumber::Plumber$setErrorHandler()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setParsers"><a href="https://www.rplumber.io/reference/Plumber.html#method-setParsers"><code>plumber::Plumber$setParsers()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="setSerializer"><a href="https://www.rplumber.io/reference/Plumber.html#method-setSerializer"><code>plumber::Plumber$setSerializer()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="swaggerFile"><a href="https://www.rplumber.io/reference/Plumber.html#method-swaggerFile"><code>plumber::Plumber$swaggerFile()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plumber" data-topic="Plumber" data-id="unmount"><a href="https://www.rplumber.io/reference/Plumber.html#method-unmount"><code>plumber::Plumber$unmount()</code></a></span></li>
+</ul></details></p><hr><a id="method-porcelain-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a porcelain object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -147,7 +147,7 @@ will log at the beginning and end of the request.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-include_package_endpoints"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain-include_package_endpoints"></a><div class="section">
 <h3 id="method-include-package-endpoints-">Method <code>include_package_endpoints()</code><a class="anchor" aria-label="anchor" href="#method-include-package-endpoints-"></a></h3>
 <p>Include package endpoints</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
@@ -172,7 +172,7 @@ usually we'll find the right thing)</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-handle"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain-handle"></a><div class="section">
 <h3 id="method-handle-">Method <code>handle()</code><a class="anchor" aria-label="anchor" href="#method-handle-"></a></h3>
 <p>Handle an endpoint</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
@@ -190,7 +190,7 @@ arguments to pass through to <code>plumber</code>.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-request"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain-request"></a><div class="section">
 <h3 id="method-request-">Method <code>request()</code><a class="anchor" aria-label="anchor" href="#method-request-"></a></h3>
 <p>Send a request to plumber for debugging</p>
 <p>Sends a request to plumber so that the API can be easily
@@ -230,7 +230,7 @@ provided alongside <code>body</code>.  If not provided it is set to
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>

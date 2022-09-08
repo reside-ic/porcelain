@@ -34,7 +34,7 @@ tidy."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.10</span>
       </span>
     </div>
 
@@ -114,13 +114,13 @@ tidy.</p>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>porcelain_background$new()</code></a></p></li>
-<li><p><a href="#method-start"><code>porcelain_background$start()</code></a></p></li>
-<li><p><a href="#method-status"><code>porcelain_background$status()</code></a></p></li>
-<li><p><a href="#method-stop"><code>porcelain_background$stop()</code></a></p></li>
-<li><p><a href="#method-url"><code>porcelain_background$url()</code></a></p></li>
-<li><p><a href="#method-request"><code>porcelain_background$request()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-porcelain_background-new"><code>porcelain_background$new()</code></a></p></li>
+<li><p><a href="#method-porcelain_background-start"><code>porcelain_background$start()</code></a></p></li>
+<li><p><a href="#method-porcelain_background-status"><code>porcelain_background$status()</code></a></p></li>
+<li><p><a href="#method-porcelain_background-stop"><code>porcelain_background$stop()</code></a></p></li>
+<li><p><a href="#method-porcelain_background-url"><code>porcelain_background$url()</code></a></p></li>
+<li><p><a href="#method-porcelain_background-request"><code>porcelain_background$request()</code></a></p></li>
+</ul></div><p></p><hr><a id="method-porcelain_background-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a background server object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -187,7 +187,7 @@ addition, we export <code><a href="https://callr.r-lib.org/reference/rcmd_safe_e
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-start"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_background-start"></a><div class="section">
 <h3 id="method-start-">Method <code><a href="https://rdrr.io/r/stats/start.html" class="external-link">start()</a></code><a class="anchor" aria-label="anchor" href="#method-start-"></a></h3>
 <p>Start the server. It is an error to try and start
 a server that is already running.</p><div class="section">
@@ -196,7 +196,7 @@ a server that is already running.</p><div class="section">
 </div>
 
 
-</div><p></p><hr><a id="method-status"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_background-status"></a><div class="section">
 <h3 id="method-status-">Method <code>status()</code><a class="anchor" aria-label="anchor" href="#method-status-"></a></h3>
 <p>Return the background server status. This will be one of:</p><ul><li><p><code>running</code>: The server is running</p></li>
 <li><p><code>stopped</code>: The server is stopped</p></li>
@@ -209,7 +209,7 @@ on the port that we would use</p></li>
 </div>
 
 
-</div><p></p><hr><a id="method-stop"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_background-stop"></a><div class="section">
 <h3 id="method-stop-">Method <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code><a class="anchor" aria-label="anchor" href="#method-stop-"></a></h3>
 <p>Stop a running server. If the server is not running,
 this has no effect.</p><div class="section">
@@ -218,7 +218,7 @@ this has no effect.</p><div class="section">
 </div>
 
 
-</div><p></p><hr><a id="method-url"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_background-url"></a><div class="section">
 <h3 id="method-url-">Method <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">url()</a></code><a class="anchor" aria-label="anchor" href="#method-url-"></a></h3>
 <p>Create a url string for the server, interpolating the
 (possibly random) port number. You can use this in your tests
@@ -236,7 +236,7 @@ like <code>bg$url("/path")</code></p><div class="section">
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-request"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_background-request"></a><div class="section">
 <h3 id="method-request-">Method <code>request()</code><a class="anchor" aria-label="anchor" href="#method-request-"></a></h3>
 <p>Run a request to the server, using <code>httr</code>. This presents
 a similar inteface to the <code>request</code> method on the porcelain object.</p><div class="section">

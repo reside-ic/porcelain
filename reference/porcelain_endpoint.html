@@ -20,7 +20,7 @@ endpoints, porcelain endpoints are meant to be used in testing."><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.10</span>
       </span>
     </div>
 
@@ -112,13 +112,13 @@ serialisation and validation information).</p></dd>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>porcelain_endpoint$new()</code></a></p></li>
-<li><p><a href="#method-run"><code>porcelain_endpoint$run()</code></a></p></li>
-<li><p><a href="#method-request"><code>porcelain_endpoint$request()</code></a></p></li>
-<li><p><a href="#method-plumber"><code>porcelain_endpoint$plumber()</code></a></p></li>
-<li><p><a href="#method-create"><code>porcelain_endpoint$create()</code></a></p></li>
-<li><p><a href="#method-clone"><code>porcelain_endpoint$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-porcelain_endpoint-new"><code>porcelain_endpoint$new()</code></a></p></li>
+<li><p><a href="#method-porcelain_endpoint-run"><code>porcelain_endpoint$run()</code></a></p></li>
+<li><p><a href="#method-porcelain_endpoint-request"><code>porcelain_endpoint$request()</code></a></p></li>
+<li><p><a href="#method-porcelain_endpoint-plumber"><code>porcelain_endpoint$plumber()</code></a></p></li>
+<li><p><a href="#method-porcelain_endpoint-create"><code>porcelain_endpoint$create()</code></a></p></li>
+<li><p><a href="#method-porcelain_endpoint-clone"><code>porcelain_endpoint$clone()</code></a></p></li>
+</ul></div><p></p><hr><a id="method-porcelain_endpoint-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create an endpoint</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -173,7 +173,7 @@ of the processed body is "invalid".</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-run"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_endpoint-run"></a><div class="section">
 <h3 id="method-run-">Method <code>run()</code><a class="anchor" aria-label="anchor" href="#method-run-"></a></h3>
 <p>Run the endpoint.  This will produce a
 standardised response object that contains <code>status_code</code>,
@@ -193,7 +193,7 @@ through the <code>process</code> method and returned by plumber) and
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-request"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_endpoint-request"></a><div class="section">
 <h3 id="method-request-">Method <code>request()</code><a class="anchor" aria-label="anchor" href="#method-request-"></a></h3>
 <p>Test the endpoint.  This creates a full plumber
 object and serves one request to the endpoint.  Argument are as
@@ -214,7 +214,7 @@ automatically taken from the endpoint itself.</p><div class="section">
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-plumber"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_endpoint-plumber"></a><div class="section">
 <h3 id="method-plumber-">Method <code>plumber()</code><a class="anchor" aria-label="anchor" href="#method-plumber-"></a></h3>
 <p>Helper method for use with plumber - not designed
 for end-user use.  This is what gets called by plumber when the
@@ -236,7 +236,7 @@ endpoint receives a request.</p><div class="section">
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-create"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_endpoint-create"></a><div class="section">
 <h3 id="method-create-">Method <code>create()</code><a class="anchor" aria-label="anchor" href="#method-create-"></a></h3>
 <p>Create a plumber endpoint</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
@@ -258,7 +258,7 @@ endpoint.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-porcelain_endpoint-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
