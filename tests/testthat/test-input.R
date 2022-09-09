@@ -230,6 +230,26 @@ test_that("Can validate query parameters from plumber, throwing nice errors", {
 })
 
 
+test_that("NA query parameters are valid", {
+  multiply <- porcelain_endpoint$new(
+    "GET", "/multiply", function(a, b) {
+      if (is.na(a)) {
+        a <- 10
+      }
+      jsonlite::unbox(a * b)
+    },
+    porcelain_input_query(a = "numeric", b = "numeric"),
+    returning = porcelain_returning_json())
+
+  api <- porcelain$new()$handle(multiply)
+
+  res <- api$request("GET", "/multiply", c(a = NA_real_, b = 2))
+  expect_equal(res$status, 200)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(res$body, multiply$run(10, 2)$body)
+})
+
+
 test_that("use routing parameter", {
   power <- function(n, m = 2) {
     jsonlite::unbox(n^m)

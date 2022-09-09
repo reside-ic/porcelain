@@ -23,6 +23,9 @@ query_string <- function(query) {
     return("")
   }
   assert_named(query)
+  ## On input we map '?param=' to list(param = NA) so we map back to this
+  ## query string for testing
+  query[is.na(query)] <- ""
   pairs <- sprintf("%s=%s", names(query), as.character(query))
   utils::URLencode(paste0("?", paste(pairs, collapse = "&")))
 }
