@@ -244,7 +244,8 @@ test_that("NA query parameters throw an error", {
   expect_equal(res$status, 400)
   errors <- jsonlite::parse_json(res$body, simplifyVector = FALSE)$errors
   expect_equal(errors[[1]]$error, "INVALID_INPUT")
-  expect_equal(errors[[1]]$detail, "query parameter 'a' is missing but required")
+  expect_equal(errors[[1]]$detail,
+               "query parameter 'a' is missing but required")
 })
 
 test_that("NA query parameters are valid when target has default values", {
