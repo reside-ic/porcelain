@@ -71,10 +71,10 @@ porcelain_log_postserialize <- function(logger) {
     } else {
       size <- nchar(res$body)
     }
-
     logger$info(sprintf("response %s %s => %d (%d bytes)",
                         req$REQUEST_METHOD, req$PATH_INFO, res$status, size),
-                caller = "postserialize")
+                caller = "postserialize", request_received = req$received_time,
+                elapsed = format_difftime(now_utc(), req$received_time))
 
     if (is_json_error_response(res)) {
       logger_detailed(logger, "error", req, "postserialize", "error",
