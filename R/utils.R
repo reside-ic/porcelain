@@ -278,26 +278,22 @@ now_utc <- function() {
 ## Modified version of difftime to show timings
 ## in ms and to a precision
 format_difftime <- function(time1, time2) {
-  z <- unclass(time1) - unclass(time2)
-  attr(z, "tzone") <- NULL
-  units <- if (all(is.na(z))) {
+  z <- as.numeric(time1 - time2, "secs")
+  units <- if (!is.finite(z) || z <= 1) {
+    "ms"
+  } else if (z < 60) {
     "secs"
+  } else if (z < 3600) {
+    "mins"
   } else {
-    diff <- min(abs(z), na.rm = TRUE)
-    if (!is.finite(diff) || diff <= 1) {
-      "ms"
-    } else if (diff < 60) {
-      "secs"
-    } else if (diff < 3600) {
-      "mins"
-    } else {
-      "hours"
-    }
+    "hours"
   }
-  time <- switch(units,
-                 ms = z * 1000,
-                 secs = z,
-                 mins = z / 60,
-                 hours = z / 3600)
-  paste(round(time, 2), units)
+  units_difftime <- if (units == "ms") "secs" else units
+  z <- as.numeric(time1 - time2, units_difftime)
+  if (units == "ms") {
+    z <- z * 1000
+    sprintf("%.0f %s", z, units)
+  } else {
+    sprintf("%.2f %s", z, units)
+  }
 }

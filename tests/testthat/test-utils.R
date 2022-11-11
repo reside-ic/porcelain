@@ -145,13 +145,14 @@ test_that("try and find a free port", {
 
 
 test_that("can format difftime nicely", {
-  now <- Sys.time()
-  expect_match(format_difftime(Sys.time(), now), "\\d{1,3}.\\d{1,2} ms")
-  expect_match(format_difftime(now, Sys.time()), "-\\d{1,3}.\\d{1,2} ms")
-  expect_equal(format_difftime(now, now), "0 ms")
+  base_time <- ISOdate(2022, 11, 11, 10, 49, 33.123)
 
-  expect_match(format_difftime(now, (now - 1)), "1000 ms")
-  expect_match(format_difftime(now, (now - 1.1)), "1.1 secs")
-  expect_match(format_difftime(now, (now - 65)), "1.08 mins")
-  expect_match(format_difftime(now, (now - 60 * 60)), "1 hours")
+  expect_equal(format_difftime(base_time, base_time), "0 ms")
+  expect_match(format_difftime(base_time + 0.5, base_time), "\\d{1,4} ms")
+  expect_match(format_difftime(base_time - 0.5, base_time), "-\\d{1,4} ms")
+
+  expect_match(format_difftime(base_time, (base_time - 1)), "1000 ms")
+  expect_match(format_difftime(base_time, (base_time - 1.1)), "1.10 secs")
+  expect_match(format_difftime(base_time, (base_time - 65)), "1.08 mins")
+  expect_match(format_difftime(base_time, (base_time - 60 * 60)), "1.00 hours")
 })
