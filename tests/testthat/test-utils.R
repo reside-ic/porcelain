@@ -142,3 +142,16 @@ test_that("try and find a free port", {
     fixed = TRUE)
   mockery::expect_called(mock_check_port, 5)
 })
+
+
+test_that("can format difftime nicely", {
+  now <- Sys.time()
+  expect_match(format_difftime(Sys.time(), now), "\\d{1,3}.\\d{2} ms")
+  expect_match(format_difftime(now, Sys.time()), "-\\d{1,3}.\\d{2} ms")
+  expect_equal(format_difftime(now, now), "0 ms")
+
+  expect_match(format_difftime(now, (now - 1)), "1000 ms")
+  expect_match(format_difftime(now, (now - 1.1)), "1.1 secs")
+  expect_match(format_difftime(now, (now - 65)), "1.08 mins")
+  expect_match(format_difftime(now, (now - 60 * 60)), "1 hours")
+})
