@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.13</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@
 
       
 
-      </header><script src="roxygen_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>roxygen</h1>
@@ -91,20 +91,30 @@
 
     
     
-<p>The approach described in <code><a href="../articles/porcelain.html">vignette("porcelain")</a></code> allows maximum flexibility, but <code>porcelain</code> also allows a less programmatic, more declarative approach via custom roxygen tags. This approach returns to the original expressiveness of <code>plumber</code>, but with the type-checking and testability of <code>porcelain</code>.</p>
+<p>The approach described in <code><a href="../articles/porcelain.html">vignette("porcelain")</a></code> allows
+maximum flexibility, but <code>porcelain</code> also allows a less
+programmatic, more declarative approach via custom roxygen tags. This
+approach returns to the original expressiveness of <code>plumber</code>,
+but with the type-checking and testability of
+<code>porcelain</code>.</p>
 <div class="section level2">
 <h2 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
 </h2>
-<p>You must first update your <code>DESCRIPTION</code> file to to add the line</p>
+<p>You must first update your <code>DESCRIPTION</code> file to to add
+the line</p>
 <pre><code><span><span class="va">Roxygen</span><span class="op">:</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>roclets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rd"</span>, <span class="st">"namespace"</span>, <span class="st">"porcelain::porcelain_roclet"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p>or if you are using roxygen-with-markdown</p>
 <pre><code><span><span class="va">Roxygen</span><span class="op">:</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>markdown <span class="op">=</span> <span class="cn">TRUE</span>, roclets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rd"</span>, <span class="st">"namespace"</span>, <span class="st">"porcelain::porcelain_roclet"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
-<p>The important part is the <code><a href="../reference/porcelain_roclet.html">porcelain::porcelain_roclet</a></code> entry in “roclets” which will activate the <code>@porcelain</code> tag that we will use.</p>
+<p>The important part is the <code><a href="../reference/porcelain_roclet.html">porcelain::porcelain_roclet</a></code>
+entry in “roclets” which will activate the <code>@porcelain</code> tag
+that we will use.</p>
 </div>
 <div class="section level2">
 <h2 id="declaring-a-simple-endpoint">Declaring a simple endpoint<a class="anchor" aria-label="anchor" href="#declaring-a-simple-endpoint"></a>
 </h2>
-<p>Consider our simple <code>add</code> function from <code><a href="../articles/porcelain.html">vignette("porcelain")</a></code>, which takes numeric query arguments and returns a number. We can write</p>
+<p>Consider our simple <code>add</code> function from
+<code><a href="../articles/porcelain.html">vignette("porcelain")</a></code>, which takes numeric query arguments
+and returns a number. We can write</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   GET / =&gt; json("numeric")</span></span>
@@ -119,7 +129,10 @@
 <span>  <span class="va">api</span><span class="op">$</span><span class="fu">include_package_endpoints</span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="va">api</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Then running <code>devtools::document()</code> (or similar) will generate the file <code>R/porcelain.R</code> with a hook function that contains code that will be included when running the <code>include_package_endpoints</code> method.</p>
+<p>Then running <code>devtools::document()</code> (or similar) will
+generate the file <code>R/porcelain.R</code> with a hook function that
+contains code that will be included when running the
+<code>include_package_endpoints</code> method.</p>
 </div>
 <div class="section level2">
 <h2 id="the-basic-syntax">The basic syntax<a class="anchor" aria-label="anchor" href="#the-basic-syntax"></a>
@@ -127,44 +140,72 @@
 <p>The basic tag parts required are</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain &lt;METHOD&gt; &lt;path&gt; =&gt; &lt;returning&gt;</span></span></code></pre></div>
-<p>This string can be split across many lines and additional whitespace is ignored, so for the simple example above, we could equivalently write</p>
+<p>This string can be split across many lines and additional whitespace
+is ignored, so for the simple example above, we could equivalently
+write</p>
 <pre><code><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   GET /add/&lt;a:int&gt;/&lt;b:int&gt; =&gt;</span></span>
 <span><span class="co">#'     json("numeric")</span></span></code></pre>
-<p>The arguments are all passed to <code><a href="../reference/porcelain_endpoint.html">porcelain::porcelain_endpoint</a></code>; the method and path are passed directly as <code>method</code> and <code>path</code>. The <code>=&gt;</code> symbol exists to read “returning” and help mark the end of the path.</p>
-<p>The “returning” argument is transformed before being passed through. In the example above <code>json("numeric")</code> became <code>porcelain::porcelain_returning_json("numeric")</code></p>
+<p>The arguments are all passed to
+<code><a href="../reference/porcelain_endpoint.html">porcelain::porcelain_endpoint</a></code>; the method and path are
+passed directly as <code>method</code> and <code>path</code>. The
+<code>=&gt;</code> symbol exists to read “returning” and help mark the
+end of the path.</p>
+<p>The “returning” argument is transformed before being passed through.
+In the example above <code>json("numeric")</code> became
+<code>porcelain::porcelain_returning_json("numeric")</code></p>
 <p>We translate with the rule:</p>
 <ul>
 <li>
-<code>json</code>: <code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning_json</a></code>
+<code>json</code>:
+<code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning_json</a></code>
 </li>
 <li>
-<code>binary</code>: <code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning_binary</a></code>
+<code>binary</code>:
+<code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning_binary</a></code>
 </li>
 <li>
-<code>generic</code> <code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning</a></code>
+<code>generic</code>
+<code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning</a></code>
 </li>
 </ul>
-<p>If if no arguments are provided we perform a call with no arguments (e.g., <code>GET /path =&gt; json</code> would use <code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning_json()</a></code>). If arguments are given, then we will attempt to auto-quote these.</p>
+<p>If if no arguments are provided we perform a call with no arguments
+(e.g., <code>GET /path =&gt; json</code> would use
+<code><a href="../reference/porcelain_returning.html">porcelain::porcelain_returning_json()</a></code>). If arguments are
+given, then we will attempt to auto-quote these.</p>
 </div>
 <div class="section level2">
 <h2 id="adding-inputs">Adding inputs<a class="anchor" aria-label="anchor" href="#adding-inputs"></a>
 </h2>
-<p>The above function used query parameters to provide inputs to the target function; you can specify query, body and bound state this way (path parameters remain in the path, as before).</p>
+<p>The above function used query parameters to provide inputs to the
+target function; you can specify query, body and bound state this way
+(path parameters remain in the path, as before).</p>
 <p>All input parameters have the format</p>
 <pre><code><span><span class="co">#' &lt;location&gt; &lt;name&gt; :: &lt;description&gt;</span></span></code></pre>
 <p>where</p>
 <ul>
 <li>
-<code>&lt;location&gt;</code> is one of <code>query</code>, <code>body</code> or <code>state</code>
+<code>&lt;location&gt;</code> is one of <code>query</code>,
+<code>body</code> or <code>state</code>
 </li>
 <li>
-<code>&lt;name&gt;</code> is the name of the argument in the target function that you will send the input to</li>
+<code>&lt;name&gt;</code> is the name of the argument in the target
+function that you will send the input to</li>
 <li>
-<code>&lt;description&gt;</code> is one or more arguments that describes the input further</li>
+<code>&lt;description&gt;</code> is one or more arguments that
+describes the input further</li>
 </ul>
-<p>The interface here is a little different to the underlying porcelain functions (<code><a href="../reference/porcelain_input_query.html">porcelain::porcelain_input_query</a></code>, <code>porcelain::porcelain_input_body</code> and <code><a href="../reference/porcelain_state.html">porcelain::porcelain_state</a></code>) in that every input parameter is given individually even if you might treat these together in the functions. For example, for two input queries we used two lines.</p>
-<p><strong>For query inputs</strong>, the description will be one of the valid types for <code><a href="../reference/porcelain_input_query.html">porcelain::porcelain_input_query</a></code>; <code>logical</code>, <code>integer</code>, <code>numeric</code> or <code>string</code>, for example an endpoint accepting two query inputs:</p>
+<p>The interface here is a little different to the underlying porcelain
+functions (<code><a href="../reference/porcelain_input_query.html">porcelain::porcelain_input_query</a></code>,
+<code>porcelain::porcelain_input_body</code> and
+<code><a href="../reference/porcelain_state.html">porcelain::porcelain_state</a></code>) in that every input parameter
+is given individually even if you might treat these together in the
+functions. For example, for two input queries we used two lines.</p>
+<p><strong>For query inputs</strong>, the description will be one of the
+valid types for <code><a href="../reference/porcelain_input_query.html">porcelain::porcelain_input_query</a></code>;
+<code>logical</code>, <code>integer</code>, <code>numeric</code> or
+<code>string</code>, for example an endpoint accepting two query
+inputs:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   POST /path =&gt; json(OutputSchema)</span></span>
@@ -173,7 +214,8 @@
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># implementation</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><strong>For a json body</strong> it is likely that you will want to add a schema</p>
+<p><strong>For a json body</strong> it is likely that you will want to
+add a schema</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   POST /path =&gt; json(OutputSchema)</span></span>
@@ -183,10 +225,12 @@
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, <span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><strong>For a binary body</strong> you can optionally specify the incoming mime type, for example</p>
+<p><strong>For a binary body</strong> you can optionally specify the
+incoming mime type, for example</p>
 <pre><code><span><span class="co">#'   body data :: binary(application/zip)</span></span></code></pre>
 <p>would refer to a zip input.</p>
-<p>No special markup is required for path parameters, include these using plumber’s syntax</p>
+<p>No special markup is required for path parameters, include these
+using plumber’s syntax</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   POST /path/&lt;a&gt;/&lt;b:int&gt; =&gt; json(OutputSchema)</span></span>
@@ -197,8 +241,13 @@
 <div class="section level2">
 <h2 id="binding-state">Binding state<a class="anchor" aria-label="anchor" href="#binding-state"></a>
 </h2>
-<p>Finally consider binding state into the API. We need to do this where we have some mutable state in the API that endpoints (typically <code>POST</code> or <code>DELETE</code>) will modify. Examples include database connections or queues.</p>
-<p>Suppose that you have an endpoint that will count the number of times that it has been accessed, returning that number. We might use a counter like this:</p>
+<p>Finally consider binding state into the API. We need to do this where
+we have some mutable state in the API that endpoints (typically
+<code>POST</code> or <code>DELETE</code>) will modify. Examples include
+database connections or queues.</p>
+<p>Suppose that you have an endpoint that will count the number of times
+that it has been accessed, returning that number. We might use a counter
+like this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">counter</span> <span class="op">&lt;-</span> <span class="fu">R6</span><span class="fu">::</span><span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span></span>
 <span>  <span class="st">"counter"</span>,</span>
@@ -220,7 +269,9 @@
 <span><span class="co">#&gt; [1] 2</span></span>
 <span><span class="va">obj</span><span class="op">$</span><span class="fu">value</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2</span></span></code></pre></div>
-<p>We can write a set of endpoints that that share a <code>counter</code> object like this, and add roxygen comments to configure it:</p>
+<p>We can write a set of endpoints that that share a
+<code>counter</code> object like this, and add roxygen comments to
+configure it:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   GET /counter/value =&gt; json(number)</span></span>
@@ -235,22 +286,39 @@
 <span><span class="va">value</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">obj</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/unbox.html" class="external-link">unbox</a></span><span class="op">(</span><span class="va">obj</span><span class="op">$</span><span class="fu">increase</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Here we have a pair of endpoints; the first <code>GET /counter/value</code> will return the value of the counter and <code>POST /counter/increase</code> will increase its value by one and return that. We could have other methods like <code>POST /counter/reset</code> to reset the counter, but the key thing is that all endpoints must <em>share the same counter</em> and to do that we must pass it to the api when we create it.</p>
-<p>Here we say that doing <code>POST /counter</code> will return a number. The endpoint takes a <code>counter</code> object as above, but that won’t come from the HTTP request - it will be bound into the API, so it might be shared. By adding the roxygen comment</p>
+<p>Here we have a pair of endpoints; the first
+<code>GET /counter/value</code> will return the value of the counter and
+<code>POST /counter/increase</code> will increase its value by one and
+return that. We could have other methods like
+<code>POST /counter/reset</code> to reset the counter, but the key thing
+is that all endpoints must <em>share the same counter</em> and to do
+that we must pass it to the api when we create it.</p>
+<p>Here we say that doing <code>POST /counter</code> will return a
+number. The endpoint takes a <code>counter</code> object as above, but
+that won’t come from the HTTP request - it will be bound into the API,
+so it might be shared. By adding the roxygen comment</p>
 <pre><code><span><span class="co">#'   state obj :: counter</span></span></code></pre>
-<p>we set this up. We need to pass the state through when creating the API:</p>
+<p>we set this up. We need to pass the state through when creating the
+API:</p>
 <pre><code><span><span class="va">api</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">validate</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">state</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counter <span class="op">=</span> <span class="va">counter</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">api</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="va"><a href="../reference/porcelain.html">porcelain</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>validate <span class="op">=</span> <span class="va">validate</span><span class="op">)</span></span>
 <span>  <span class="va">api</span><span class="op">$</span><span class="fu">include_package_endpoints</span><span class="op">(</span><span class="va">state</span><span class="op">)</span></span>
 <span>  <span class="va">api</span></span>
 <span><span class="op">}</span></span></code></pre>
-<p>Here our api creation function creates a new zeroed counter (you could accept one as an argument of course), puts that into a list with name <code>counter</code>, corresponding to the rhs of the roxygen comment, and passes that through to <code>include_package_endpoints</code>.</p>
+<p>Here our api creation function creates a new zeroed counter (you
+could accept one as an argument of course), puts that into a list with
+name <code>counter</code>, corresponding to the rhs of the roxygen
+comment, and passes that through to
+<code>include_package_endpoints</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a>
 </h2>
-<p>Because the code is generated into the porcelain.R file you need to use <code><a href="../reference/porcelain_package_endpoint.html">porcelain::porcelain_package_endpoint</a></code> in order to extract the raw endpoint object to take advantage of porcelain’s test helper.</p>
+<p>Because the code is generated into the porcelain.R file you need to
+use <code><a href="../reference/porcelain_package_endpoint.html">porcelain::porcelain_package_endpoint</a></code> in order to
+extract the raw endpoint object to take advantage of porcelain’s test
+helper.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">endpoint</span> <span class="op">&lt;-</span> <span class="fu">porcelain</span><span class="fu">::</span><span class="fu"><a href="../reference/porcelain_package_endpoint.html">porcelain_package_endpoint</a></span><span class="op">(</span><span class="st">"mypkg"</span>, <span class="st">"GET"</span>, <span class="st">"/path"</span><span class="op">)</span></span>
 <span><span class="va">endpoint</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -267,7 +335,9 @@
 └──  [01;34minst [0m
     └──  [01;34mschema [0m
         └── numeric.json</code></pre>
-<p>As for the simple example in <code><a href="../articles/porcelain.html">vignette("porcelain")</a></code> we have written the api into a single file <code>R/api.R</code> but this could be split over as many files as you prefer</p>
+<p>As for the simple example in <code><a href="../articles/porcelain.html">vignette("porcelain")</a></code> we
+have written the api into a single file <code>R/api.R</code> but this
+could be split over as many files as you prefer</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @porcelain</span></span>
 <span><span class="co">#'   GET / =&gt; json("numeric")</span></span>
@@ -294,13 +364,15 @@ Encoding: UTF-8
 Imports: porcelain
 Roxygen: list(markdown = TRUE, roclets = c("rd", "namespace", "porcelain::porcelain_roclet"))
 RoxygenNote: 7.1.2</code></pre>
-<p>We include a small json schema <code>inst/schema/numeric.json</code>:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">{</span></span>
-<span id="cb20-2"><a href="#cb20-2"></a>    <span class="dt">"$schema"</span><span class="fu">:</span> <span class="st">"http://json-schema.org/draft-04/schema#"</span><span class="fu">,</span></span>
-<span id="cb20-3"><a href="#cb20-3"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"numeric"</span><span class="fu">,</span></span>
-<span id="cb20-4"><a href="#cb20-4"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"number"</span></span>
-<span id="cb20-5"><a href="#cb20-5"></a><span class="fu">}</span></span></code></pre></div>
-<p>Running <code>roxygen2::roxygenize(path)</code> on the file will build the interface</p>
+<p>We include a small json schema
+<code>inst/schema/numeric.json</code>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"$schema"</span><span class="fu">:</span> <span class="st">"http://json-schema.org/draft-04/schema#"</span><span class="fu">,</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"numeric"</span><span class="fu">,</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"number"</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Running <code>roxygen2::roxygenize(path)</code> on the file will
+build the interface</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">roxygen2</span><span class="fu">::</span><span class="fu"><a href="https://roxygen2.r-lib.org/reference/roxygenize.html" class="external-link">roxygenize</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Setting `RoxygenNote` to "7.2.1"</span></span>
@@ -309,7 +381,8 @@ RoxygenNote: 7.1.2</code></pre>
 <span><span class="co">#&gt; Adding porcelain endpoints:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - GET / (api.R:1)</span></span></code></pre></div>
-<p>The contents now include <code>R/porcelain.R</code> (and <code>man</code>, created by roxygen2 but empty)</p>
+<p>The contents now include <code>R/porcelain.R</code> (and
+<code>man</code>, created by roxygen2 but empty)</p>
 <pre><code> [01;34madd2 [0m
 ├── DESCRIPTION
 ├── NAMESPACE
@@ -320,7 +393,8 @@ RoxygenNote: 7.1.2</code></pre>
 │   └──  [01;34mschema [0m
 │       └── numeric.json
 └──  [01;34mman [0m</code></pre>
-<p>The <code>R/porcelain.R</code> file contains automatically-generated endpoint definitions</p>
+<p>The <code>R/porcelain.R</code> file contains automatically-generated
+endpoint definitions</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generated by porcelain: do not edit by hand</span></span>
 <span><span class="va">`__porcelain__`</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
