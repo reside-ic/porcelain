@@ -271,3 +271,7 @@ package_name <- function(env) {
   utils::packageName(env)
 }
 
+now_utc <- function() {
+  as.POSIXlt(Sys.time(), tz = "UTC")
+}
+

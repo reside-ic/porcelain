@@ -50,7 +50,7 @@ porcelain_logger <- function(log_level = "info", name = NULL, path = NULL) {
 porcelain_log_postroute <- function(logger) {
   force(logger)
   function(data, req, res) {
-    duration <- Sys.time() - req$received_time
+    duration <- now_utc() - req$received_time
     logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO,
                 caller = "postroute", request_received = req$received_time,
                 elapsed = format(duration))
@@ -74,7 +74,7 @@ porcelain_log_postserialize <- function(logger) {
       size <- nchar(res$body)
     }
 
-    duration <- Sys.time() - req$received_time
+    duration <- now_utc() - req$received_time
 
     logger$info(sprintf("response %s %s => %d (%d bytes)",
                         req$REQUEST_METHOD, req$PATH_INFO, res$status, size),

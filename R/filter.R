@@ -30,6 +30,6 @@ porcelain_body <- function(type, value) {
 
 
 porcelain_filter_metadata <- function(req, res) {
-  req$received_time <- Sys.time()
+  req$received_time <- now_utc()
   plumber::forward()
 }
