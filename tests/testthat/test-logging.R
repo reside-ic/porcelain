@@ -30,7 +30,7 @@ test_that("Can log", {
                     msg = "response GET / => 200 (49 bytes)"))
   datetime_pattern <- "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
   expect_match(log[[3]]$request_received, datetime_pattern)
-  expect_match(log[[3]]$elapsed, "\\d.\\d+ \\w+")
+  expect_match(log[[3]]$elapsed, "\\d+ \\w+")
 
   expect_equal(
     log[[4]][c("caller", "msg", "method", "path", "query", "headers",
