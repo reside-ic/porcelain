@@ -50,10 +50,8 @@ porcelain_logger <- function(log_level = "info", name = NULL, path = NULL) {
 porcelain_log_postroute <- function(logger) {
   force(logger)
   function(data, req, res) {
-    duration <- now_utc() - req$received_time
     logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO,
-                caller = "postroute", request_received = req$received_time,
-                elapsed = format(duration))
+                caller = "postroute")
     logger_detailed(logger, "trace", req, "postroute", "request")
   }
 }
@@ -73,13 +71,10 @@ porcelain_log_postserialize <- function(logger) {
     } else {
       size <- nchar(res$body)
     }
-
-    duration <- now_utc() - req$received_time
-
     logger$info(sprintf("response %s %s => %d (%d bytes)",
                         req$REQUEST_METHOD, req$PATH_INFO, res$status, size),
                 caller = "postserialize", request_received = req$received_time,
-                elapsed = format(duration))
+                elapsed = format_difftime(now_utc(), req$received_time))
 
     if (is_json_error_response(res)) {
       logger_detailed(logger, "error", req, "postserialize", "error",
