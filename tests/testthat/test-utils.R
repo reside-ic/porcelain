@@ -146,8 +146,8 @@ test_that("try and find a free port", {
 
 test_that("can format difftime nicely", {
   now <- Sys.time()
-  expect_match(format_difftime(Sys.time(), now), "\\d{1,3}.\\d{2} ms")
-  expect_match(format_difftime(now, Sys.time()), "-\\d{1,3}.\\d{2} ms")
+  expect_match(format_difftime(Sys.time(), now), "\\d{1,3}.\\d{1,2} ms")
+  expect_match(format_difftime(now, Sys.time()), "-\\d{1,3}.\\d{1,2} ms")
   expect_equal(format_difftime(now, now), "0 ms")
 
   expect_match(format_difftime(now, (now - 1)), "1000 ms")
