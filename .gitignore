@@ -1,3 +1,5 @@
 docs
 .Rproj.user
 inst/examples/add2/R/porcelain.R
+.Rhistory
+.vscode

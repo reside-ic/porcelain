@@ -255,7 +255,7 @@ dquote <- function(x) {
 
 list_call <- function(fn, x) {
   n <- length(x)
-  prefix <-  "  "
+  prefix <- "  "
   for (i in seq_along(x)) {
     el <- paste0(prefix, x[[i]])
     end <- if (i == n) ")" else ","
@@ -296,4 +296,10 @@ format_difftime <- function(time1, time2) {
   } else {
     sprintf("%.2f %s", z, units)
   }
+}
+
+format_difftime_ms <- function(time1, time2) {
+  z <- as.numeric(time1 - time2, "secs")
+  z <- z * 1000
+  round(z, digits = 0)
 }
