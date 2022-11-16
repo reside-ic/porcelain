@@ -156,8 +156,8 @@ test_that("can format difftime nicely", {
   expect_match(format_difftime(base_time, (base_time - 65)), "1.08 mins")
   expect_match(format_difftime(base_time, (base_time - 60 * 60)), "1.00 hours")
 
-  expect_equal(format_difftime_ms(base_time, base_time), "0 ms")
-  expect_match(format_difftime_ms(base_time, (base_time - 1)), "1000 ms")
-  expect_match(format_difftime_ms(base_time, (base_time - 1.1)), "1100 ms")
-  expect_match(format_difftime_ms(base_time, (base_time - 65)), "65000 ms")
+  expect_equal(format_difftime_ms(base_time, base_time), "0")
+  expect_match(format_difftime_ms(base_time, (base_time - 1)), "1000")
+  expect_match(format_difftime_ms(base_time, (base_time - 1.1)), "1100")
+  expect_match(format_difftime_ms(base_time, (base_time - 65)), "65000")
 })

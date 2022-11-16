@@ -301,5 +301,5 @@ format_difftime <- function(time1, time2) {
 format_difftime_ms <- function(time1, time2) {
   z <- as.numeric(time1 - time2, "secs")
   z <- z * 1000
-  sprintf("%.0f %s", z, "ms")
+  sprintf("%.0f", z)
 }
