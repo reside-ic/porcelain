@@ -74,7 +74,9 @@ porcelain_log_postserialize <- function(logger) {
     now <- now_utc()
     logger$info(sprintf("response %s %s => %d (%d bytes)",
                         req$REQUEST_METHOD, req$PATH_INFO, res$status, size),
-                caller = "postserialize", request_received = req$received_time,
+                caller = "postserialize",
+                endpoint = req$endpoint,
+                request_received = req$received_time,
                 elapsed_ms = format_difftime_ms(now, req$received_time),
                 elapsed = format_difftime(now, req$received_time)
     )
@@ -102,6 +104,7 @@ logger_detailed <- function(logger, level, req, caller, ...) {
     caller = caller,
     method = req$REQUEST_METHOD,
     path = req$PATH_INFO,
+    endpoint = req$endpoint,
     query = req$porcelain_query,
     headers = as.list(req$HEADERS),
     body = describe_body(req$porcelain_body$value))

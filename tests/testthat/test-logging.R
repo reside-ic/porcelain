@@ -12,7 +12,109 @@ test_that("Can log", {
 
   pr <- porcelain$new(logger = logger)
   pr$handle(endpoint)
+
   pr$request("GET", "/")
+
+  log <- test_logger_read(logger)
+  expect_length(log, 4)
+
+  expect_equal(log[[1]][c("caller", "msg")],
+               list(caller = "postroute", msg = "request GET /"))
+
+  expect_equal(
+    log[[2]][c("caller", "msg", "method", "path", "query", "headers",
+               "endpoint")],
+    list(caller = "postroute", msg = "request", method = "GET", path = "/",
+         query = list(), headers = list(), endpoint = "/"))
+
+  expect_equal(log[[3]][c("caller", "msg", "endpoint")],
+               list(caller = "postserialize",
+                    msg = "response GET / => 200 (49 bytes)",
+                    endpoint = "/"))
+  datetime_pattern <- "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+  expect_match(log[[3]]$request_received, datetime_pattern)
+  expect_match(log[[3]]$elapsed, "\\d+ \\w+")
+  expect_type(log[[3]]$elapsed_ms, "integer")
+
+  expect_equal(
+    log[[4]][c("caller", "msg", "method", "path", "query", "headers",
+               "body", "endpoint")],
+    list(caller = "postserialize", msg = "response", method = "GET", path = "/",
+         query = list(), headers = list(),
+         body = '{"status":"success","errors":null,"data":"hello"}',
+         endpoint = "/"))
+})
+
+
+test_that("Can log from endpoint with path variable", {
+  skip_if_not_installed("lgr")
+  id <- function(type, id) {
+    jsonlite::unbox(id)
+  }
+  endpoint_path <- porcelain_endpoint$new(
+    "GET", "/path/<type>/<id>", id,
+    returning = porcelain_returning_json("String", "schema"),
+    validate = TRUE)
+  param <- function(param) {
+    jsonlite::unbox(param)
+  }
+
+  logger <- test_logger("can-log")
+
+  pr <- porcelain$new(logger = logger)
+  pr$handle(endpoint_path)
+
+  pr$request("GET", "/path/value/123")
+
+  log <- test_logger_read(logger)
+  expect_length(log, 4)
+
+  expect_equal(log[[1]][c("caller", "msg")],
+               list(caller = "postroute", msg = "request GET /"))
+
+  expect_equal(
+    log[[2]][c("caller", "msg", "method", "path", "query", "headers",
+               "endpoint")],
+    list(caller = "postroute", msg = "request", method = "GET", path = "/",
+         query = list(), headers = list(), endpoint = "/path/<type>/<id>"))
+
+  expect_equal(log[[3]][c("caller", "msg", "endpoint")],
+               list(caller = "postserialize",
+                    msg = "response GET / => 200 (49 bytes)",
+                    endpoint = "/path/<type>/<id>"))
+  datetime_pattern <- "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+  expect_match(log[[3]]$request_received, datetime_pattern)
+  expect_match(log[[3]]$elapsed, "\\d+ \\w+")
+  expect_type(log[[3]]$elapsed_ms, "integer")
+
+  expect_equal(
+    log[[4]][c("caller", "msg", "method", "path", "query", "headers",
+               "body", "endpoint")],
+    list(caller = "postserialize", msg = "response", method = "GET", path = "/",
+         query = list(), headers = list(),
+         body = '{"status":"success","errors":null,"data":"hello"}',
+         endpoint = "/path/<type>/<id>"))
+})
+
+
+test_that("Can log from endpoint with query param", {
+  skip_if_not_installed("lgr")
+  param <- function(param) {
+    jsonlite::unbox(param)
+  }
+  input_query <- porcelain_input_query(param = "string")
+  endpoint_query <- porcelain_endpoint$new(
+    "GET", "/query", param,
+    input_query,
+    returning = porcelain_returning_json("String", "schema"),
+    validate = TRUE)
+
+  logger <- test_logger("can-log")
+
+  pr <- porcelain$new(logger = logger)
+  pr$handle(endpoint_query)
+
+  pr$request("GET", "/query", c(param = "value"))
 
   log <- test_logger_read(logger)
   expect_length(log, 4)
