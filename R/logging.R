@@ -104,7 +104,7 @@ logger_detailed <- function(logger, level, req, caller, ...) {
     caller = caller,
     method = req$REQUEST_METHOD,
     path = req$PATH_INFO,
-    endpoint = req$endpoint,
+    endpoint = req$porcelain_endpoint,
     query = req$porcelain_query,
     headers = as.list(req$HEADERS),
     body = describe_body(req$porcelain_body$value))
