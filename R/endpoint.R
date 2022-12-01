@@ -166,7 +166,7 @@ porcelain_endpoint <- R6::R6Class(
     ##' @param ... Additional arguments passed through to \code{run}
     plumber = function(req, res, ...) {
       tryCatch({
-        req$endpoint <- self$path
+        req$porcelain_endpoint <- self$path
         given <- list(
           path = plumber_path_args(req),
           query = req$porcelain_query,
