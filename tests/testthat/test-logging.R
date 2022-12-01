@@ -70,17 +70,18 @@ test_that("Can log from endpoint with path variable", {
   expect_length(log, 4)
 
   expect_equal(log[[1]][c("caller", "msg")],
-               list(caller = "postroute", msg = "request GET /"))
+               list(caller = "postroute", msg = "request GET /path/value/123"))
 
   expect_equal(
     log[[2]][c("caller", "msg", "method", "path", "query", "headers",
                "endpoint")],
-    list(caller = "postroute", msg = "request", method = "GET", path = "/",
-         query = list(), headers = list(), endpoint = "/path/<type>/<id>"))
+    list(caller = "postroute", msg = "request", method = "GET",
+         path = "/path/value/123", query = list(), headers = list(),
+         endpoint = "/path/<type>/<id>"))
 
   expect_equal(log[[3]][c("caller", "msg", "endpoint")],
                list(caller = "postserialize",
-                    msg = "response GET / => 200 (49 bytes)",
+                    msg = "response GET /path/value/123 => 200 (47 bytes)",
                     endpoint = "/path/<type>/<id>"))
   datetime_pattern <- "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
   expect_match(log[[3]]$request_received, datetime_pattern)
@@ -90,9 +91,9 @@ test_that("Can log from endpoint with path variable", {
   expect_equal(
     log[[4]][c("caller", "msg", "method", "path", "query", "headers",
                "body", "endpoint")],
-    list(caller = "postserialize", msg = "response", method = "GET", path = "/",
-         query = list(), headers = list(),
-         body = '{"status":"success","errors":null,"data":"hello"}',
+    list(caller = "postserialize", msg = "response", method = "GET",
+         path = "/path/value/123", query = list(), headers = list(),
+         body = '{"status":"success","errors":null,"data":"123"}',
          endpoint = "/path/<type>/<id>"))
 })
 
@@ -120,16 +121,19 @@ test_that("Can log from endpoint with query param", {
   expect_length(log, 4)
 
   expect_equal(log[[1]][c("caller", "msg")],
-               list(caller = "postroute", msg = "request GET /"))
+               list(caller = "postroute", msg = "request GET /query"))
 
   expect_equal(
-    log[[2]][c("caller", "msg", "method", "path", "query", "headers")],
-    list(caller = "postroute", msg = "request", method = "GET", path = "/",
-         query = list(), headers = list()))
+    log[[2]][c("caller", "msg", "method", "path", "query", "headers",
+               "endpoint")],
+    list(caller = "postroute", msg = "request", method = "GET", path = "/query",
+         query = list(param = "value"), headers = list(),
+         endpoint = "/query"))
 
-  expect_equal(log[[3]][c("caller", "msg")],
+  expect_equal(log[[3]][c("caller", "msg", "endpoint")],
                list(caller = "postserialize",
-                    msg = "response GET / => 200 (49 bytes)"))
+                    msg = "response GET /query => 200 (49 bytes)",
+                    endpoint = "/query"))
   datetime_pattern <- "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
   expect_match(log[[3]]$request_received, datetime_pattern)
   expect_match(log[[3]]$elapsed, "\\d+ \\w+")
@@ -137,10 +141,11 @@ test_that("Can log from endpoint with query param", {
 
   expect_equal(
     log[[4]][c("caller", "msg", "method", "path", "query", "headers",
-               "body")],
-    list(caller = "postserialize", msg = "response", method = "GET", path = "/",
-         query = list(), headers = list(),
-         body = '{"status":"success","errors":null,"data":"hello"}'))
+               "body", "endpoint")],
+    list(caller = "postserialize", msg = "response", method = "GET",
+         path = "/query", query = list(param = "value"), headers = list(),
+         body = '{"status":"success","errors":null,"data":"value"}',
+         endpoint = "/query"))
 })
 
 
