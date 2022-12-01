@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">porcelain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.15</span>
       </span>
     </div>
 
@@ -177,7 +177,7 @@ vector.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $body</span></span>
-<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-0.0488,0.6435,-0.7829,1.1805]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.6984,-0.8613,-0.0706,0.6715]}"</span></span>
 <span><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/uniform"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $status</span></span>
 <span><span class="co">#&gt; [1] 200</span></span>
@@ -191,7 +191,7 @@ vector.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $body</span></span>
-<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.7798,0.9609,0.6648,0.5681]}"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.1545,0.6171,0.5084,0.0405]}"</span></span></code></pre></div>
 <p>Note that the output here is <em>always a vector</em>, even in the
 corner cases of 1 and 0 elements returned:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -208,7 +208,7 @@ corner cases of 1 and 0 elements returned:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $body</span></span>
-<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[-0.5304]}"</span></span>
+<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[0.7528]}"</span></span>
 <span><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"GET"</span>, <span class="st">"/random/normal"</span>, query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $status</span></span>
 <span><span class="co">#&gt; [1] 200</span></span>
@@ -242,25 +242,25 @@ return a table of coefficients.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residuals:</span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -0.18178 -0.12151 -0.03356  0.11396  0.25831 </span></span>
+<span><span class="co">#&gt; -0.50443 -0.22490 -0.03796  0.22350  0.58103 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; (Intercept)  0.06334    0.10535   0.601    0.564    </span></span>
-<span><span class="co">#&gt; x            1.97531    0.16409  12.038 2.09e-06 ***</span></span>
+<span><span class="co">#&gt; (Intercept)   0.1344     0.2093   0.642 0.538697    </span></span>
+<span><span class="co">#&gt; x             1.8928     0.3334   5.677 0.000466 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Residual standard error: 0.1602 on 8 degrees of freedom</span></span>
-<span><span class="co">#&gt; Multiple R-squared:  0.9477, Adjusted R-squared:  0.9411 </span></span>
-<span><span class="co">#&gt; F-statistic: 144.9 on 1 and 8 DF,  p-value: 2.093e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; Residual standard error: 0.3403 on 8 degrees of freedom</span></span>
+<span><span class="co">#&gt; Multiple R-squared:  0.8012, Adjusted R-squared:  0.7763 </span></span>
+<span><span class="co">#&gt; F-statistic: 32.23 on 1 and 8 DF,  p-value: 0.0004664</span></span></code></pre></div>
 <p>We’re interested in getting the table of coefficients, which we can
 extract like this:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span></span>
-<span><span class="co">#&gt;               Estimate Std. Error    t value     Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept) 0.06333631  0.1053502  0.6011979 5.643504e-01</span></span>
-<span><span class="co">#&gt; x           1.97530571  0.1640916 12.0378210 2.093059e-06</span></span></code></pre></div>
+<span><span class="co">#&gt;              Estimate Std. Error  t value     Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept) 0.1344379  0.2093344 0.642216 0.5386967156</span></span>
+<span><span class="co">#&gt; x           1.8927588  0.3333901 5.677310 0.0004664396</span></span></code></pre></div>
 <p>and transform a little to turn the row names into a column of their
 own</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -277,17 +277,17 @@ of objects, each of which is key/value pairs for each row:</p>
 <span><span class="co">#&gt; [</span></span>
 <span><span class="co">#&gt;   {</span></span>
 <span><span class="co">#&gt;     "name": "(Intercept)",</span></span>
-<span><span class="co">#&gt;     "Estimate": 0.0633,</span></span>
-<span><span class="co">#&gt;     "Std. Error": 0.1054,</span></span>
-<span><span class="co">#&gt;     "t value": 0.6012,</span></span>
-<span><span class="co">#&gt;     "Pr(&gt;|t|)": 0.5644</span></span>
+<span><span class="co">#&gt;     "Estimate": 0.1344,</span></span>
+<span><span class="co">#&gt;     "Std. Error": 0.2093,</span></span>
+<span><span class="co">#&gt;     "t value": 0.6422,</span></span>
+<span><span class="co">#&gt;     "Pr(&gt;|t|)": 0.5387</span></span>
 <span><span class="co">#&gt;   },</span></span>
 <span><span class="co">#&gt;   {</span></span>
 <span><span class="co">#&gt;     "name": "x",</span></span>
-<span><span class="co">#&gt;     "Estimate": 1.9753,</span></span>
-<span><span class="co">#&gt;     "Std. Error": 0.1641,</span></span>
-<span><span class="co">#&gt;     "t value": 12.0378,</span></span>
-<span><span class="co">#&gt;     "Pr(&gt;|t|)": 2.0931e-06</span></span>
+<span><span class="co">#&gt;     "Estimate": 1.8928,</span></span>
+<span><span class="co">#&gt;     "Std. Error": 0.3334,</span></span>
+<span><span class="co">#&gt;     "t value": 5.6773,</span></span>
+<span><span class="co">#&gt;     "Pr(&gt;|t|)": 0.0005</span></span>
 <span><span class="co">#&gt;   }</span></span>
 <span><span class="co">#&gt; ]</span></span></code></pre></div>
 <p>So we have our target function now:</p>
@@ -355,7 +355,7 @@ an R object).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">json</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="va">json</span></span>
-<span><span class="co">#&gt; [{"x":0.9149,"y":1.7592},{"x":0.7657,"y":1.7125},{"x":0.112,"y":0.2018},{"x":0.782,"y":1.6236},{"x":0.7435,"y":1.3502},{"x":0.4994,"y":0.9249},{"x":0.102,"y":0.5232},{"x":0.9854,"y":2.1882},{"x":0.482,"y":1.0614},{"x":0.2418,"y":0.4068}]</span></span></code></pre></div>
+<span><span class="co">#&gt; [{"x":0.0593,"y":0.5509},{"x":0.9823,"y":2.0517},{"x":0.8052,"y":1.3816},{"x":0.5663,"y":0.9389},{"x":0.9602,"y":2.5329},{"x":0.4064,"y":0.3993},{"x":0.0861,"y":0.576},{"x":0.2602,"y":0.5297},{"x":0.787,"y":1.5719},{"x":0.4726,"y":1.0052}]</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">api</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="st">"POST"</span>, <span class="st">"/lm"</span>, body <span class="op">=</span> <span class="va">json</span>, content_type <span class="op">=</span> <span class="st">"application/json"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $status</span></span>
@@ -370,7 +370,7 @@ an R object).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $body</span></span>
-<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[{\"name\":\"(Intercept)\",\"Estimate\":0.0633,\"Std. Error\":0.1054,\"t value\":0.601,\"Pr(&gt;|t|)\":0.5644},{\"name\":\"x\",\"Estimate\":1.9753,\"Std. Error\":0.1641,\"t value\":12.0348,\"Pr(&gt;|t|)\":2.0971e-06}]}"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "{\"status\":\"success\",\"errors\":null,\"data\":[{\"name\":\"(Intercept)\",\"Estimate\":0.1345,\"Std. Error\":0.2093,\"t value\":0.6424,\"Pr(&gt;|t|)\":0.5386},{\"name\":\"x\",\"Estimate\":1.8927,\"Std. Error\":0.3334,\"t value\":5.6775,\"Pr(&gt;|t|)\":0.0005}]}"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="post-endpoint-inputs-as-binary-returning-binary">POST endpoint, inputs as binary, returning binary<a class="anchor" aria-label="anchor" href="#post-endpoint-inputs-as-binary-returning-binary"></a>
@@ -406,7 +406,7 @@ screen)</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="va">data</span>, <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">binary_plot</span><span class="op">(</span><span class="va">bin</span><span class="op">)</span>, vec.len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  raw [1:11449] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  raw [1:12036] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></span></code></pre></div>
 <p>It’s hard to tell this is a png, but the first few bytes give it away
 (the <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" class="external-link">magic
 number</a> <code>89 50 4e 47 0d 0a 1a 0a</code> is used at the start of
@@ -428,7 +428,7 @@ thousands of hex characters)</p>
 <span><span class="co">#&gt;  $ headers:List of 2</span></span>
 <span><span class="co">#&gt;   ..$ Content-Type         : chr "application/octet-stream"</span></span>
 <span><span class="co">#&gt;   ..$ X-Porcelain-Validated: chr "true"</span></span>
-<span><span class="co">#&gt;  $ body   : raw [1:11449] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ body   : raw [1:12036] 89 50 4e 47 0d 0a 1a 0a 00 00 ...</span></span></code></pre></div>
 </div>
   </div>
 
