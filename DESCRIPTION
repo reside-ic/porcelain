@@ -1,6 +1,7 @@
 Package: porcelain
 Title: Turn a Package into an HTTP API
-Version: 0.1.9
+Version: 0.1.15
+
 Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
                     email = "rich.fitzjohn@gmail.com"),
              person("Imperial College of Science, Technology and Medicine",
@@ -34,7 +35,7 @@ Suggests:
     testthat,
     withr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 Remotes: ropensci/jsonvalidate
 Config/testthat/edition: 3

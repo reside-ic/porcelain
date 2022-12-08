@@ -1,6 +1,7 @@
 porcelain_filters <- function(req, res) {
   list(query_string = porcelain_filter_query_string,
-       post_body = porcelain_filter_post_body)
+       post_body = porcelain_filter_post_body,
+       metadata = porcelain_filter_metadata)
 }
 
 
@@ -27,4 +28,10 @@ porcelain_filter_post_body <- function(req, res) {
 
 porcelain_body <- function(type, value) {
   list(type = type, value = value, provided = length(value) > 0L)
+}
+
+
+porcelain_filter_metadata <- function(req, res) {
+  req$received_time <- now_utc()
+  plumber::forward()
 }

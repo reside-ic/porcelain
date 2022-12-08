@@ -20,10 +20,12 @@ test_that("null and empty strings return empty list", {
 })
 
 
-test_that("incomplete query strings are errors", {
-  expect_error(parse_query("a="), "Incomplete query for 'a'")
-  expect_error(parse_query("a=1&b=&c=&d=1"), "Incomplete query for 'b', 'c'")
-  expect_error(parse_query("a=1&b&c&d=1"), "Incomplete query for 'b', 'c'")
+test_that("incomplete query strings convert to NA", {
+  expect_equal(parse_query("a="), list(a = NA))
+  expect_equal(parse_query("a=1&b=&c=&d=1"),
+               list(a = "1", b = NA, c = NA, d = "1"))
+  expect_equal(parse_query("a=1&b&c&d=1"),
+               list(a = "1", b = NA, c = NA, d = "1"))
 })
 
 

@@ -229,3 +229,26 @@ test_that("build api - dupe headers throws error", {
     "Can't add header 'Content-Type' with value 'image/png'. Header already ",
     "exists with value 'application/octet-stream'."))
 })
+
+
+test_that("build api - text endpoint", {
+  text <- function() {
+    "some text"
+  }
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/text", text,
+    returning = porcelain_returning_text(),
+    validate = TRUE)
+
+  res <- endpoint$run()
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "text/plain")
+  expect_null(res$headers)
+  expect_true(res$validated)
+  expect_equal(res$data, "some text")
+
+  res_api <- endpoint$request()
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$headers[["Content-Type"]], "text/plain")
+  expect_equal(res_api$body, "some text")
+})

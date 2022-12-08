@@ -151,18 +151,21 @@ porcelain_input <- R6::R6Class(
 ## query and path (eventually also cookie and header)
 porcelain_input_validate_parameter <- function(given, self) {
   value <- given[[self$where]][[self$name]]
-  if (self$required && is.null(value)) {
+  missing_value <- is.null(value) || is.na(value)
+  if (self$required && missing_value) {
     porcelain_input_error(sprintf(
       "%s parameter '%s' is missing but required",
       self$where, self$name))
   }
-  if (!is.null(value)) {
+  if (!missing_value) {
     value <- tryCatch(
       self$validator(value),
       error = function(e)
         ## NOTE: not a lovely error message for the body
         porcelain_input_error(sprintf("Error parsing %s parameter '%s': %s",
                                    self$where, self$name, e$message)))
+  } else {
+    value <- self$default
   }
   value
 }

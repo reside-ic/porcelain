@@ -59,3 +59,13 @@ porcelain_returning_binary <- function(status_code = 200L) {
   process <- identity
   porcelain_returning(content_type, process, validate, status_code)
 }
+
+
+##' @export
+##' @rdname porcelain_returning
+porcelain_returning_text <- function(status_code = 200L) {
+  content_type <- "text/plain"
+  validate <- assert_scalar_character
+  process <- identity
+  porcelain_returning(content_type, process, validate, status_code)
+}

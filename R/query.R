@@ -33,6 +33,7 @@ parse_query <- function(query) {
   }
 
   keys <- trimws(vcapply(args, "[[", 1L))
+
   err <- lengths(args) != 2
   if (any(err)) {
     stop(sprintf("Incomplete query for %s",
@@ -40,7 +41,13 @@ parse_query <- function(query) {
   }
   args <- lapply(args, function(x) trimws(utils::URLdecode(x)))
 
-  vals <- lapply(args, "[[", 2L)
+  ## if (any(err)) {
+  ##   ## TODO: should be 400 not 500 error
+  ##   stop(sprintf("Incomplete query for %s",
+  ##                paste(squote(keys[err]), collapse = ", ")))
+  ## }
+  args <- lapply(args, function(x) trimws(utils::URLdecode(x)))
+  vals <- lapply(args, function(x) if (length(x) == 1) NA else x[[2]])
 
   if (anyDuplicated(keys)) {
     stop(sprintf(

@@ -260,6 +260,7 @@ roxy_process_returning <- function(returning, env, tag) {
   map <- c(
     json = "porcelain::porcelain_returning_json",
     binary = "porcelain::porcelain_returning_binary",
+    text = "porcelain::porcelain_returning_text",
     generic = "porcelain::porcelain_returning")
   fn <- returning[[1]]
   if (!(fn %in% names(map))) {

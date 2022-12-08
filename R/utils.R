@@ -255,7 +255,7 @@ dquote <- function(x) {
 
 list_call <- function(fn, x) {
   n <- length(x)
-  prefix <-  "  "
+  prefix <- "  "
   for (i in seq_along(x)) {
     el <- paste0(prefix, x[[i]])
     end <- if (i == n) ")" else ","
@@ -269,4 +269,37 @@ list_call <- function(fn, x) {
 
 package_name <- function(env) {
   utils::packageName(env)
+}
+
+now_utc <- function() {
+  as.POSIXct(Sys.time(), tz = "UTC")
+}
+
+## Modified version of difftime to show timings
+## in ms and to a precision
+format_difftime <- function(time1, time2) {
+  z <- as.numeric(time1 - time2, "secs")
+  units <- if (!is.finite(z) || z <= 1) {
+    "ms"
+  } else if (z < 60) {
+    "secs"
+  } else if (z < 3600) {
+    "mins"
+  } else {
+    "hours"
+  }
+  units_difftime <- if (units == "ms") "secs" else units
+  z <- as.numeric(time1 - time2, units_difftime)
+  if (units == "ms") {
+    z <- z * 1000
+    sprintf("%.0f %s", z, units)
+  } else {
+    sprintf("%.2f %s", z, units)
+  }
+}
+
+format_difftime_ms <- function(time1, time2) {
+  z <- as.numeric(time1 - time2, "secs")
+  z <- z * 1000
+  round(z, digits = 0)
 }

@@ -230,6 +230,40 @@ test_that("Can validate query parameters from plumber, throwing nice errors", {
 })
 
 
+test_that("NA query parameters throw an error", {
+  multiply <- porcelain_endpoint$new(
+    "GET", "/multiply", function(a, b) {
+      jsonlite::unbox(a * b)
+    },
+    porcelain_input_query(a = "numeric", b = "numeric"),
+    returning = porcelain_returning_json())
+
+  api <- porcelain$new()$handle(multiply)
+
+  res <- api$request("GET", "/multiply", c(a = NA_real_, b = 2))
+  expect_equal(res$status, 400)
+  errors <- jsonlite::parse_json(res$body, simplifyVector = FALSE)$errors
+  expect_equal(errors[[1]]$error, "INVALID_INPUT")
+  expect_equal(errors[[1]]$detail,
+               "query parameter 'a' is missing but required")
+})
+
+test_that("NA query parameters are valid when target has default values", {
+  multiply <- porcelain_endpoint$new(
+    "GET", "/multiply", function(a = 10, b) {
+      jsonlite::unbox(a * b)
+    },
+    porcelain_input_query(a = "numeric", b = "numeric"),
+    returning = porcelain_returning_json())
+
+  api <- porcelain$new()$handle(multiply)
+
+  res <- api$request("GET", "/multiply", c(a = NA_real_, b = 2))
+  expect_equal(res$status, 200)
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(res$body, multiply$run(10, 2)$body)
+})
+
 test_that("use routing parameter", {
   power <- function(n, m = 2) {
     jsonlite::unbox(n^m)
@@ -645,4 +679,40 @@ test_that("destructure body failure returns input error", {
                 detail = paste("Error parsing body (for 'a'):",
                                "Did not find key 'a' within object"))),
          data = NULL))
+})
+
+
+test_that("endpoint errors from empty queries when no default value set", {
+  square <- function(n) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/square", square,
+    returning = porcelain_returning_json("Number", "schema"),
+    porcelain_input_query(n = "numeric"),
+    validate = TRUE)
+
+  res_api <- endpoint$request(alist(n =)) # nolint
+  expect_equal(res_api$status, 400)
+  body <- jsonlite::parse_json(res_api$body)
+  expect_equal(body$errors[[1]]$error, "INVALID_INPUT")
+  expect_equal(body$errors[[1]]$detail,
+               "query parameter 'n' is missing but required")
+})
+
+
+test_that("Can provide empty queries when default value set", {
+  square <- function(n = 2) {
+    jsonlite::unbox(n * n)
+  }
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/square", square,
+    returning = porcelain_returning_json("Number", "schema"),
+    porcelain_input_query(n = "numeric"),
+    validate = TRUE)
+
+  res_api <- endpoint$request(alist(n =)) # nolint
+  expect_equal(res_api$status, 200)
+  body <- jsonlite::parse_json(res_api$body)
+  expect_equal(body$data, 4)
 })
