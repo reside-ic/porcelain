@@ -51,7 +51,7 @@ porcelain_log_postroute <- function(logger) {
   force(logger)
   function(data, req, res) {
     logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO,
-                caller = "postroute")
+                caller = "postroute", request_id = req$REQUEST_ID)
     logger_detailed(logger, "trace", req, "postroute", "request")
   }
 }
@@ -75,6 +75,7 @@ porcelain_log_postserialize <- function(logger) {
     logger$info(sprintf("response %s %s => %d (%d bytes)",
                         req$REQUEST_METHOD, req$PATH_INFO, res$status, size),
                 caller = "postserialize",
+                request_id = req$REQUEST_ID,
                 endpoint = req$porcelain_endpoint,
                 request_received = req$received_time,
                 elapsed_ms = format_difftime_ms(now, req$received_time),
@@ -104,6 +105,7 @@ logger_detailed <- function(logger, level, req, caller, ...) {
     caller = caller,
     method = req$REQUEST_METHOD,
     path = req$PATH_INFO,
+    request_id = req$REQUEST_ID,
     endpoint = req$porcelain_endpoint,
     query = req$porcelain_query,
     headers = as.list(req$HEADERS),

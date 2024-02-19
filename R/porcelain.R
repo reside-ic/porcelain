@@ -122,10 +122,13 @@ porcelain <- R6::R6Class(
     ##' provided alongside \code{body}.  If not provided it is set to
     ##' \code{application/octet-stream} if \code{body} is raw, or
     ##' \code{application/json} otherwise.
+    ##'
+    ##' @param request_id Optional request ID. An ID which is attached to
+    ##' every log raised by this request. Used for tracing purposes.
     request = function(method, path, query = NULL, body = NULL,
-                       content_type = NULL) {
+                       content_type = NULL, request_id = NULL) {
       plumber_request(self, method, path, query, body = body,
-                      content_type = content_type)
+                      content_type = content_type, request_id = request_id)
     }
   ))
 

@@ -1,5 +1,6 @@
 porcelain_filters <- function(req, res) {
   list(query_string = porcelain_filter_query_string,
+       request_id = porcelain_filter_request_id,
        post_body = porcelain_filter_post_body,
        metadata = porcelain_filter_metadata)
 }
@@ -31,5 +32,15 @@ porcelain_body <- function(type, value) {
 
 porcelain_filter_metadata <- function(req, res) {
   req$received_time <- now_utc()
+  plumber::forward()
+}
+
+porcelain_filter_request_id <- function(req, res) {
+  if ("x-request-id" %in% names(req$HEADERS)) {
+    request_id <- req$HEADERS[["x-request-id"]]
+  } else {
+    request_id <- ids::uuid()
+  }
+  req$REQUEST_ID <- request_id
   plumber::forward()
 }
