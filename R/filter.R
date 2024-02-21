@@ -42,5 +42,6 @@ porcelain_filter_request_id <- function(req, res) {
     request_id <- ids::uuid()
   }
   req$REQUEST_ID <- request_id
+  res$setHeader("x-request-id", request_id)
   plumber::forward()
 }

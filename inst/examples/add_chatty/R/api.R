@@ -10,7 +10,8 @@ endpoint_add <- function() {
 }
 
 api <- function(validate = FALSE, log_path = tempfile()) {
-  api <- porcelain::porcelain$new(validate = validate)
+  logger <- porcelain::porcelain_logger("info", path = log_path)
+  api <- porcelain::porcelain$new(validate = validate, logger = logger)
   api$handle(endpoint_add())
   api
 }

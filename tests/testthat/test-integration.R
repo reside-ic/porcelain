@@ -18,8 +18,8 @@ test_that("can get logs from server", {
   skip_on_os("windows")
   skip_if_not_installed("pkgload")
 
-  path_add <- system_file("examples/add", package = "porcelain")
-  pkg <- pkgload::load_all(path_add,
+  path_add_chatty <- system_file("examples/add_chatty", package = "porcelain")
+  pkg <- pkgload::load_all(path_add_chatty,
                            export_all = FALSE, attach_testthat = FALSE,
                            warn_conflicts = FALSE, quiet = TRUE)
 
@@ -41,6 +41,8 @@ test_that("can get logs from server", {
     from_json(httr::content(r, encoding = "UTF-8", as = "text")),
     list(status = "success", errors = NULL, data = 3))
 
+  expect_equal(r$headers$`x-request-id`, "id123")
+
   logs <- readLines(bg$log)
   postroute_log <- jsonlite::fromJSON(logs[[length(logs) - 1]])
   postserialize_log <- jsonlite::fromJSON(logs[[length(logs)]])
@@ -51,6 +53,7 @@ test_that("can get logs from server", {
 
   ## Without a request ID
   r <- bg$request("GET", "/", query = list(a = 1, b = 2))
+
   logs <- readLines(bg$log)
   postroute_log <- jsonlite::fromJSON(logs[[length(logs) - 1]])
   postserialize_log <- jsonlite::fromJSON(logs[[length(logs)]])
@@ -58,4 +61,5 @@ test_that("can get logs from server", {
   expect_match(postroute_log$request_id, uuid_regex)
   expect_equal(postserialize_log$caller, "postserialize")
   expect_equal(postserialize_log$request_id, postroute_log$request_id)
+  expect_equal(r$headers$`x-request-id`, postroute_log$request_id)
 })
