@@ -648,9 +648,8 @@ test_that("destructure body", {
   json <- '{"a": 3, "b": 2}'
   res <- pr$request("POST", "/multiply", body = json)
   expect_equal(res$status, 200)
-  expect_equal(res$headers[c("Content-Type", "X-Porcelain-Validated")],
-               list("Content-Type" = "application/json",
-                    "X-Porcelain-Validated" = "true"))
+  expect_equal(res$headers[["Content-Type"]], "application/json")
+  expect_equal(res$headers[["X-Porcelain-Validated"]], "true")
   expect_match(res$headers[["x-request-id"]], uuid_regex)
   expect_equal(res$body, endpoint$run("3", "2")$body)
 })
