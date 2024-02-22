@@ -15,7 +15,7 @@ plumber_request <- function(plumber, method, path, query = NULL,
     req[["HTTP_CONTENT_TYPE"]] <- request_content_type(body, content_type)
   }
   if (!is.null(request_id)) {
-    req[["HEADERS"]] <- c(req[["HEADERS"]], "x-request-id" = request_id)
+    req[["HTTP_X_REQUEST_ID"]] <- request_id
   }
 
   plumber$call(req)
