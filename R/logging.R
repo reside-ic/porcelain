@@ -1,4 +1,4 @@
-LOG_FILTER_REQUEST_ID_NAME <- "request_id"
+LOG_FILTER_REQUEST_ID_NAME <- "request_id" # nolint
 
 ##' Create a json-emitting logger, using the 'lgr' package.
 ##'
@@ -119,4 +119,3 @@ describe_body <- function(body) {
   }
   body
 }
-

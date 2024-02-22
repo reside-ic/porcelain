@@ -33,7 +33,8 @@ porcelain <- R6::R6Class(
     initialize = function(..., validate = FALSE, logger = NULL) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
-      super$initialize(NULL, porcelain_filters(logger), new.env(parent = .GlobalEnv))
+      super$initialize(NULL, porcelain_filters(logger),
+                       new.env(parent = .GlobalEnv))
       private$validate <- porcelain_validate_default(validate)
       self$setErrorHandler(porcelain_error_handler)
       self$set404Handler(porcelain_404_handler)
