@@ -33,10 +33,10 @@ test_that("Can serve endpoint directly", {
     porcelain_input_query(n = "numeric"),
     validate = TRUE)
 
-  cmp <- porcelain$new()$handle(endpoint)$request("GET", "/square", list(n = 3))
-  res <- endpoint$request(list(n = 3))
+  cmp <- porcelain$new()$handle(endpoint)$request("GET", "/square", list(n = 3),
+                                                  request_id = "123")
+  res <- endpoint$request(list(n = 3), request_id = "123")
   res$headers[["Date"]] <- cmp$headers[["Date"]]
-  res$headers[["x-request-id"]] <- cmp$headers[["x-request-id"]]
   expect_equal(cmp, res)
 })
 

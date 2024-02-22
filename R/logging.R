@@ -1,3 +1,5 @@
+LOG_FILTER_REQUEST_ID_NAME <- "request_id"
+
 ##' Create a json-emitting logger, using the 'lgr' package.
 ##'
 ##' @title Create logger
@@ -36,7 +38,6 @@ porcelain_logger <- function(log_level = "info", name = NULL, path = NULL) {
   logger
 }
 
-
 ## Plumber has stages preroute -> postroute -> preserialize -> postserialize
 ##
 ## We hook up the first bit of logging up against postroute as by that
@@ -51,7 +52,7 @@ porcelain_log_postroute <- function(logger) {
   force(logger)
   function(data, req, res) {
     logger$info("request %s %s", req$REQUEST_METHOD, req$PATH_INFO,
-                caller = "postroute", request_id = req$REQUEST_ID)
+                caller = "postroute")
     logger_detailed(logger, "trace", req, "postroute", "request")
   }
 }
@@ -75,7 +76,6 @@ porcelain_log_postserialize <- function(logger) {
     logger$info(sprintf("response %s %s => %d (%d bytes)",
                         req$REQUEST_METHOD, req$PATH_INFO, res$status, size),
                 caller = "postserialize",
-                request_id = req$REQUEST_ID,
                 endpoint = req$porcelain_endpoint,
                 request_received = req$received_time,
                 elapsed_ms = format_difftime_ms(now, req$received_time),
@@ -90,6 +90,7 @@ porcelain_log_postserialize <- function(logger) {
     logger_detailed(logger, "trace", req, "postserialize", "response",
                     body = describe_body(value$body))
 
+    logger$remove_filter(LOG_FILTER_REQUEST_ID_NAME)
     value
   }
 }
@@ -105,7 +106,6 @@ logger_detailed <- function(logger, level, req, caller, ...) {
     caller = caller,
     method = req$REQUEST_METHOD,
     path = req$PATH_INFO,
-    request_id = req$REQUEST_ID,
     endpoint = req$porcelain_endpoint,
     query = req$porcelain_query,
     headers = as.list(req$HEADERS),
@@ -119,3 +119,4 @@ describe_body <- function(body) {
   }
   body
 }
+

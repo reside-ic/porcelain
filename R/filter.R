@@ -1,6 +1,6 @@
-porcelain_filters <- function(req, res) {
+porcelain_filters <- function(logger) {
   list(query_string = porcelain_filter_query_string,
-       request_id = porcelain_filter_request_id,
+       request_id = porcelain_filter_request_id(logger),
        post_body = porcelain_filter_post_body,
        metadata = porcelain_filter_metadata)
 }
@@ -35,13 +35,21 @@ porcelain_filter_metadata <- function(req, res) {
   plumber::forward()
 }
 
-porcelain_filter_request_id <- function(req, res) {
-  if ("x-request-id" %in% names(req$HEADERS)) {
-    request_id <- req$HEADERS[["x-request-id"]]
-  } else {
-    request_id <- ids::uuid()
+
+porcelain_filter_request_id <- function(logger) {
+  force(logger)
+  function(req, res) {
+    if ("x-request-id" %in% names(req$HEADERS)) {
+      request_id <- req$HEADERS[["x-request-id"]]
+    } else {
+      request_id <- ids::uuid()
+    }
+    req$REQUEST_ID <- request_id
+    res$setHeader("x-request-id", request_id)
+    if (!is.null(logger)) {
+      logger$add_filter(lgr::FilterInject$new(request_id = request_id),
+                        name = LOG_FILTER_REQUEST_ID_NAME)
+    }
+    plumber::forward()
   }
-  req$REQUEST_ID <- request_id
-  res$setHeader("x-request-id", request_id)
-  plumber::forward()
 }

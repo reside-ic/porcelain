@@ -1,4 +1,6 @@
 add <- function(a, b) {
+  logger <- lgr::get_logger("add.chatty")
+  logger$info("Adding numbers :D")
   jsonlite::unbox(a + b)
 }
 
@@ -9,8 +11,8 @@ endpoint_add <- function() {
     returning = porcelain::porcelain_returning_json("numeric"))
 }
 
-api <- function(validate = FALSE, log_path = tempfile()) {
-  logger <- porcelain::porcelain_logger("info", path = log_path)
+api <- function(validate = FALSE) {
+  logger <- porcelain::porcelain_logger("info")
   api <- porcelain::porcelain$new(validate = validate, logger = logger)
   api$handle(endpoint_add())
   api

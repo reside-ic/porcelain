@@ -9,7 +9,7 @@ endpoint_add <- function() {
     returning = porcelain::porcelain_returning_json("numeric"))
 }
 
-api <- function(validate = FALSE, log_path = tempfile()) {
+api <- function(validate = FALSE) {
   api <- porcelain::porcelain$new(validate = validate)
   api$handle(endpoint_add())
   api

@@ -1,9 +1,9 @@
-Package: add
-Title: Adds Numbers
+Package: add.chatty
+Title: Chattily adds Numbers
 Version: 1.0.0
 Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
                     email = "rich.fitzjohn@gmail.com"))
-Description: Adds numbers as an HTTP API.
+Description: Adds numbers as an HTTP API with lots of logging.
 License: CC0
 Encoding: UTF-8
 Imports: porcelain
