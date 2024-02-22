@@ -39,11 +39,7 @@ porcelain_filter_metadata <- function(req, res) {
 porcelain_filter_request_id <- function(logger) {
   force(logger)
   function(req, res) {
-    if (!is.null(req$HTTP_X_REQUEST_ID)) {
-      request_id <- req$HTTP_X_REQUEST_ID
-    } else {
-      request_id <- ids::uuid()
-    }
+    request_id <- req$HTTP_X_REQUEST_ID %||% ids::uuid()
     req$REQUEST_ID <- request_id
     res$setHeader("x-request-id", request_id)
     if (!is.null(logger)) {
