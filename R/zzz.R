@@ -10,6 +10,8 @@ cache <- new.env()
   cache$plumber_1_0_0 <- utils::packageVersion("plumber") >= "0.9.9"
   cache$v8 <- V8::new_context()
   cache$v8$source(system_file("utils.js", package = "porcelain"))
+  cache[[LOG_FILTER_REQUEST_ID_NAME]] <- lgr::FilterInject$new(
+    package_id = NA_character_)
   ## nocov end
 }
 

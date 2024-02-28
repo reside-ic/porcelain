@@ -43,8 +43,7 @@ porcelain_filter_request_id <- function(logger) {
     req$REQUEST_ID <- request_id
     res$setHeader("x-request-id", request_id)
     if (!is.null(logger)) {
-      logger$add_filter(lgr::FilterInject$new(request_id = request_id),
-                        name = LOG_FILTER_REQUEST_ID_NAME)
+      set_request_id_filter(logger, request_id)
     }
     plumber::forward()
   }
