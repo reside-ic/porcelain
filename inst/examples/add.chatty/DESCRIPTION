@@ -1,0 +1,12 @@
+Package: add.chatty
+Title: Chattily adds Numbers
+Version: 1.0.0
+Authors@R: c(person("Rich", "FitzJohn", role = c("aut", "cre"),
+                    email = "rich.fitzjohn@gmail.com"))
+Description: Adds numbers as an HTTP API with lots of logging.
+License: CC0
+Encoding: UTF-8
+Imports: porcelain
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

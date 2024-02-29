@@ -1,6 +1,7 @@
 ## Support for easily sending requests to the plumber without running it
 plumber_request <- function(plumber, method, path, query = NULL,
-                            body = NULL, content_type = NULL) {
+                            body = NULL, content_type = NULL,
+                            request_id = NULL) {
   req <- new.env(parent = emptyenv())
   req[["REQUEST_METHOD"]] <- toupper(method)
   req[["PATH_INFO"]] <- path
@@ -12,6 +13,9 @@ plumber_request <- function(plumber, method, path, query = NULL,
 
   if (!is.null(body)) {
     req[["HTTP_CONTENT_TYPE"]] <- request_content_type(body, content_type)
+  }
+  if (!is.null(request_id)) {
+    req[["HTTP_X_REQUEST_ID"]] <- request_id
   }
 
   plumber$call(req)

@@ -116,3 +116,7 @@ plumber_response <- function() {
   testthat::skip_on_cran() # using plumber internals, subject to change
   plumber:::PlumberResponse$new()
 }
+
+
+uuid_regex <- paste0("^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}",
+                     "\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$")

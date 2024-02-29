@@ -139,7 +139,14 @@ Sends a request to plumber so that the API can be easily
 tested without running the whole API. The interface here will
 probably change, and may end up using the interface of \code{httr}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{porcelain$request(method, path, query = NULL, body = NULL, content_type = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{porcelain$request(
+  method,
+  path,
+  query = NULL,
+  body = NULL,
+  content_type = NULL,
+  request_id = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -159,6 +166,9 @@ etc).}
 provided alongside \code{body}.  If not provided it is set to
 \code{application/octet-stream} if \code{body} is raw, or
 \code{application/json} otherwise.}
+
+\item{\code{request_id}}{Optional request ID. An ID which is attached to
+every log raised by this request. Used for tracing purposes.}
 }
 \if{html}{\out{</div>}}
 }

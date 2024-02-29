@@ -33,7 +33,8 @@ porcelain <- R6::R6Class(
     initialize = function(..., validate = FALSE, logger = NULL) {
       ## NOTE: it's not totally clear what the correct environment
       ## here is.
-      super$initialize(NULL, porcelain_filters(), new.env(parent = .GlobalEnv))
+      super$initialize(NULL, porcelain_filters(logger),
+                       new.env(parent = .GlobalEnv))
       private$validate <- porcelain_validate_default(validate)
       self$setErrorHandler(porcelain_error_handler)
       self$set404Handler(porcelain_404_handler)
@@ -122,10 +123,13 @@ porcelain <- R6::R6Class(
     ##' provided alongside \code{body}.  If not provided it is set to
     ##' \code{application/octet-stream} if \code{body} is raw, or
     ##' \code{application/json} otherwise.
+    ##'
+    ##' @param request_id Optional request ID. An ID which is attached to
+    ##' every log raised by this request. Used for tracing purposes.
     request = function(method, path, query = NULL, body = NULL,
-                       content_type = NULL) {
+                       content_type = NULL, request_id = NULL) {
       plumber_request(self, method, path, query, body = body,
-                      content_type = content_type)
+                      content_type = content_type, request_id = request_id)
     }
   ))
 

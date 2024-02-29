@@ -99,7 +99,7 @@ test_that("Nice error on parse failure", {
   err <- expect_error(
     roxygen2::parse_text(text))
   expect_match(
-    err$message,
+    err$parent$parent$message,
     "Failed to find endpoint description in @porcelain tag.*<text>:1")
 })
 
@@ -116,7 +116,7 @@ test_that("Nice error on input parse failure", {
     sep = "\n")
   err <- expect_error(
     roxygen2::parse_text(text))
-  expect_match(err$message,
+  expect_match(err$parent$parent$message,
                "error occured at <text>:5", fixed = TRUE)
 })
 

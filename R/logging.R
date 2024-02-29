@@ -1,3 +1,5 @@
+LOG_FILTER_REQUEST_ID_NAME <- "log_filter_request_id" # nolint
+
 ##' Create a json-emitting logger, using the 'lgr' package.
 ##'
 ##' @title Create logger
@@ -33,9 +35,10 @@ porcelain_logger <- function(log_level = "info", name = NULL, path = NULL) {
     appender <- lgr::AppenderJson$new(path)
   }
   logger$add_appender(appender, name = "json")
+  logger$add_filter(cache[[LOG_FILTER_REQUEST_ID_NAME]],
+                    name = LOG_FILTER_REQUEST_ID_NAME)
   logger
 }
-
 
 ## Plumber has stages preroute -> postroute -> preserialize -> postserialize
 ##
@@ -89,6 +92,8 @@ porcelain_log_postserialize <- function(logger) {
     logger_detailed(logger, "trace", req, "postserialize", "response",
                     body = describe_body(value$body))
 
+    set_request_id_filter(logger, NA_character_)
+
     value
   }
 }
@@ -116,4 +121,11 @@ describe_body <- function(body) {
     body <- sprintf("<binary body (%d bytes)>", length(body))
   }
   body
+}
+
+
+set_request_id_filter <- function(logger, request_id) {
+  if (LOG_FILTER_REQUEST_ID_NAME %in% names(logger$filters)) {
+    cache[[LOG_FILTER_REQUEST_ID_NAME]]$values$request_id <- request_id
+  }
 }
