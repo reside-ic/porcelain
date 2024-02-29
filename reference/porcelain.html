@@ -197,7 +197,14 @@ arguments to pass through to <code>plumber</code>.</p></dd>
 tested without running the whole API. The interface here will
 probably change, and may end up using the interface of <code>httr</code>.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span><span class="va">method</span>, <span class="va">path</span>, query <span class="op">=</span> <span class="cn">NULL</span>, body <span class="op">=</span> <span class="cn">NULL</span>, content_type <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">porcelain</span><span class="op">$</span><span class="fu">request</span><span class="op">(</span></span>
+<span>  <span class="va">method</span>,</span>
+<span>  <span class="va">path</span>,</span>
+<span>  query <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  body <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  content_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  request_id <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -225,6 +232,11 @@ etc).</p></dd>
 provided alongside <code>body</code>.  If not provided it is set to
 <code>application/octet-stream</code> if <code>body</code> is raw, or
 <code>application/json</code> otherwise.</p></dd>
+
+
+<dt><code>request_id</code></dt>
+<dd><p>Optional request ID. An ID which is attached to
+every log raised by this request. Used for tracing purposes.</p></dd>
 
 
 </dl><p></p></div>
@@ -262,7 +274,7 @@ provided alongside <code>body</code>.  If not provided it is set to
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
