@@ -18,6 +18,11 @@ plumber_request <- function(plumber, method, path, query = NULL,
     req[["HTTP_X_REQUEST_ID"]] <- request_id
   }
 
+  ## We need this in order to correctly serialise output, as
+  ## plumber$call behaves differently when running as part of a full
+  ## api or not on an error at this point.
+  req[["PORCELAIN_REQUEST"]] <- TRUE
+
   plumber$call(req)
 }
 

@@ -216,6 +216,10 @@ test_that("build api - dupe headers throws error", {
   pr <- porcelain$new()
   pr$handle(endpoint)
 
+  ## So on this one we don't return the correct bits, probably because
+  ## we throw in the handler?  Right, we're throwing in the serialiser
+  ## - this is exactly the same error as in test-error.R which also
+  ## does not work well for request.
   res <- pr$request("GET", "/binary")
   expect_equal(res$status, 500L)
   body <- from_json(res$body)

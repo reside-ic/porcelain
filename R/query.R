@@ -34,6 +34,13 @@ parse_query <- function(query) {
 
   keys <- trimws(vcapply(args, "[[", 1L))
 
+  err <- lengths(args) != 2
+  if (any(err)) {
+    stop(sprintf("Incomplete query for %s",
+                 paste(squote(keys[err]), collapse = ", ")))
+  }
+  args <- lapply(args, function(x) trimws(utils::URLdecode(x)))
+
   ## if (any(err)) {
   ##   ## TODO: should be 400 not 500 error
   ##   stop(sprintf("Incomplete query for %s",
@@ -43,8 +50,6 @@ parse_query <- function(query) {
   vals <- lapply(args, function(x) if (length(x) == 1) NA else x[[2]])
 
   if (anyDuplicated(keys)) {
-    ## TODO: This should be a 400 error, as it's bad input. As is,
-    ## this will likely end up as a 500 error.
     stop(sprintf(
       "Unexpected duplicate keys %s",
       paste(squote(unique(keys[duplicated(keys)])), collapse = ", ")))

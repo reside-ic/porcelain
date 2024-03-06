@@ -7,7 +7,9 @@ porcelain_filters <- function(logger) {
 
 
 porcelain_filter_query_string <- function(req, res) {
-  req$porcelain_query <- parse_query(req$QUERY_STRING)
+  req$porcelain_query <- tryCatch(
+    parse_query(req$QUERY_STRING),
+    error = function(e) porcelain::porcelain_stop(e$message))
   plumber::forward()
 }
 

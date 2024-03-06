@@ -149,7 +149,10 @@ porcelain_response <- function(status_code, content_type, body, headers,
 
 porcelain_serialize_pass <- function(val, req, res, error_handler) {
   tryCatch(porcelain_do_serialize_pass(val, res),
-           error = function(e) error_handler(req, res, e))
+           error = function(e) {
+             req[["PORCELAN_SERIALIZE_PASS_FAILURE"]] <- TRUE
+             error_handler(req, res, e)
+           })
 }
 
 
@@ -180,7 +183,21 @@ porcelain_do_serialize_pass <- function(val, res) {
 
 porcelain_error_handler <- function(req, res, e) {
   val <- porcelain_process_error(e)
-  porcelain_serialize_pass(val, req, res, function(...) NULL)
+
+  ## If PORCELAIN_REQUEST is set, then we're running via the direct
+  ## $request method; plumber behaves differently wrt error handling
+  ## here when the serialiser fails (but not anything else!)
+  porcelain_request_serialise_error <-
+    isTRUE(req[["PORCELAIN_REQUEST"]]) &&
+    isTRUE(req[["PORCELAN_SERIALIZE_PASS_FAILURE"]])
+
+  if (porcelain_request_serialise_error) {
+    porcelain_serialize_pass(val, req, res, function(...) NULL)
+  } else {
+    res$status <- val$status_code
+    val$value$data <- jsonlite::unbox(NA)
+    val$value
+  }
 }
 
 
