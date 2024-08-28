@@ -172,6 +172,10 @@ porcelain_endpoint <- R6::R6Class(
           query = req$porcelain_query,
           body = req$porcelain_body)
         args <- self$inputs$validate(given)
+        run_args <- rlang::fn_fmls_names(self$target)
+        if ("req" %in% run_args) {
+          args$req <- req
+        }
         do.call(self$run, args)
       }, error = porcelain_process_error)
     },

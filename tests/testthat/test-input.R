@@ -614,6 +614,24 @@ test_that("Must provide all non-optional args", {
 })
 
 
+test_that("'req' arg always accepted", {
+  expect_error(
+    porcelain_endpoint$new(
+      "GET", "/add", function(a, b, req) jsonlite::unbox(a + b),
+      returning = porcelain_returning_json("Number", "schema"),
+      input_query = porcelain_input_query(a = "numeric"),
+      validate = TRUE),
+    "Required arguments to target function missing from inputs: 'b'")
+  expect_error(
+    porcelain_endpoint$new(
+      "GET", "/add", function(a, req, b = 1) jsonlite::unbox(a + b),
+      returning = porcelain_returning_json("Number", "schema"),
+      input_query = porcelain_input_query(a = "numeric"),
+      validate = TRUE),
+    NA)
+})
+
+
 test_that("default parameters", {
   endpoint <- porcelain_endpoint$new(
     "GET", "/multiply", function(a, b = 2) jsonlite::unbox(a * b),
