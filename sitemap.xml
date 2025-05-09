@@ -1,66 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/cookbook.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/porcelain.html</loc>
-  </url>
-  <url>
-    <loc>/articles/roxygen.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_add_headers.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_background.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_endpoint.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_input_body.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_input_query.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_logger.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_package_endpoint.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_returning.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_roclet.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_state.html</loc>
-  </url>
-  <url>
-    <loc>/reference/porcelain_stop.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/cookbook.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/porcelain.html</loc></url>
+<url><loc>/articles/roxygen.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/porcelain.html</loc></url>
+<url><loc>/reference/porcelain_add_headers.html</loc></url>
+<url><loc>/reference/porcelain_background.html</loc></url>
+<url><loc>/reference/porcelain_endpoint.html</loc></url>
+<url><loc>/reference/porcelain_input_body.html</loc></url>
+<url><loc>/reference/porcelain_input_query.html</loc></url>
+<url><loc>/reference/porcelain_logger.html</loc></url>
+<url><loc>/reference/porcelain_package_endpoint.html</loc></url>
+<url><loc>/reference/porcelain_returning.html</loc></url>
+<url><loc>/reference/porcelain_roclet.html</loc></url>
+<url><loc>/reference/porcelain_state.html</loc></url>
+<url><loc>/reference/porcelain_stop.html</loc></url>
 </urlset>
+
