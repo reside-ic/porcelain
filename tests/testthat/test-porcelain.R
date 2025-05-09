@@ -248,3 +248,26 @@ test_that("build api - text endpoint", {
   expect_equal(res_api$headers[["Content-Type"]], "text/plain")
   expect_equal(res_api$body, "some text")
 })
+
+
+test_that("build api - endpoint using 'req'", {
+  handler <- function(req) {
+    req$REQUEST_METHOD
+  }
+  endpoint <- porcelain_endpoint$new(
+    "GET", "/text", handler,
+    returning = porcelain_returning_text(),
+    validate = TRUE)
+
+  mock_request <- as.environment(list(REQUEST_METHOD = "GET"))
+  res <- endpoint$run(mock_request)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$content_type, "text/plain")
+  expect_null(res$headers)
+  expect_true(res$validated)
+  expect_equal(res$data, "GET")
+
+  res_api <- endpoint$request()
+  expect_equal(res_api$status, 200)
+  expect_equal(res_api$body, "GET")
+})

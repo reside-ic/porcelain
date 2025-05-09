@@ -251,6 +251,7 @@ porcelain_inputs <- R6::R6Class(
 
       nms <- vcapply(self$inputs, "[[", "name")
       msg <- setdiff(formals_required(target), nms)
+      msg <- setdiff(msg, "req")
       if (length(msg) > 0L) {
         stop("Required arguments to target function missing from inputs: ",
              paste(squote(msg), collapse = ", "),
